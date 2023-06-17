@@ -41,7 +41,6 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
                     novoUsuario.DS_EMAIL = request.DS_EMAIL?.ToLower();
                     novoUsuario.FL_ATIVO = request.FL_ATIVO;
                     novoUsuario.DT_ULTIMO_ACESSO = DateTime.Now;
-                    novoUsuario.NR_PERMISSAO = request.NR_PERMISSAO;
                     dbDiceHaven.Add(novoUsuario);
                     dbDiceHaven.SaveChanges();
 
@@ -79,8 +78,7 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
                                       DS_LOGIN = u.DS_LOGIN,
                                       DS_EMAIL = u.DS_EMAIL,
                                       FL_ATIVO = u.FL_ATIVO,
-                                      DT_ULTIMO_ACESSO = u.DT_ULTIMO_ACESSO,
-                                      NR_PERMISSAO = u.NR_PERMISSAO
+                                      DT_ULTIMO_ACESSO = u.DT_ULTIMO_ACESSO
                                   }).FirstOrDefault();
             return usuario;
         }

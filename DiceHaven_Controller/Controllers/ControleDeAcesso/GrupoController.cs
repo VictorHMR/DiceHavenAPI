@@ -37,5 +37,56 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
                 return StatusCode((int)ex.CodeStatus, new { ex.Message });
             }
         }
+
+        [HttpGet("ListarUsuariosGrupo")]
+        public ActionResult ListarUsuariosGrupo(int idGrupo)
+        {
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                List<Claim> claim = identity.Claims.ToList();
+                Grupo grupoModel = new Grupo(dbDiceHaven);
+
+                return StatusCode(200, grupoModel.ListarUsuariosGrupo(idGrupo));
+            }
+            catch (HttpDiceExcept ex)
+            {
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
+            }
+        }
+
+        [HttpPost("VincularUsuarioGrupo")]
+        public ActionResult VincularUsuarioGrupo(int ID_USUARIO, int ID_GRUPO)
+        {
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                List<Claim> claim = identity.Claims.ToList();
+                Grupo grupoModel = new Grupo(dbDiceHaven);
+                grupoModel.VincularUsuarioGrupo(ID_USUARIO, ID_GRUPO);
+                return StatusCode(200, new { Message = "Usuário Vinculado com sucesso!" });
+            }
+            catch (HttpDiceExcept ex)
+            {
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
+            }
+        }
+
+        [HttpPost("DesvincularUsuarioGrupo")]
+        public ActionResult DesvincularUsuarioGrupo(int ID_USUARIO, int ID_GRUPO)
+        {
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                List<Claim> claim = identity.Claims.ToList();
+                Grupo grupoModel = new Grupo(dbDiceHaven);
+                grupoModel.DesvincularUsuarioGrupo(ID_USUARIO, ID_GRUPO);
+                return StatusCode(200, new { Message = "Usuário Desvinculado com sucesso!" });
+            }
+            catch (HttpDiceExcept ex)
+            {
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
+            }
+        }
     }
 }
