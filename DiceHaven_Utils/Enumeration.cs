@@ -19,7 +19,9 @@ namespace DiceHaven_Utils
         public enum Permissoes
         {
             PMS_Ver_Permissao = 1,
-            PMS_Adm_Permissao = 2
+            PMS_Adm_Permissao = 2,
+            PMS_Ver_Grupos = 3,
+            PMS_Adm_Grupos = 4
         }
     }
 }

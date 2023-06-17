@@ -26,8 +26,10 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
             {
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
-                int idUsuario = int.Parse(claim[0].Value);
+                int idUsuarioLogado = int.Parse(claim[0].Value);
                 Grupo grupoModel = new Grupo(dbDiceHaven);
+                Permissao permissaoModel = new Permissao(dbDiceHaven);
+                permissaoModel.VerificaPermissaoUsuario(idUsuarioLogado, Enumeration.Permissoes.PMS_Ver_Grupos);
 
                 return StatusCode(200, grupoModel.ListarGrupos());
 
@@ -45,8 +47,10 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
             {
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
+                int idUsuarioLogado = int.Parse(claim[0].Value);
                 Grupo grupoModel = new Grupo(dbDiceHaven);
-
+                Permissao permissaoModel = new Permissao(dbDiceHaven);
+                permissaoModel.VerificaPermissaoUsuario(idUsuarioLogado, Enumeration.Permissoes.PMS_Ver_Grupos);
                 return StatusCode(200, grupoModel.ListarUsuariosGrupo((int)grupo));
             }
             catch (HttpDiceExcept ex)
@@ -62,7 +66,10 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
             {
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
+                int idUsuarioLogado = int.Parse(claim[0].Value);
                 Grupo grupoModel = new Grupo(dbDiceHaven);
+                Permissao permissaoModel = new Permissao(dbDiceHaven);
+                permissaoModel.VerificaPermissaoUsuario(idUsuarioLogado, Enumeration.Permissoes.PMS_Adm_Grupos);
                 grupoModel.VincularUsuarioGrupo(ID_USUARIO, (int)grupo);
                 return StatusCode(200, new { Message = "Usuário Vinculado com sucesso!" });
             }
@@ -79,7 +86,10 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
             {
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
+                int idUsuarioLogado = int.Parse(claim[0].Value);
                 Grupo grupoModel = new Grupo(dbDiceHaven);
+                Permissao permissaoModel = new Permissao(dbDiceHaven);
+                permissaoModel.VerificaPermissaoUsuario(idUsuarioLogado, Enumeration.Permissoes.PMS_Adm_Grupos);
                 grupoModel.DesvincularUsuarioGrupo(ID_USUARIO, (int)grupo);
                 return StatusCode(200, new { Message = "Usuário Desvinculado com sucesso!" });
             }
