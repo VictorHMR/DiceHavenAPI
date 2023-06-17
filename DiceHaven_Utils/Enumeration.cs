@@ -15,5 +15,11 @@ namespace DiceHaven_Utils
             Moderador_1 = 2,
             Comum = 3
         }
+
+        public enum Permissoes
+        {
+            PMS_Ver_Permissao = 1,
+            PMS_Adm_Permissao = 2
+        }
     }
 }
