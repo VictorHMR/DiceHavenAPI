@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33712.159
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiceHaven_Controller", "DiceHaven_API\DiceHaven_Controller.csproj", "{B5A1F81A-8976-4571-ADAA-6D1C4E13FD8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiceHaven_Controller", "DiceHaven_Controller\DiceHaven_Controller.csproj", "{B5A1F81A-8976-4571-ADAA-6D1C4E13FD8A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiceHaven_BD", "DiceHaven_BD\DiceHaven_BD.csproj", "{0C7FEDF3-808D-4AA7-8F0E-579E6A70D635}"
 EndProject
