@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using DiceHaven_Utils;
 using System.Net;
-
 namespace DiceHaven_Model.Models.ControlleDeAcesso
 {
     public class Usuario
@@ -33,6 +32,7 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
                 else
                 {
                     dbDiceHaven.Database.BeginTransaction();
+
                     TB_USUARIO novoUsuario = new TB_USUARIO();
                     novoUsuario.DS_NOME = request.DS_NOME;
                     novoUsuario.DT_NASCIMENTO = request.DT_NASCIMENTO;
@@ -50,6 +50,9 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
                     dbDiceHaven.Add(config);
                     dbDiceHaven.SaveChanges();
                     dbDiceHaven.Database.CommitTransaction();
+
+                    Grupo grupoModels = new Grupo(dbDiceHaven);
+                    grupoModels.VincularUsuarioGrupo(novoUsuario.ID_USUARIO, (int)Enumeration.Grupo.Comum);
 
                     return novoUsuario.ID_USUARIO;
                 }

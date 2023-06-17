@@ -9,12 +9,11 @@ namespace DiceHaven_Utils
     public class Enumeration
     {
 
-        public enum Permissao
+        public enum Grupo
         {
-            Visitante = 0,
-            Usuario = 1,
-            Moderador = 2,
-            Admin = 4
+            Admin = 1,
+            Moderador_1 = 2,
+            Comum = 3
         }
     }
 }

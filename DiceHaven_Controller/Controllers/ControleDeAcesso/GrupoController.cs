@@ -39,7 +39,7 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
         }
 
         [HttpGet("ListarUsuariosGrupo")]
-        public ActionResult ListarUsuariosGrupo(int idGrupo)
+        public ActionResult ListarUsuariosGrupo(Enumeration.Grupo grupo)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
                 List<Claim> claim = identity.Claims.ToList();
                 Grupo grupoModel = new Grupo(dbDiceHaven);
 
-                return StatusCode(200, grupoModel.ListarUsuariosGrupo(idGrupo));
+                return StatusCode(200, grupoModel.ListarUsuariosGrupo((int)grupo));
             }
             catch (HttpDiceExcept ex)
             {
@@ -56,14 +56,14 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
         }
 
         [HttpPost("VincularUsuarioGrupo")]
-        public ActionResult VincularUsuarioGrupo(int ID_USUARIO, int ID_GRUPO)
+        public ActionResult VincularUsuarioGrupo(int ID_USUARIO, Enumeration.Grupo grupo)
         {
             try
             {
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 Grupo grupoModel = new Grupo(dbDiceHaven);
-                grupoModel.VincularUsuarioGrupo(ID_USUARIO, ID_GRUPO);
+                grupoModel.VincularUsuarioGrupo(ID_USUARIO, (int)grupo);
                 return StatusCode(200, new { Message = "Usuário Vinculado com sucesso!" });
             }
             catch (HttpDiceExcept ex)
@@ -73,14 +73,14 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
         }
 
         [HttpPost("DesvincularUsuarioGrupo")]
-        public ActionResult DesvincularUsuarioGrupo(int ID_USUARIO, int ID_GRUPO)
+        public ActionResult DesvincularUsuarioGrupo(int ID_USUARIO, Enumeration.Grupo grupo)
         {
             try
             {
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 Grupo grupoModel = new Grupo(dbDiceHaven);
-                grupoModel.DesvincularUsuarioGrupo(ID_USUARIO, ID_GRUPO);
+                grupoModel.DesvincularUsuarioGrupo(ID_USUARIO, (int)grupo);
                 return StatusCode(200, new { Message = "Usuário Desvinculado com sucesso!" });
             }
             catch (HttpDiceExcept ex)

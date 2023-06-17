@@ -60,6 +60,7 @@ public partial class DiceHavenBDContext : DbContext
 
             entity.ToTable("TB_GRUPO");
 
+            entity.Property(e => e.ID_GRUPO).ValueGeneratedNever();
             entity.Property(e => e.DS_DESCRICAO).HasMaxLength(200);
             entity.Property(e => e.DS_GRUPO)
                 .IsRequired()
@@ -159,9 +160,7 @@ public partial class DiceHavenBDContext : DbContext
             entity.Property(e => e.DS_NOME)
                 .IsRequired()
                 .HasMaxLength(100);
-            entity.Property(e => e.DS_SENHA)
-                .IsRequired()
-                .HasMaxLength(30);
+            entity.Property(e => e.DS_SENHA).HasMaxLength(100);
             entity.Property(e => e.DT_NASCIMENTO).HasColumnType("datetime");
             entity.Property(e => e.DT_ULTIMO_ACESSO).HasColumnType("datetime");
         });
