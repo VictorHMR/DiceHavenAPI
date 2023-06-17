@@ -60,8 +60,8 @@ namespace DiceHaven_API.Controllers.Autorization
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuario = int.Parse(claim[0].Value);
                 Usuario userModel = new Usuario(dbDiceHaven);
-
-                return StatusCode(200, userModel.alterarConfigUsuario(configsUsuario, idUsuario));
+                userModel.alterarConfigUsuario(configsUsuario, idUsuario);
+                return StatusCode(200, new {Message="Configurações alteradas com sucesso"});
 
             }
             catch(DiceHavenExcept ex)

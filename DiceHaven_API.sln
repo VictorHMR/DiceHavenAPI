@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33712.159
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiceHaven_API", "DiceHaven_API\DiceHaven_API.csproj", "{B5A1F81A-8976-4571-ADAA-6D1C4E13FD8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiceHaven_Controller", "DiceHaven_API\DiceHaven_Controller.csproj", "{B5A1F81A-8976-4571-ADAA-6D1C4E13FD8A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiceHaven_BD", "DiceHaven_BD\DiceHaven_BD.csproj", "{0C7FEDF3-808D-4AA7-8F0E-579E6A70D635}"
 EndProject
@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiceHaven_Model", "DiceHave
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiceHaven_Utils", "DiceHaven_Utils\DiceHaven_Utils.csproj", "{C2DF5965-47A2-424D-81F6-D03E5919AAF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiceHaven_DTO", "DiceHaven_DTO\DiceHaven_DTO.csproj", "{2730C74F-5E3C-4710-8BA0-2BDB2BA92AE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiceHaven_DTO", "DiceHaven_DTO\DiceHaven_DTO.csproj", "{2730C74F-5E3C-4710-8BA0-2BDB2BA92AE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
