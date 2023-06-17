@@ -21,8 +21,6 @@ public partial class TB_USUARIO
 
     public DateTime? DT_ULTIMO_ACESSO { get; set; }
 
-    public int? NR_PERMISSAO { get; set; }
-
     public virtual TB_CONFIG_USUARIO TB_CONFIG_USUARIO { get; set; }
 
     public virtual ICollection<TB_GRUPO_USUARIO> TB_GRUPO_USUARIOs { get; set; } = new List<TB_GRUPO_USUARIO>();

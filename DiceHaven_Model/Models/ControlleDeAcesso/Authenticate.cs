@@ -71,8 +71,7 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
                                           DS_LOGIN = u.DS_LOGIN,
                                           DS_EMAIL = u.DS_EMAIL,
                                           FL_ATIVO = u.FL_ATIVO,
-                                          DT_ULTIMO_ACESSO = u.DT_ULTIMO_ACESSO,
-                                          NR_PERMISSAO = u.NR_PERMISSAO
+                                          DT_ULTIMO_ACESSO = u.DT_ULTIMO_ACESSO
                                       }).FirstOrDefault();
                 if (usuario is null)
                     throw new HttpDiceExcept("Ocorreu um erro ao autenticar ! Verifique suas credenciais.");

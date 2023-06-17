@@ -164,7 +164,6 @@ public partial class DiceHavenBDContext : DbContext
                 .HasMaxLength(30);
             entity.Property(e => e.DT_NASCIMENTO).HasColumnType("datetime");
             entity.Property(e => e.DT_ULTIMO_ACESSO).HasColumnType("datetime");
-            entity.Property(e => e.NR_PERMISSAO).HasDefaultValueSql("'0'");
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -16,7 +16,6 @@ namespace DiceHaven_DTO.ControleDeAcesso
         public string DS_EMAIL { get; set; }
         public bool FL_ATIVO { get; set; }
         public DateTime? DT_ULTIMO_ACESSO { get; set; }
-        public int? NR_PERMISSAO { get; set; }
 
     }
 }
