@@ -1,12 +1,12 @@
 using DiceHaven_BD.Contexts;
 using DiceHaven_DTO.ControleDeAcesso;
-using DiceHaven_Model.Models;
+using DiceHaven_Model.Models.ControlleDeAcesso;
 using DiceHaven_Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace DiceHaven_API.Controllers.Autorization
+namespace DiceHaven_Controller.Controllers.ControleDeAcesso
 {
     [ApiExplorerSettings(GroupName = "Geral")]
     [ApiController]
@@ -37,7 +37,7 @@ namespace DiceHaven_API.Controllers.Autorization
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message= ex.Message });
+                return StatusCode(500, new { ex.Message });
             }
 
         }

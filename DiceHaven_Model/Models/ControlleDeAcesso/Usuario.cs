@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using DiceHaven_Utils;
 using System.Net;
 
-namespace DiceHaven_Model.Models
+namespace DiceHaven_Model.Models.ControlleDeAcesso
 {
     public class Usuario
     {
@@ -26,10 +26,10 @@ namespace DiceHaven_Model.Models
             {
 
                 if (!loginValido(request.DS_LOGIN))
-                    throw new DiceHavenExcept("Usuário já existe", HttpStatusCode.Conflict);
+                    throw new HttpDiceExcept("Usuário já existe", HttpStatusCode.Conflict);
 
                 else if (!emailValido(request.DS_EMAIL))
-                    throw new DiceHavenExcept("email já existe", HttpStatusCode.Conflict);
+                    throw new HttpDiceExcept("email já existe", HttpStatusCode.Conflict);
                 else
                 {
                     dbDiceHaven.Database.BeginTransaction();
@@ -55,16 +55,16 @@ namespace DiceHaven_Model.Models
                     return novoUsuario.ID_USUARIO;
                 }
             }
-            catch (DiceHavenExcept ex)
+            catch (HttpDiceExcept ex)
             {
                 throw ex;
             }
-            catch(Exception exx)
+            catch (Exception exx)
             {
                 dbDiceHaven.Database.RollbackTransaction();
-                throw new DiceHavenExcept($"Ocorreu um erro ao cadastrar o usuário! Message: {exx}", HttpStatusCode.InternalServerError);
+                throw new HttpDiceExcept($"Ocorreu um erro ao cadastrar o usuário! Message: {exx}", HttpStatusCode.InternalServerError);
             }
-            
+
         }
 
         public UsuarioDTO obterUsuario(int idUsuario)
@@ -91,7 +91,7 @@ namespace DiceHaven_Model.Models
             {
                 return !dbDiceHaven.TB_USUARIOs.Where(x => x.DS_NOME == login).Any();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -117,13 +117,13 @@ namespace DiceHaven_Model.Models
                 configAntiga.FL_DARK_MODE = configsUsuario.FL_DARK_MODE;
                 dbDiceHaven.SaveChanges();
             }
-            catch(DiceHavenExcept ex)
+            catch (HttpDiceExcept ex)
             {
                 throw ex;
             }
-            catch(Exception exx)
+            catch (Exception exx)
             {
-                throw new DiceHavenExcept($"Ocorreu um erro ao atualizar configurações! Message: {exx}", HttpStatusCode.InternalServerError);
+                throw new HttpDiceExcept($"Ocorreu um erro ao atualizar configurações! Message: {exx}", HttpStatusCode.InternalServerError);
             }
         }
     }
