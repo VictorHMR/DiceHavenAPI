@@ -13,7 +13,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
 
-namespace DiceHaven_Model.Models
+namespace DiceHaven_Model.Models.ControlleDeAcesso
 {
     public class Authenticate
     {
@@ -51,7 +51,7 @@ namespace DiceHaven_Model.Models
             }
             catch (Exception ex)
             {
-                throw new DiceHavenExcept("Ocorreu um erro ao autenticar !", HttpStatusCode.BadRequest);
+                throw new HttpDiceExcept("Ocorreu um erro ao autenticar !", HttpStatusCode.BadRequest);
             }
 
 
@@ -75,20 +75,20 @@ namespace DiceHaven_Model.Models
                                           NR_PERMISSAO = u.NR_PERMISSAO
                                       }).FirstOrDefault();
                 if (usuario is null)
-                    throw new DiceHavenExcept("Ocorreu um erro ao autenticar ! Verifique suas credenciais.");
+                    throw new HttpDiceExcept("Ocorreu um erro ao autenticar ! Verifique suas credenciais.");
 
                 dbDiceHaven.TB_USUARIOs.Find(usuario.ID_USUARIO).DT_ULTIMO_ACESSO = DateTime.Now;
                 dbDiceHaven.SaveChanges();
                 return usuario;
 
             }
-            catch (DiceHavenExcept ex)
+            catch (HttpDiceExcept ex)
             {
                 throw ex;
             }
             catch (Exception ex)
             {
-                throw new DiceHavenExcept($"Ocorreu um erro ! Message: {ex.Message}", HttpStatusCode.Unauthorized);
+                throw new HttpDiceExcept($"Ocorreu um erro ! Message: {ex.Message}", HttpStatusCode.Unauthorized);
             }
         }
 

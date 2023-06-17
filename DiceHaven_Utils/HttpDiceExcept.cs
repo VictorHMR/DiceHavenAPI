@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace DiceHaven_Utils
 {
-    public class DiceHavenExcept : Exception
+    public class HttpDiceExcept : Exception
     {
         public HttpStatusCode CodeStatus { get; set; }
 
-        public DiceHavenExcept(string mensagem)
+        public HttpDiceExcept(string mensagem)
             : base(mensagem)
         {
         }
 
-        public DiceHavenExcept(string mensagem, HttpStatusCode Code)
+        public HttpDiceExcept(string mensagem, HttpStatusCode Code)
             : base(mensagem)
         {
             this.CodeStatus = Code;

@@ -1,12 +1,12 @@
 using DiceHaven_BD.Contexts;
 using DiceHaven_DTO.ControleDeAcesso;
-using DiceHaven_Model.Models;
+using DiceHaven_Model.Models.ControlleDeAcesso;
 using DiceHaven_Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace DiceHaven_API.Controllers.Autorization
+namespace DiceHaven_Controller.Controllers.ControleDeAcesso
 {
     [ApiExplorerSettings(GroupName = "Geral")]
     [ApiController]
@@ -27,11 +27,11 @@ namespace DiceHaven_API.Controllers.Autorization
             {
                 Usuario usuarioModel = new Usuario(dbDiceHaven);
                 usuarioModel.cadastrarUsuario(novoUsuario);
-                return StatusCode(200, new {Message="Usuário cadastrado com sucesso!"});
+                return StatusCode(200, new { Message = "Usuário cadastrado com sucesso!" });
             }
-            catch (DiceHavenExcept ex)
+            catch (HttpDiceExcept ex)
             {
-                return StatusCode((int)ex.CodeStatus, new { Message= ex.Message });
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
             }
 
         }
@@ -46,7 +46,7 @@ namespace DiceHaven_API.Controllers.Autorization
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = ex.Message });
+                return StatusCode(500, new { ex.Message });
             }
 
         }
@@ -61,12 +61,12 @@ namespace DiceHaven_API.Controllers.Autorization
                 int idUsuario = int.Parse(claim[0].Value);
                 Usuario userModel = new Usuario(dbDiceHaven);
                 userModel.alterarConfigUsuario(configsUsuario, idUsuario);
-                return StatusCode(200, new {Message="Configurações alteradas com sucesso"});
+                return StatusCode(200, new { Message = "Configurações alteradas com sucesso" });
 
             }
-            catch(DiceHavenExcept ex)
+            catch (HttpDiceExcept ex)
             {
-                return StatusCode((int)ex.CodeStatus, new { Message = ex.Message });
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
             }
 
         }
