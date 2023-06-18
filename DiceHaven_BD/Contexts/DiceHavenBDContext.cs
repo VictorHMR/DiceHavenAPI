@@ -16,23 +16,23 @@ public partial class DiceHavenBDContext : DbContext
     {
     }
 
-    public virtual DbSet<TB_CONFIG_USUARIO> TB_CONFIG_USUARIOs { get; set; }
+    public virtual DbSet<tb_config_usuario> tb_config_usuarios { get; set; }
 
-    public virtual DbSet<TB_GRUPO> TB_GRUPOs { get; set; }
+    public virtual DbSet<tb_grupo> tb_grupos { get; set; }
 
-    public virtual DbSet<TB_GRUPO_PERMISSAO> TB_GRUPO_PERMISSAOs { get; set; }
+    public virtual DbSet<tb_grupo_permissao> tb_grupo_permissaos { get; set; }
 
-    public virtual DbSet<TB_GRUPO_USUARIO> TB_GRUPO_USUARIOs { get; set; }
+    public virtual DbSet<tb_grupo_usuario> tb_grupo_usuarios { get; set; }
 
-    public virtual DbSet<TB_PERMISSAO> TB_PERMISSAOs { get; set; }
+    public virtual DbSet<tb_permissao> tb_permissaos { get; set; }
 
-    public virtual DbSet<TB_PERSONAGEM> TB_PERSONAGEMs { get; set; }
+    public virtual DbSet<tb_personagem> tb_personagems { get; set; }
 
-    public virtual DbSet<TB_USUARIO> TB_USUARIOs { get; set; }
+    public virtual DbSet<tb_usuario> tb_usuarios { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseMySql("server=containers-us-west-82.railway.app;port=7795;database=railway;user=root;password=rT2hDXifJ32jBWvQJEla", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.33-mysql"));
+        => optionsBuilder.UseMySql("server=localhost;port=3306;database=DiceHaven;user=root", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.31-mysql"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -40,25 +40,25 @@ public partial class DiceHavenBDContext : DbContext
             .UseCollation("utf8mb4_0900_ai_ci")
             .HasCharSet("utf8mb4");
 
-        modelBuilder.Entity<TB_CONFIG_USUARIO>(entity =>
+        modelBuilder.Entity<tb_config_usuario>(entity =>
         {
             entity.HasKey(e => e.ID_CONFIG_USUARIO).HasName("PRIMARY");
 
-            entity.ToTable("TB_CONFIG_USUARIO");
+            entity.ToTable("tb_config_usuario");
 
             entity.Property(e => e.ID_CONFIG_USUARIO).ValueGeneratedOnAdd();
 
-            entity.HasOne(d => d.ID_CONFIG_USUARIONavigation).WithOne(p => p.TB_CONFIG_USUARIO)
-                .HasForeignKey<TB_CONFIG_USUARIO>(d => d.ID_CONFIG_USUARIO)
+            entity.HasOne(d => d.ID_CONFIG_USUARIONavigation).WithOne(p => p.tb_config_usuario)
+                .HasForeignKey<tb_config_usuario>(d => d.ID_CONFIG_USUARIO)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("TB_CONFIG_USUARIO_ibfk_1");
+                .HasConstraintName("tb_config_usuario_ibfk_1");
         });
 
-        modelBuilder.Entity<TB_GRUPO>(entity =>
+        modelBuilder.Entity<tb_grupo>(entity =>
         {
             entity.HasKey(e => e.ID_GRUPO).HasName("PRIMARY");
 
-            entity.ToTable("TB_GRUPO");
+            entity.ToTable("tb_grupo");
 
             entity.Property(e => e.ID_GRUPO).ValueGeneratedNever();
             entity.Property(e => e.DS_DESCRICAO).HasMaxLength(200);
@@ -67,53 +67,33 @@ public partial class DiceHavenBDContext : DbContext
                 .HasMaxLength(100);
         });
 
-        modelBuilder.Entity<TB_GRUPO_PERMISSAO>(entity =>
+        modelBuilder.Entity<tb_grupo_permissao>(entity =>
         {
             entity.HasKey(e => e.ID_GRUPO_PERMISSAO).HasName("PRIMARY");
 
-            entity.ToTable("TB_GRUPO_PERMISSAO");
+            entity.ToTable("tb_grupo_permissao");
 
             entity.HasIndex(e => e.ID_GRUPO, "ID_GRUPO");
 
             entity.HasIndex(e => e.ID_PERMISSAO, "ID_PERMISSAO");
-
-            entity.HasOne(d => d.ID_GRUPONavigation).WithMany(p => p.TB_GRUPO_PERMISSAOs)
-                .HasForeignKey(d => d.ID_GRUPO)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("TB_GRUPO_PERMISSAO_ibfk_1");
-
-            entity.HasOne(d => d.ID_PERMISSAONavigation).WithMany(p => p.TB_GRUPO_PERMISSAOs)
-                .HasForeignKey(d => d.ID_PERMISSAO)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("TB_GRUPO_PERMISSAO_ibfk_2");
         });
 
-        modelBuilder.Entity<TB_GRUPO_USUARIO>(entity =>
+        modelBuilder.Entity<tb_grupo_usuario>(entity =>
         {
             entity.HasKey(e => e.ID_GRUPO_USUARIO).HasName("PRIMARY");
 
-            entity.ToTable("TB_GRUPO_USUARIO");
+            entity.ToTable("tb_grupo_usuario");
 
             entity.HasIndex(e => e.ID_GRUPO, "ID_GRUPO");
 
             entity.HasIndex(e => e.ID_USUARIO, "ID_USUARIO");
-
-            entity.HasOne(d => d.ID_GRUPONavigation).WithMany(p => p.TB_GRUPO_USUARIOs)
-                .HasForeignKey(d => d.ID_GRUPO)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("TB_GRUPO_USUARIO_ibfk_1");
-
-            entity.HasOne(d => d.ID_USUARIONavigation).WithMany(p => p.TB_GRUPO_USUARIOs)
-                .HasForeignKey(d => d.ID_USUARIO)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("TB_GRUPO_USUARIO_ibfk_2");
         });
 
-        modelBuilder.Entity<TB_PERMISSAO>(entity =>
+        modelBuilder.Entity<tb_permissao>(entity =>
         {
             entity.HasKey(e => e.ID_PERMISSAO).HasName("PRIMARY");
 
-            entity.ToTable("TB_PERMISSAO");
+            entity.ToTable("tb_permissao");
 
             entity.Property(e => e.ID_PERMISSAO).ValueGeneratedNever();
             entity.Property(e => e.DS_DESCRICAO)
@@ -124,11 +104,11 @@ public partial class DiceHavenBDContext : DbContext
                 .HasMaxLength(50);
         });
 
-        modelBuilder.Entity<TB_PERSONAGEM>(entity =>
+        modelBuilder.Entity<tb_personagem>(entity =>
         {
             entity.HasKey(e => e.ID_PERSONAGEM).HasName("PRIMARY");
 
-            entity.ToTable("TB_PERSONAGEM");
+            entity.ToTable("tb_personagem");
 
             entity.HasIndex(e => e.ID_USUARIO, "ID_USUARIO");
 
@@ -139,17 +119,17 @@ public partial class DiceHavenBDContext : DbContext
                 .IsRequired()
                 .HasMaxLength(75);
 
-            entity.HasOne(d => d.ID_USUARIONavigation).WithMany(p => p.TB_PERSONAGEMs)
+            entity.HasOne(d => d.ID_USUARIONavigation).WithMany(p => p.tb_personagems)
                 .HasForeignKey(d => d.ID_USUARIO)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("TB_PERSONAGEM_ibfk_1");
+                .HasConstraintName("tb_personagem_ibfk_1");
         });
 
-        modelBuilder.Entity<TB_USUARIO>(entity =>
+        modelBuilder.Entity<tb_usuario>(entity =>
         {
             entity.HasKey(e => e.ID_USUARIO).HasName("PRIMARY");
 
-            entity.ToTable("TB_USUARIO");
+            entity.ToTable("tb_usuario");
 
             entity.Property(e => e.DS_EMAIL)
                 .IsRequired()
@@ -160,7 +140,9 @@ public partial class DiceHavenBDContext : DbContext
             entity.Property(e => e.DS_NOME)
                 .IsRequired()
                 .HasMaxLength(100);
-            entity.Property(e => e.DS_SENHA).HasMaxLength(100);
+            entity.Property(e => e.DS_SENHA)
+                .IsRequired()
+                .HasMaxLength(30);
             entity.Property(e => e.DT_NASCIMENTO).HasColumnType("datetime");
             entity.Property(e => e.DT_ULTIMO_ACESSO).HasColumnType("datetime");
         });

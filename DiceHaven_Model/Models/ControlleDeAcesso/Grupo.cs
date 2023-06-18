@@ -25,7 +25,7 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
         {
             try
             {
-                List<GrupoDTO> listaDeGrupos = (from g in dbDiceHaven.TB_GRUPOs
+                List<GrupoDTO> listaDeGrupos = (from g in dbDiceHaven.tb_grupos
                                                     //where g.FL_ADMIN == false
                                                 select new GrupoDTO
                                                 {
@@ -46,9 +46,9 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
         {
             try
             {
-                List<UsuarioDTO> listaUsuarios = (from g in dbDiceHaven.TB_GRUPOs
-                                                  join gu in dbDiceHaven.TB_GRUPO_USUARIOs on g.ID_GRUPO equals gu.ID_GRUPO
-                                                  join u in dbDiceHaven.TB_USUARIOs on gu.ID_USUARIO equals u.ID_USUARIO
+                List<UsuarioDTO> listaUsuarios = (from g in dbDiceHaven.tb_grupos
+                                                  join gu in dbDiceHaven.tb_grupo_usuarios on g.ID_GRUPO equals gu.ID_GRUPO
+                                                  join u in dbDiceHaven.tb_usuarios on gu.ID_USUARIO equals u.ID_USUARIO
                                                   where g.ID_GRUPO == idGrupo
                                                   select new UsuarioDTO
                                                   {
@@ -69,8 +69,8 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
         {
             try
             {
-                TB_GRUPO Grupo = dbDiceHaven.TB_GRUPOs.Find(idGrupo);
-                TB_USUARIO Usuario = dbDiceHaven.TB_USUARIOs.Find(idUsuario);
+                tb_grupo Grupo = dbDiceHaven.tb_grupos.Find(idGrupo);
+                tb_usuario Usuario = dbDiceHaven.tb_usuarios.Find(idUsuario);
 
                 if (Grupo is null)
                     throw new HttpDiceExcept("O grupo informado não existe.", HttpStatusCode.InternalServerError);
@@ -78,12 +78,12 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
                     throw new HttpDiceExcept("O usuário informado não existe", HttpStatusCode.InternalServerError);
                 else
                 {
-                    TB_GRUPO_USUARIO GrupoUsuario = dbDiceHaven.TB_GRUPO_USUARIOs.Where(x => x.ID_GRUPO == idGrupo && x.ID_USUARIO == idUsuario).FirstOrDefault() ?? new TB_GRUPO_USUARIO();
+                    tb_grupo_usuario GrupoUsuario = dbDiceHaven.tb_grupo_usuarios.Where(x => x.ID_GRUPO == idGrupo && x.ID_USUARIO == idUsuario).FirstOrDefault() ?? new tb_grupo_usuario();
                     if (GrupoUsuario.ID_GRUPO_USUARIO != 0)
                         throw new HttpDiceExcept("O usuário já está vinculado a esse grupo", HttpStatusCode.InternalServerError);
                     GrupoUsuario.ID_GRUPO = Grupo.ID_GRUPO;
                     GrupoUsuario.ID_USUARIO = Usuario.ID_USUARIO;
-                    dbDiceHaven.TB_GRUPO_USUARIOs.Add(GrupoUsuario);
+                    dbDiceHaven.tb_grupo_usuarios.Add(GrupoUsuario);
                     dbDiceHaven.SaveChanges();
 
                 }
@@ -103,11 +103,11 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
             try
             {
 
-                TB_GRUPO_USUARIO GrupoUsuario = dbDiceHaven.TB_GRUPO_USUARIOs.Where(x => x.ID_GRUPO == idGrupo && x.ID_USUARIO == idUsuario).FirstOrDefault();
+                tb_grupo_usuario GrupoUsuario = dbDiceHaven.tb_grupo_usuarios.Where(x => x.ID_GRUPO == idGrupo && x.ID_USUARIO == idUsuario).FirstOrDefault();
                 if (GrupoUsuario is null)
                     throw new HttpDiceExcept("O usuário não está vinculado a esse grupo.", HttpStatusCode.InternalServerError);
 
-                dbDiceHaven.TB_GRUPO_USUARIOs.Remove(GrupoUsuario);
+                dbDiceHaven.tb_grupo_usuarios.Remove(GrupoUsuario);
                 dbDiceHaven.SaveChanges();
 
             }
@@ -125,9 +125,9 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
         {
             try
             {
-                List<GrupoDTO> ListadeGrupos = (from g in dbDiceHaven.TB_GRUPOs
-                                                join gu in dbDiceHaven.TB_GRUPO_USUARIOs on g.ID_GRUPO equals gu.ID_GRUPO
-                                                join u in dbDiceHaven.TB_USUARIOs on gu.ID_USUARIO equals u.ID_USUARIO
+                List<GrupoDTO> ListadeGrupos = (from g in dbDiceHaven.tb_grupos
+                                                join gu in dbDiceHaven.tb_grupo_usuarios on g.ID_GRUPO equals gu.ID_GRUPO
+                                                join u in dbDiceHaven.tb_usuarios on gu.ID_USUARIO equals u.ID_USUARIO
                                                 where u.ID_USUARIO == idUsuario
                                                 select new GrupoDTO
                                                 {

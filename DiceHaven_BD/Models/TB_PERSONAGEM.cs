@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DiceHaven_BD.Models;
 
-public partial class TB_PERSONAGEM
+public partial class tb_personagem
 {
     public int ID_PERSONAGEM { get; set; }
 
@@ -21,5 +21,5 @@ public partial class TB_PERSONAGEM
 
     public int ID_USUARIO { get; set; }
 
-    public virtual TB_USUARIO ID_USUARIONavigation { get; set; }
+    public virtual tb_usuario ID_USUARIONavigation { get; set; }
 }

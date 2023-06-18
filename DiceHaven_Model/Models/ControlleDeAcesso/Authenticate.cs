@@ -61,7 +61,7 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
         {
             try
             {
-                UsuarioDTO usuario = (from u in dbDiceHaven.TB_USUARIOs
+                UsuarioDTO usuario = (from u in dbDiceHaven.tb_usuarios
                                       where (u.DS_LOGIN == login || u.DS_EMAIL == login) && u.DS_SENHA == password && u.FL_ATIVO == true
                                       select new UsuarioDTO
                                       {
@@ -76,7 +76,7 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
                 if (usuario is null)
                     throw new HttpDiceExcept("Ocorreu um erro ao autenticar ! Verifique suas credenciais.");
 
-                dbDiceHaven.TB_USUARIOs.Find(usuario.ID_USUARIO).DT_ULTIMO_ACESSO = DateTime.Now;
+                dbDiceHaven.tb_usuarios.Find(usuario.ID_USUARIO).DT_ULTIMO_ACESSO = DateTime.Now;
                 dbDiceHaven.SaveChanges();
                 return usuario;
 
