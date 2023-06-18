@@ -33,7 +33,7 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
                 {
                     dbDiceHaven.Database.BeginTransaction();
 
-                    TB_USUARIO novoUsuario = new TB_USUARIO();
+                    tb_usuario novoUsuario = new tb_usuario();
                     novoUsuario.DS_NOME = request.DS_NOME;
                     novoUsuario.DT_NASCIMENTO = request.DT_NASCIMENTO;
                     novoUsuario.DS_LOGIN = request.DS_LOGIN;
@@ -44,7 +44,7 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
                     dbDiceHaven.Add(novoUsuario);
                     dbDiceHaven.SaveChanges();
 
-                    TB_CONFIG_USUARIO config = new TB_CONFIG_USUARIO();
+                    tb_config_usuario config = new tb_config_usuario();
                     config.ID_CONFIG_USUARIO = novoUsuario.ID_USUARIO;
                     config.FL_DARK_MODE = true;
                     dbDiceHaven.Add(config);
@@ -71,7 +71,7 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
 
         public UsuarioDTO obterUsuario(int idUsuario)
         {
-            UsuarioDTO usuario = (from u in dbDiceHaven.TB_USUARIOs
+            UsuarioDTO usuario = (from u in dbDiceHaven.tb_usuarios
                                   where u.ID_USUARIO == idUsuario
                                   select new UsuarioDTO
                                   {
@@ -90,7 +90,7 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
         {
             try
             {
-                return !dbDiceHaven.TB_USUARIOs.Where(x => x.DS_NOME == login).Any();
+                return !dbDiceHaven.tb_usuarios.Where(x => x.DS_LOGIN == login).Any();
             }
             catch (Exception ex)
             {
@@ -102,7 +102,7 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
         {
             try
             {
-                return !dbDiceHaven.TB_USUARIOs.Where(x => x.DS_EMAIL == email).Any();
+                return !dbDiceHaven.tb_usuarios.Where(x => x.DS_EMAIL == email).Any();
             }
             catch (Exception ex)
             {
@@ -114,7 +114,7 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
         {
             try
             {
-                TB_CONFIG_USUARIO configAntiga = dbDiceHaven.TB_CONFIG_USUARIOs.Find(idUsuario);
+                tb_config_usuario configAntiga = dbDiceHaven.tb_config_usuarios.Find(idUsuario);
                 configAntiga.FL_DARK_MODE = configsUsuario.FL_DARK_MODE;
                 dbDiceHaven.SaveChanges();
             }
