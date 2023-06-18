@@ -21,7 +21,9 @@ namespace DiceHaven_Utils
             PMS_Ver_Permissao = 1,
             PMS_Adm_Permissao = 2,
             PMS_Ver_Grupos = 3,
-            PMS_Adm_Grupos = 4
+            PMS_Adm_Grupos = 4,
+            PMS_Adm_Fichas = 5,
+            PMS_Ver_Fichas_Privadas = 6
         }
     }
 }
