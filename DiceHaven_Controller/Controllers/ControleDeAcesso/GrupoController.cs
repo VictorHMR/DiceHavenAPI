@@ -29,7 +29,7 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
                 int idUsuarioLogado = int.Parse(claim[0].Value);
                 Grupo grupoModel = new Grupo(dbDiceHaven);
                 Permissao permissaoModel = new Permissao(dbDiceHaven);
-                permissaoModel.VerificaPermissaoUsuario(idUsuarioLogado, Enumeration.Permissoes.PMS_Ver_Grupos);
+                permissaoModel.VerificaPermissaoUsuario(idUsuarioLogado, (int)Enumeration.Permissoes.PMS_Ver_Grupos);
 
                 return StatusCode(200, grupoModel.ListarGrupos());
 
@@ -50,7 +50,7 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
                 int idUsuarioLogado = int.Parse(claim[0].Value);
                 Grupo grupoModel = new Grupo(dbDiceHaven);
                 Permissao permissaoModel = new Permissao(dbDiceHaven);
-                permissaoModel.VerificaPermissaoUsuario(idUsuarioLogado, Enumeration.Permissoes.PMS_Ver_Grupos);
+                permissaoModel.VerificaPermissaoUsuario(idUsuarioLogado, (int)Enumeration.Permissoes.PMS_Ver_Grupos);
                 return StatusCode(200, grupoModel.ListarUsuariosGrupo((int)grupo));
             }
             catch (HttpDiceExcept ex)
@@ -69,7 +69,7 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
                 int idUsuarioLogado = int.Parse(claim[0].Value);
                 Grupo grupoModel = new Grupo(dbDiceHaven);
                 Permissao permissaoModel = new Permissao(dbDiceHaven);
-                permissaoModel.VerificaPermissaoUsuario(idUsuarioLogado, Enumeration.Permissoes.PMS_Adm_Grupos);
+                permissaoModel.VerificaPermissaoUsuario(idUsuarioLogado, (int)Enumeration.Permissoes.PMS_Adm_Grupos);
                 grupoModel.VincularUsuarioGrupo(ID_USUARIO, (int)grupo);
                 return StatusCode(200, new { Message = "Usuário Vinculado com sucesso!" });
             }
@@ -89,7 +89,7 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
                 int idUsuarioLogado = int.Parse(claim[0].Value);
                 Grupo grupoModel = new Grupo(dbDiceHaven);
                 Permissao permissaoModel = new Permissao(dbDiceHaven);
-                permissaoModel.VerificaPermissaoUsuario(idUsuarioLogado, Enumeration.Permissoes.PMS_Adm_Grupos);
+                permissaoModel.VerificaPermissaoUsuario(idUsuarioLogado, (int)Enumeration.Permissoes.PMS_Adm_Grupos);
                 grupoModel.DesvincularUsuarioGrupo(ID_USUARIO, (int)grupo);
                 return StatusCode(200, new { Message = "Usuário Desvinculado com sucesso!" });
             }

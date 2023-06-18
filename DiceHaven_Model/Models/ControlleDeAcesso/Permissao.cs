@@ -98,12 +98,12 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
             }
         }
 
-        public bool VerificaPermissaoUsuario(int idUsuario, Enumeration.Permissoes permissao)
+        public bool VerificaPermissaoUsuario(int idUsuario, int idPermissao)
         {
             try
             {
                 List<PermissaoDTO> listaDePermissoes = ListarPermissoesUsuario(idUsuario);
-                if (listaDePermissoes.Where(x => x.ID_PERMISSAO == (int)permissao).Any())
+                if (listaDePermissoes.Where(x => x.ID_PERMISSAO == idPermissao).Any())
                     return true;
                 else
                     throw new HttpDiceExcept("o usuário não possui permissão para realizar essa ação", HttpStatusCode.Unauthorized);
@@ -114,12 +114,12 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
             }
         }
 
-        public void VincularPermissaoGrupo(int idGrupo, Enumeration.Permissoes permissao)
+        public void VincularPermissaoGrupo(int idGrupo, int idPermissao)
         {
             try
             {
                 tb_grupo Grupo = dbDiceHaven.tb_grupos.Find(idGrupo);
-                tb_permissao Permissao = dbDiceHaven.tb_permissaos.Find((int)permissao);
+                tb_permissao Permissao = dbDiceHaven.tb_permissaos.Find(idPermissao);
 
                 if (Grupo is null)
                     throw new HttpDiceExcept("O grupo informado não existe.", HttpStatusCode.InternalServerError);
@@ -127,7 +127,7 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
                     throw new HttpDiceExcept("O grupo já possui acesso total", HttpStatusCode.InternalServerError);
                 else
                 {
-                    tb_grupo_permissao GrupoPermissao = dbDiceHaven.tb_grupo_permissaos.Where(x => x.ID_GRUPO == idGrupo && x.ID_PERMISSAO == (int)permissao).FirstOrDefault() ?? new tb_grupo_permissao();
+                    tb_grupo_permissao GrupoPermissao = dbDiceHaven.tb_grupo_permissaos.Where(x => x.ID_GRUPO == idGrupo && x.ID_PERMISSAO == idPermissao).FirstOrDefault() ?? new tb_grupo_permissao();
                     if (GrupoPermissao.ID_GRUPO_PERMISSAO != 0)
                         throw new HttpDiceExcept("O grupo já possui essa permissão!", HttpStatusCode.InternalServerError);
 
@@ -148,11 +148,11 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
             }
         }
 
-        public void DesvincularPermissaoGrupo(int idGrupo, Enumeration.Permissoes permissao)
+        public void DesvincularPermissaoGrupo(int idGrupo, int idPermissao)
         {
             try
             {
-                tb_grupo_permissao GrupoPermissao = dbDiceHaven.tb_grupo_permissaos.Where(x => x.ID_GRUPO == idGrupo && x.ID_PERMISSAO == (int)permissao).FirstOrDefault();
+                tb_grupo_permissao GrupoPermissao = dbDiceHaven.tb_grupo_permissaos.Where(x => x.ID_GRUPO == idGrupo && x.ID_PERMISSAO == idPermissao).FirstOrDefault();
                 if (GrupoPermissao is null)
                     throw new HttpDiceExcept("O grupo não possui essa permissão vinculada.", HttpStatusCode.InternalServerError);
                 dbDiceHaven.tb_grupo_permissaos.Remove(GrupoPermissao);
