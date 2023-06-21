@@ -1,6 +1,6 @@
 using DiceHaven_BD.Contexts;
 using DiceHaven_DTO.ControleDeAcesso;
-using DiceHaven_Model.Models.ControlleDeAcesso;
+using DiceHaven_Model.Models;
 using DiceHaven_Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 
-namespace DiceHaven_Controller.Controllers.ControleDeAcesso
+namespace DiceHaven_Controller.Controllers
 {
     [ApiExplorerSettings(GroupName = "Geral")]
     [ApiController]
@@ -16,21 +16,21 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
     public class UsuarioController : ControllerBase
     {
         private DiceHavenBDContext dbDiceHaven;
+        private readonly IConfiguration _configuration;
 
-        public UsuarioController(DiceHavenBDContext dbDiceHaven)
+        public UsuarioController(DiceHavenBDContext dbDiceHaven, IConfiguration config)
         {
             this.dbDiceHaven = dbDiceHaven;
+            this._configuration = config;
         }
 
-
-        [SwaggerOperation(Summary = "Faz Login",
-            Description = "Autentica usuário")]
+        [SwaggerOperation(Summary = "Faz Login", Description = "Autentica usuário")]
         [HttpGet("Login")]
         public ActionResult Login(string login, string senha)
         {
             try
             {
-                Usuario usuarioModel = new Usuario(dbDiceHaven);
+                Usuario usuarioModel = new Usuario(dbDiceHaven, _configuration);
                 UsuarioDTO usuario = usuarioModel.Login(login, senha);
 
                 return StatusCode(200, usuarioModel.GerarToken(usuario));

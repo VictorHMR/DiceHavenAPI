@@ -1,12 +1,12 @@
 ﻿using DiceHaven_BD.Contexts;
-using DiceHaven_Model.Models.ControlleDeAcesso;
+using DiceHaven_Model.Models;
 using DiceHaven_Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace DiceHaven_Controller.Controllers.ControleDeAcesso
+namespace DiceHaven_Controller.Controllers
 {
     [Route("api/v1/[controller]")]
     [Authorize]
