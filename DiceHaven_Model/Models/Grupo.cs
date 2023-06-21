@@ -10,7 +10,7 @@ using System.Net;
 using DiceHaven_BD.Models;
 using static DiceHaven_Utils.Enumeration;
 
-namespace DiceHaven_Model.Models.ControlleDeAcesso
+namespace DiceHaven_Model.Models
 {
     public class Grupo
     {

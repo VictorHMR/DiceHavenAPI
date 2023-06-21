@@ -21,6 +21,10 @@ public partial class tb_usuario
 
     public DateTime? DT_ULTIMO_ACESSO { get; set; }
 
+    public virtual ICollection<tb_campanha> tb_campanhaID_MESTRE_CAMPANHANavigations { get; set; } = new List<tb_campanha>();
+
+    public virtual ICollection<tb_campanha> tb_campanhaID_USUARIO_CRIADORNavigations { get; set; } = new List<tb_campanha>();
+
     public virtual tb_config_usuario tb_config_usuario { get; set; }
 
     public virtual ICollection<tb_personagem> tb_personagems { get; set; } = new List<tb_personagem>();
