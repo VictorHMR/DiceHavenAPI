@@ -15,11 +15,11 @@ public partial class tb_campanha
 
     public bool FL_EXISTE_MAGIA { get; set; }
 
-    public string DS_DEFINICAO_ATRIBUTOS { get; set; }
+    public int NR_DEFINICAO_ATRIBUTOS { get; set; }
 
     public DateTime DT_CRIACAO { get; set; }
 
-    public bool? FL_ATIVO { get; set; }
+    public bool FL_ATIVO { get; set; }
 
     public int ID_USUARIO_CRIADOR { get; set; }
 

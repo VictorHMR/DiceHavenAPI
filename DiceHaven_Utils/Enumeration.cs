@@ -25,5 +25,13 @@ namespace DiceHaven_Utils
             PMS_Adm_Fichas = 5,
             PMS_Ver_Fichas_Privadas = 6
         }
+
+        public enum TipoDefinicaoAtributos
+        {
+            Distribuicao = 1,
+            Rolagem = 2,
+            BaseadoEmRaca = 3
+
+        }
     }
 }

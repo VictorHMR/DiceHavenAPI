@@ -10,4 +10,8 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.31.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DiceHaven_Utils\DiceHaven_Utils.csproj" />
+  </ItemGroup>
+
 </Project>
