@@ -1,6 +1,6 @@
 ﻿using DiceHaven_BD.Contexts;
 using DiceHaven_BD.Models;
-using DiceHaven_DTO.ControleDeAcesso;
+using DiceHaven_DTO;
 using DiceHaven_Utils;
 using System;
 using System.Collections.Generic;

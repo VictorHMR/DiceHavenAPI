@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DiceHaven_DTO.Ficha
+namespace DiceHaven_DTO
 {
     public class PersonagemDTO
     {

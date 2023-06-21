@@ -1,5 +1,4 @@
 ﻿using DiceHaven_BD.Contexts;
-using DiceHaven_DTO.ControleDeAcesso;
 using DiceHaven_Utils;
 using System;
 using System.Collections.Generic;
@@ -9,6 +8,7 @@ using System.Threading.Tasks;
 using System.Net;
 using DiceHaven_BD.Models;
 using static DiceHaven_Utils.Enumeration;
+using DiceHaven_DTO;
 
 namespace DiceHaven_Model.Models
 {
