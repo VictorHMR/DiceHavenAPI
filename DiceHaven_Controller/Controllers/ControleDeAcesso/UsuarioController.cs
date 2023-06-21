@@ -51,6 +51,22 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
 
         }
 
+        [HttpPut("alterarDadosUsuario")]
+        public ActionResult alterarDadosUsuario(UsuarioDTO Usuario)
+        {
+            try
+            {
+                Usuario usuarioModel = new Usuario(dbDiceHaven);
+                usuarioModel.alterarDadosUsuario(Usuario);
+                return StatusCode(200, new { Message = "Usuário atualizado com sucesso!" });
+            }
+            catch (HttpDiceExcept ex)
+            {
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
+            }
+
+        }
+
         [HttpPut("alterarConfigUsuario")]
         public ActionResult alterarConfigUsuario(ConfigUsuarioDTO configsUsuario)
         {

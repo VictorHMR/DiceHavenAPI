@@ -142,7 +142,7 @@ public partial class DiceHavenBDContext : DbContext
                 .HasMaxLength(100);
             entity.Property(e => e.DS_SENHA)
                 .IsRequired()
-                .HasMaxLength(30);
+                .HasColumnType("text");
             entity.Property(e => e.DT_NASCIMENTO).HasColumnType("datetime");
             entity.Property(e => e.DT_ULTIMO_ACESSO).HasColumnType("datetime");
         });
