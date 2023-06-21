@@ -37,7 +37,7 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
                     novoUsuario.DS_NOME = request.DS_NOME;
                     novoUsuario.DT_NASCIMENTO = request.DT_NASCIMENTO;
                     novoUsuario.DS_LOGIN = request.DS_LOGIN;
-                    novoUsuario.DS_SENHA = request.DS_SENHA;
+                    novoUsuario.DS_SENHA = Conversor.HashPassword(request.DS_SENHA);
                     novoUsuario.DS_EMAIL = request.DS_EMAIL?.ToLower();
                     novoUsuario.FL_ATIVO = request.FL_ATIVO;
                     novoUsuario.DT_ULTIMO_ACESSO = DateTime.Now;
@@ -69,6 +69,37 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
 
         }
 
+        public void alterarDadosUsuario(UsuarioDTO request)
+        {
+            try
+            {
+                if (!loginValido(request.DS_LOGIN))
+                    throw new HttpDiceExcept("Usuário já existe", HttpStatusCode.Conflict);
+
+                else if (!emailValido(request.DS_EMAIL))
+                    throw new HttpDiceExcept("email já existe", HttpStatusCode.Conflict);
+                else
+                {
+                    dbDiceHaven.Database.BeginTransaction();
+
+                    tb_usuario Usuario = dbDiceHaven.tb_usuarios.Find(request.ID_USUARIO);
+                    Usuario.DS_LOGIN = request.DS_LOGIN ?? Usuario.DS_LOGIN;
+                    Usuario.DS_EMAIL = request.DS_EMAIL?.ToLower() ?? Usuario.DS_EMAIL;
+                    dbDiceHaven.SaveChanges();
+                    dbDiceHaven.Database.CommitTransaction();
+                }
+            }
+            catch (HttpDiceExcept ex)
+            {
+                throw ex;
+            }
+            catch (Exception exx)
+            {
+                dbDiceHaven.Database.RollbackTransaction();
+                throw new HttpDiceExcept($"Ocorreu um erro ao cadastrar o usuário! Message: {exx}", HttpStatusCode.InternalServerError);
+            }
+        }
+
         public UsuarioDTO obterUsuario(int idUsuario)
         {
             UsuarioDTO usuario = (from u in dbDiceHaven.tb_usuarios
@@ -79,6 +110,7 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
                                       DS_NOME = u.DS_NOME,
                                       DT_NASCIMENTO = u.DT_NASCIMENTO,
                                       DS_LOGIN = u.DS_LOGIN,
+                                      DS_SENHA = u.DS_SENHA,
                                       DS_EMAIL = u.DS_EMAIL,
                                       FL_ATIVO = u.FL_ATIVO,
                                       DT_ULTIMO_ACESSO = u.DT_ULTIMO_ACESSO

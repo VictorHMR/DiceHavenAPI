@@ -62,7 +62,7 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
             try
             {
                 UsuarioDTO usuario = (from u in dbDiceHaven.tb_usuarios
-                                      where (u.DS_LOGIN == login || u.DS_EMAIL == login) && u.DS_SENHA == password && u.FL_ATIVO == true
+                                      where (u.DS_LOGIN == login || u.DS_EMAIL == login) && u.DS_SENHA == Conversor.HashPassword(password) && u.FL_ATIVO == true
                                       select new UsuarioDTO
                                       {
                                           ID_USUARIO = u.ID_USUARIO,
