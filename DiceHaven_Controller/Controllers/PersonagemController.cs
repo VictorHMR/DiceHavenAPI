@@ -1,5 +1,5 @@
 ﻿using DiceHaven_BD.Contexts;
-using DiceHaven_DTO.Ficha;
+using DiceHaven_DTO;
 using DiceHaven_Model.Models;
 using DiceHaven_Model.Models.Ficha;
 using DiceHaven_Utils;

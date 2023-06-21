@@ -1,6 +1,5 @@
 ﻿using DiceHaven_BD.Contexts;
 using DiceHaven_BD.Models;
-using DiceHaven_DTO.ControleDeAcesso;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using DiceHaven_DTO;
 
 namespace DiceHaven_Model.Models
 {

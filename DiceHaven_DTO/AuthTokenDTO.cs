@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DiceHaven_DTO.ControleDeAcesso
+namespace DiceHaven_DTO
 {
     public class AuthTokenDTO
     {

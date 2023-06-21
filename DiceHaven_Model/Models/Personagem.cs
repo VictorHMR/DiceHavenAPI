@@ -1,6 +1,6 @@
 ﻿using DiceHaven_BD.Contexts;
 using DiceHaven_BD.Models;
-using DiceHaven_DTO.ControleDeAcesso;
+using DiceHaven_DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using DiceHaven_Utils;
 using System.Net;
-using DiceHaven_DTO.Ficha;
 
 namespace DiceHaven_Model.Models.Ficha
 {
