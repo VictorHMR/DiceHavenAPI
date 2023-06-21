@@ -4,6 +4,8 @@ using DiceHaven_Model.Models.ControlleDeAcesso;
 using DiceHaven_Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 
 namespace DiceHaven_Controller.Controllers.ControleDeAcesso
@@ -18,6 +20,26 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
         public UsuarioController(DiceHavenBDContext dbDiceHaven)
         {
             this.dbDiceHaven = dbDiceHaven;
+        }
+
+
+        [SwaggerOperation(Summary = "Faz Login",
+            Description = "Autentica usuário")]
+        [HttpGet("Login")]
+        public ActionResult Login(string login, string senha)
+        {
+            try
+            {
+                Usuario usuarioModel = new Usuario(dbDiceHaven);
+                UsuarioDTO usuario = usuarioModel.Login(login, senha);
+
+                return StatusCode(200, usuarioModel.GerarToken(usuario));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+
         }
 
         [HttpPost("cadastrarUsuario")]

@@ -9,7 +9,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DiceHaven_Model.Models.ControlleDeAcesso
+namespace DiceHaven_Model.Models
 {
     public class Permissao
     {
@@ -45,7 +45,7 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
                 List<PermissaoDTO> permissoesGrupo = (from p in dbDiceHaven.tb_permissaos
                                                       join gp in dbDiceHaven.tb_grupo_permissaos on p.ID_PERMISSAO equals gp.ID_PERMISSAO
                                                       join g in dbDiceHaven.tb_grupos on gp.ID_GRUPO equals g.ID_GRUPO
-                                                      where (g.ID_GRUPO == idGrupo || g.FL_ADMIN)
+                                                      where g.ID_GRUPO == idGrupo || g.FL_ADMIN
                                                       select new PermissaoDTO
                                                       {
                                                           ID_PERMISSAO = p.ID_PERMISSAO,

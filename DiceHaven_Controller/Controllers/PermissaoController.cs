@@ -1,12 +1,12 @@
 ﻿using DiceHaven_BD.Contexts;
-using DiceHaven_Model.Models.ControlleDeAcesso;
+using DiceHaven_Model.Models;
 using DiceHaven_Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace DiceHaven_Controller.Controllers.ControleDeAcesso
+namespace DiceHaven_Controller.Controllers
 {
     [Route("api/v1/[controller]")]
     [Authorize]
@@ -32,9 +32,9 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
 
                 return StatusCode(200, permissaoModel.ListarPermissoes());
             }
-            catch (HttpDiceExcept ex) 
+            catch (HttpDiceExcept ex)
             {
-                return StatusCode((int)ex.CodeStatus, new { Message = ex.Message });
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
             }
         }
 
@@ -53,7 +53,7 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
             }
             catch (HttpDiceExcept ex)
             {
-                return StatusCode((int)ex.CodeStatus, new { Message = ex.Message });
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
             }
         }
 
@@ -72,7 +72,7 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
             }
             catch (HttpDiceExcept ex)
             {
-                return StatusCode((int)ex.CodeStatus, new { Message = ex.Message });
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
             }
         }
 
@@ -88,11 +88,11 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
                 permissaoModel.VerificaPermissaoUsuario(idUsuarioLogado, (int)Enumeration.Permissoes.PMS_Ver_Permissao);
                 permissaoModel.VincularPermissaoGrupo((int)grupo, (int)permissao);
 
-                return StatusCode(200, new {Message = "Permissão vinculada com sucesso!"});
+                return StatusCode(200, new { Message = "Permissão vinculada com sucesso!" });
             }
             catch (HttpDiceExcept ex)
             {
-                return StatusCode((int)ex.CodeStatus, new { Message = ex.Message });
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
             }
         }
 
@@ -112,7 +112,7 @@ namespace DiceHaven_Controller.Controllers.ControleDeAcesso
             }
             catch (HttpDiceExcept ex)
             {
-                return StatusCode((int)ex.CodeStatus, new { Message = ex.Message });
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
             }
         }
     }
