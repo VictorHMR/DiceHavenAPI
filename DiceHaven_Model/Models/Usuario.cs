@@ -13,7 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace DiceHaven_Model.Models.ControlleDeAcesso
+namespace DiceHaven_Model.Models
 {
     public class Usuario
     {
@@ -23,7 +23,7 @@ namespace DiceHaven_Model.Models.ControlleDeAcesso
         public Usuario(DiceHavenBDContext dbDiceHaven, IConfiguration config)
         {
             this.dbDiceHaven = dbDiceHaven;
-            this._configuration = config;
+            _configuration = config;
         }
         public Usuario(DiceHavenBDContext dbDiceHaven)
         {

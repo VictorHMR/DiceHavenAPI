@@ -1,6 +1,6 @@
 ﻿using DiceHaven_BD.Contexts;
 using DiceHaven_DTO.Ficha;
-using DiceHaven_Model.Models.ControlleDeAcesso;
+using DiceHaven_Model.Models;
 using DiceHaven_Model.Models.Ficha;
 using DiceHaven_Utils;
 using Microsoft.AspNetCore.Authorization;
