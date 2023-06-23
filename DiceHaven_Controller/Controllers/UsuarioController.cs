@@ -24,7 +24,8 @@ namespace DiceHaven_Controller.Controllers
             this._configuration = config;
         }
 
-        [SwaggerOperation(Summary = "Faz Login", Description = "Autentica usuário")]
+        [ProducesResponseType(typeof(AuthTokenDTO), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Faz login no sistema", Description = "Verifica as credenciais, se estiver tudo certo, retorna um Bearer token e sua duração.")]
         [HttpGet("Login")]
         public ActionResult Login(string login, string senha)
         {
@@ -42,6 +43,8 @@ namespace DiceHaven_Controller.Controllers
 
         }
 
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Cadastra um usuário no sistema", Description = "Cadastra um usuário no sistema.")]
         [HttpPost("cadastrarUsuario")]
         public ActionResult cadastrarUsuario(UsuarioDTO novoUsuario)
         {
@@ -58,6 +61,8 @@ namespace DiceHaven_Controller.Controllers
 
         }
 
+        [ProducesResponseType(typeof(UsuarioDTO), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Busca um usuario", Description = "Busca um usuario pelo ID_USUARIO.")]
         [HttpGet("obterUsuario")]
         public ActionResult obterUsuario(int idUsuario)
         {
@@ -73,6 +78,8 @@ namespace DiceHaven_Controller.Controllers
 
         }
 
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Edita um usuario", Description = "Edita os dados de um usuario.")]
         [HttpPut("alterarDadosUsuario")]
         public ActionResult alterarDadosUsuario(UsuarioDTO Usuario)
         {
@@ -89,6 +96,8 @@ namespace DiceHaven_Controller.Controllers
 
         }
 
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Edita as configurações um usuario", Description = "Edita as configurações um usuario.")]
         [HttpPut("alterarConfigUsuario")]
         public ActionResult alterarConfigUsuario(ConfigUsuarioDTO configsUsuario)
         {
