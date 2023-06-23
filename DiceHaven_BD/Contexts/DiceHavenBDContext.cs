@@ -18,7 +18,11 @@ public partial class DiceHavenBDContext : DbContext
 
     public virtual DbSet<tb_campanha> tb_campanhas { get; set; }
 
+    public virtual DbSet<tb_classe> tb_classes { get; set; }
+
     public virtual DbSet<tb_config_usuario> tb_config_usuarios { get; set; }
+
+    public virtual DbSet<tb_ficha> tb_fichas { get; set; }
 
     public virtual DbSet<tb_grupo> tb_grupos { get; set; }
 
@@ -29,6 +33,8 @@ public partial class DiceHavenBDContext : DbContext
     public virtual DbSet<tb_permissao> tb_permissaos { get; set; }
 
     public virtual DbSet<tb_personagem> tb_personagems { get; set; }
+
+    public virtual DbSet<tb_raca> tb_racas { get; set; }
 
     public virtual DbSet<tb_usuario> tb_usuarios { get; set; }
 
@@ -59,6 +65,9 @@ public partial class DiceHavenBDContext : DbContext
                 .IsRequired()
                 .HasMaxLength(100);
             entity.Property(e => e.DS_PERIODO).HasMaxLength(30);
+            entity.Property(e => e.DS_XP_SUBIR_LVL)
+                .IsRequired()
+                .HasColumnType("text");
             entity.Property(e => e.DT_CRIACAO).HasColumnType("datetime");
 
             entity.HasOne(d => d.ID_MESTRE_CAMPANHANavigation).WithMany(p => p.tb_campanhaID_MESTRE_CAMPANHANavigations)
@@ -70,6 +79,25 @@ public partial class DiceHavenBDContext : DbContext
                 .HasForeignKey(d => d.ID_USUARIO_CRIADOR)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("tb_campanha_ibfk_1");
+        });
+
+        modelBuilder.Entity<tb_classe>(entity =>
+        {
+            entity.HasKey(e => e.ID_CLASSE).HasName("PRIMARY");
+
+            entity.ToTable("tb_classe");
+
+            entity.HasIndex(e => e.ID_CAMPANHA, "ID_CAMPANHA");
+
+            entity.Property(e => e.DS_CLASSE)
+                .IsRequired()
+                .HasMaxLength(30);
+            entity.Property(e => e.DS_DESCRICAO).HasColumnType("text");
+
+            entity.HasOne(d => d.ID_CAMPANHANavigation).WithMany(p => p.tb_classes)
+                .HasForeignKey(d => d.ID_CAMPANHA)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("tb_classe_ibfk_1");
         });
 
         modelBuilder.Entity<tb_config_usuario>(entity =>
@@ -84,6 +112,43 @@ public partial class DiceHavenBDContext : DbContext
                 .HasForeignKey<tb_config_usuario>(d => d.ID_CONFIG_USUARIO)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("tb_config_usuario_ibfk_1");
+        });
+
+        modelBuilder.Entity<tb_ficha>(entity =>
+        {
+            entity.HasKey(e => e.ID_FICHA).HasName("PRIMARY");
+
+            entity.ToTable("tb_ficha");
+
+            entity.HasIndex(e => e.ID_CAMPANHA, "ID_CAMPANHA");
+
+            entity.HasIndex(e => e.ID_CLASSE, "ID_CLASSE");
+
+            entity.HasIndex(e => e.ID_PERSONAGEM, "ID_PERSONAGEM");
+
+            entity.HasIndex(e => e.ID_RACA, "ID_RACA");
+
+            entity.Property(e => e.DS_TENDENCIA).HasMaxLength(30);
+
+            entity.HasOne(d => d.ID_CAMPANHANavigation).WithMany(p => p.tb_fichas)
+                .HasForeignKey(d => d.ID_CAMPANHA)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("tb_ficha_ibfk_4");
+
+            entity.HasOne(d => d.ID_CLASSENavigation).WithMany(p => p.tb_fichas)
+                .HasForeignKey(d => d.ID_CLASSE)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("tb_ficha_ibfk_2");
+
+            entity.HasOne(d => d.ID_PERSONAGEMNavigation).WithMany(p => p.tb_fichas)
+                .HasForeignKey(d => d.ID_PERSONAGEM)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("tb_ficha_ibfk_3");
+
+            entity.HasOne(d => d.ID_RACANavigation).WithMany(p => p.tb_fichas)
+                .HasForeignKey(d => d.ID_RACA)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("tb_ficha_ibfk_1");
         });
 
         modelBuilder.Entity<tb_grupo>(entity =>
@@ -155,6 +220,25 @@ public partial class DiceHavenBDContext : DbContext
                 .HasForeignKey(d => d.ID_USUARIO)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("tb_personagem_ibfk_1");
+        });
+
+        modelBuilder.Entity<tb_raca>(entity =>
+        {
+            entity.HasKey(e => e.ID_RACA).HasName("PRIMARY");
+
+            entity.ToTable("tb_raca");
+
+            entity.HasIndex(e => e.ID_CAMPANHA, "ID_CAMPANHA");
+
+            entity.Property(e => e.DS_DESCRICAO).HasColumnType("text");
+            entity.Property(e => e.DS_RACA)
+                .IsRequired()
+                .HasMaxLength(30);
+
+            entity.HasOne(d => d.ID_CAMPANHANavigation).WithMany(p => p.tb_racas)
+                .HasForeignKey(d => d.ID_CAMPANHA)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("tb_raca_ibfk_1");
         });
 
         modelBuilder.Entity<tb_usuario>(entity =>
