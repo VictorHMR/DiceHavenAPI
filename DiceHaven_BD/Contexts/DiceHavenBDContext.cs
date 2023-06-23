@@ -137,7 +137,6 @@ public partial class DiceHavenBDContext : DbContext
 
             entity.HasOne(d => d.ID_CLASSENavigation).WithMany(p => p.tb_fichas)
                 .HasForeignKey(d => d.ID_CLASSE)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("tb_ficha_ibfk_2");
 
             entity.HasOne(d => d.ID_PERSONAGEMNavigation).WithMany(p => p.tb_fichas)
@@ -147,7 +146,6 @@ public partial class DiceHavenBDContext : DbContext
 
             entity.HasOne(d => d.ID_RACANavigation).WithMany(p => p.tb_fichas)
                 .HasForeignKey(d => d.ID_RACA)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("tb_ficha_ibfk_1");
         });
 

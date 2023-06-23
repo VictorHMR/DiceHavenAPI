@@ -29,9 +29,9 @@ public partial class tb_ficha
 
     public int? NR_CHA { get; set; }
 
-    public int ID_RACA { get; set; }
+    public int? ID_RACA { get; set; }
 
-    public int ID_CLASSE { get; set; }
+    public int? ID_CLASSE { get; set; }
 
     public int ID_PERSONAGEM { get; set; }
 
