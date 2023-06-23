@@ -1,9 +1,11 @@
 ﻿using DiceHaven_BD.Contexts;
+using DiceHaven_DTO;
 using DiceHaven_Model.Models;
 using DiceHaven_Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 
 namespace DiceHaven_Controller.Controllers
@@ -19,6 +21,8 @@ namespace DiceHaven_Controller.Controllers
             this.dbDiceHaven = dbDiceHaven;
         }
 
+        [ProducesResponseType(typeof(List<GrupoDTO>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Listar grupos", Description = "Lista todos os grupos existentes no banco.")]
         [HttpGet("ListarGrupos")]
         public ActionResult ListarGrupos()
         {
@@ -40,6 +44,8 @@ namespace DiceHaven_Controller.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(List<UsuarioDTO>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Listar usuarios em grupos", Description = "Lista todos os usuários pertencentes a um grupo.")]
         [HttpGet("ListarUsuariosGrupo")]
         public ActionResult ListarUsuariosGrupo(Enumeration.Grupo grupo)
         {
@@ -59,6 +65,8 @@ namespace DiceHaven_Controller.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Vincula um usuário a um grupo", Description = "Vincula um usuário a um grupo.")]
         [HttpPost("VincularUsuarioGrupo")]
         public ActionResult VincularUsuarioGrupo(int ID_USUARIO, Enumeration.Grupo grupo)
         {
@@ -79,6 +87,8 @@ namespace DiceHaven_Controller.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Desvincula um usuário de um grupo", Description = "Desvincula um usuário de um grupo.")]
         [HttpPost("DesvincularUsuarioGrupo")]
         public ActionResult DesvincularUsuarioGrupo(int ID_USUARIO, Enumeration.Grupo grupo)
         {

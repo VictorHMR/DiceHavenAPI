@@ -1,9 +1,11 @@
 ﻿using DiceHaven_BD.Contexts;
+using DiceHaven_DTO;
 using DiceHaven_Model.Models;
 using DiceHaven_Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 
 namespace DiceHaven_Controller.Controllers
@@ -19,6 +21,8 @@ namespace DiceHaven_Controller.Controllers
             this.dbDiceHaven = dbDiceHaven;
         }
 
+        [ProducesResponseType(typeof(List<PermissaoDTO>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Lista todas as permissões", Description = "Lista todas as permissões existentes no banco.")]
         [HttpGet("ListarPermissoes")]
         public ActionResult ListarPermissoes()
         {
@@ -38,6 +42,8 @@ namespace DiceHaven_Controller.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(List<PermissaoDTO>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Lista todas as permissões de um grupo", Description = "Lista todas as permissões vinculadas e um grupo.")]
         [HttpGet("ListarPermissoesGrupo")]
         public ActionResult ListarPermissoesGrupo(Enumeration.Grupo grupo)
         {
@@ -57,6 +63,8 @@ namespace DiceHaven_Controller.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(List<PermissaoDTO>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Lista todas as permissões de um usuario", Description = "Lista todas as permissões pertencentes aos grupos que o usuário está vinculado.")]
         [HttpGet("ListarPermissoesUsuario")]
         public ActionResult ListarPermissoesUsuario(int idUsuario)
         {
@@ -76,6 +84,8 @@ namespace DiceHaven_Controller.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Vincula uma permissão a um grupo", Description = "Vincula uma permissão a um grupo.")]
         [HttpPost("VincularPermissaoGrupo")]
         public ActionResult VincularPermissaoGrupo(Enumeration.Grupo grupo, Enumeration.Permissoes permissao)
         {
@@ -96,6 +106,8 @@ namespace DiceHaven_Controller.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Desvincula uma permissão de um grupo", Description = "Desvincula uma permissão de um grupo.")]
         [HttpPost("DesvincularPermissaoGrupo")]
         public ActionResult DesvincularPermissaoGrupo(Enumeration.Grupo grupo, Enumeration.Permissoes permissao)
         {

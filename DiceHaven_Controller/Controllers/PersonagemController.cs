@@ -6,6 +6,7 @@ using DiceHaven_Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 
 namespace DiceHaven_Controller.Controllers.Ficha
@@ -21,6 +22,9 @@ namespace DiceHaven_Controller.Controllers.Ficha
             this.dbDiceHaven = dbDiceHaven;
         }
 
+        [ProducesResponseType(typeof(List<PersonagemDTO>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Lista todos os personagens de um usuário", 
+            Description = "Lista todos os personagens de um usuário. por padrão o usuário logado")]
         [HttpGet("ListarPersonagens")]
         public ActionResult ListarPersonagens(int? idUsuario)
         {
@@ -47,6 +51,8 @@ namespace DiceHaven_Controller.Controllers.Ficha
             }
         }
 
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Cadastra um novo personagem", Description = "Cadastra um novo personagem")]
         [HttpPost("CadastrarPersonagem")]
         public ActionResult CadastrarPersonagem(PersonagemDTO novoPersonagem)
         {
@@ -70,6 +76,8 @@ namespace DiceHaven_Controller.Controllers.Ficha
             }
         }
 
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Edita um personagem", Description = "Edita os dados de um personagem")]
         [HttpPut("EditarPersonagem")]
         public ActionResult EditarPersonagem(PersonagemDTO novoPersonagem)
         {

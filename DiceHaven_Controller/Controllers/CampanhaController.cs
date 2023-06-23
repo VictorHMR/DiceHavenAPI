@@ -5,6 +5,7 @@ using DiceHaven_Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 
 namespace DiceHaven_Controller.Controllers
@@ -20,6 +21,8 @@ namespace DiceHaven_Controller.Controllers
             this.dbDiceHaven = dbDiceHaven;
         }
 
+        [ProducesResponseType(typeof(CampanhaDTO), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Busca uma campanha", Description = "Busca uma campanha baseado no ID_CAMPANHA")]
         [HttpGet("obterCampanha")]
         public ActionResult obterCampanha(int idCampanha)
         {
@@ -39,6 +42,8 @@ namespace DiceHaven_Controller.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(List<CampanhaDTO>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Lista campanhas", Description = "Lista todas as campanhas ligadas a um usuário")]
         [HttpGet("listarCampanhas")]
         public ActionResult listarCampanhas(int idUsuario)
         {
@@ -58,6 +63,8 @@ namespace DiceHaven_Controller.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Cadastra uma nova campanha", Description = "Cadastra uma nova campanha com as informações passadas pelo usuário")]
         [HttpPost("cadastrarCampanha")]
         public ActionResult cadastrarCampanha([FromForm]CampanhaDTO novaCampanha)
         {
@@ -78,6 +85,8 @@ namespace DiceHaven_Controller.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Atualiza uma campanha", Description = "Atualiza os dados de uma campanha com informações passadas pelo usuário")]
         [HttpPut("atualizarCampanha")]
         public ActionResult atualizarCampanha(CampanhaDTO campanhaAtualizada)
         {
