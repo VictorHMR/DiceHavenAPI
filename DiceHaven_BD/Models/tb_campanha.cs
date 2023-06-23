@@ -25,7 +25,15 @@ public partial class tb_campanha
 
     public int ID_MESTRE_CAMPANHA { get; set; }
 
+    public string DS_XP_SUBIR_LVL { get; set; }
+
     public virtual tb_usuario ID_MESTRE_CAMPANHANavigation { get; set; }
 
     public virtual tb_usuario ID_USUARIO_CRIADORNavigation { get; set; }
+
+    public virtual ICollection<tb_classe> tb_classes { get; set; } = new List<tb_classe>();
+
+    public virtual ICollection<tb_ficha> tb_fichas { get; set; } = new List<tb_ficha>();
+
+    public virtual ICollection<tb_raca> tb_racas { get; set; } = new List<tb_raca>();
 }
