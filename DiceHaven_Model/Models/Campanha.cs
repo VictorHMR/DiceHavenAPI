@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using static DiceHaven_Utils.Enumeration;
@@ -38,6 +39,7 @@ namespace DiceHaven_Model.Models
                                             DS_XP_SUBIR_LVL = c.DS_XP_SUBIR_LVL,
                                             DT_CRIACAO = c.DT_CRIACAO,
                                             FL_ATIVO = c.FL_ATIVO,
+                                            FL_PUBLICA = c.FL_PUBLICA,
                                             ID_USUARIO_CRIADOR = c.ID_USUARIO_CRIADOR,
                                             ID_MESTRE_CAMPANHA = c.ID_MESTRE_CAMPANHA
                                         }).FirstOrDefault();
@@ -55,11 +57,13 @@ namespace DiceHaven_Model.Models
             }
         }
 
-        public List<CampanhaDTO> ListarCampanhas()
+        public List<CampanhaDTO> ListarCampanhas(int idUsuario = 0)
         {
             try
             {
                 List<CampanhaDTO> campanhas = (from c in dbDiceHaven.tb_campanhas
+                                               join uc in dbDiceHaven.tb_usuario_campanhas on c.ID_CAMPANHA equals uc.ID_CAMPANHA
+                                               where (idUsuario == 0 || uc.ID_USUARIO == idUsuario)
                                                 select new CampanhaDTO
                                                 {
                                                     ID_CAMPANHA = c.ID_CAMPANHA,
@@ -71,6 +75,7 @@ namespace DiceHaven_Model.Models
                                                     DS_XP_SUBIR_LVL = c.DS_XP_SUBIR_LVL,
                                                     DT_CRIACAO = c.DT_CRIACAO,
                                                     FL_ATIVO = c.FL_ATIVO,
+                                                    FL_PUBLICA = c.FL_PUBLICA,
                                                     ID_USUARIO_CRIADOR = c.ID_USUARIO_CRIADOR,
                                                     ID_MESTRE_CAMPANHA = c.ID_MESTRE_CAMPANHA
                                                 }).ToList();
@@ -101,11 +106,14 @@ namespace DiceHaven_Model.Models
                 novaCampanhaBD.DS_XP_SUBIR_LVL = novaCampanha.DS_XP_SUBIR_LVL;
                 novaCampanhaBD.DT_CRIACAO = DateTime.Now;
                 novaCampanhaBD.FL_ATIVO = true;
+                novaCampanhaBD.FL_PUBLICA = novaCampanha.FL_PUBLICA;
                 novaCampanhaBD.ID_USUARIO_CRIADOR = idUsuarioLogado;
                 novaCampanhaBD.ID_MESTRE_CAMPANHA = novaCampanha?.ID_MESTRE_CAMPANHA ?? idUsuarioLogado;
 
                 dbDiceHaven.tb_campanhas.Add(novaCampanhaBD);
                 dbDiceHaven.SaveChanges();
+
+                this.VincularUsuarioCampanha(novaCampanhaBD.ID_CAMPANHA, idUsuarioLogado, true);
 
                 return novaCampanhaBD.ID_CAMPANHA;
 
@@ -134,6 +142,7 @@ namespace DiceHaven_Model.Models
                 CampanhaBD.DS_XP_SUBIR_LVL = campanhaAtualizada.DS_XP_SUBIR_LVL;
                 CampanhaBD.FL_EXISTE_MAGIA = campanhaAtualizada.FL_EXISTE_MAGIA;
                 CampanhaBD.FL_ATIVO = campanhaAtualizada.FL_ATIVO ?? true;
+                CampanhaBD.FL_PUBLICA = campanhaAtualizada.FL_PUBLICA;
                 CampanhaBD.ID_MESTRE_CAMPANHA = campanhaAtualizada?.ID_MESTRE_CAMPANHA ?? CampanhaBD.ID_MESTRE_CAMPANHA;
                 dbDiceHaven.SaveChanges();
 
@@ -148,6 +157,102 @@ namespace DiceHaven_Model.Models
             }
         }
 
+        public void VincularUsuarioCampanha(int idCampanha, int idUsuario, bool flAdmin = false)
+        {
+            try
+            {
+                tb_campanha campanha = dbDiceHaven.tb_campanhas.Find(idCampanha);
+                tb_usuario usuario = dbDiceHaven.tb_usuarios.Find(idUsuario);
+                tb_usuario_campanha novoVinculo = dbDiceHaven.tb_usuario_campanhas.Where(x => x.ID_USUARIO == idUsuario && x.ID_CAMPANHA == idCampanha).FirstOrDefault() ?? null;
 
+                if (campanha is null)
+                    throw new HttpDiceExcept("A campanha informada não existe!", HttpStatusCode.NotFound);
+                if (usuario is null)
+                    throw new HttpDiceExcept("O usuário informado não existe!", HttpStatusCode.NotFound);
+                if (novoVinculo is not null)
+                    throw new HttpDiceExcept("O usuário informado já está vinculado a essa campanha!", HttpStatusCode.InternalServerError);
+
+                novoVinculo = new tb_usuario_campanha();
+                novoVinculo.ID_USUARIO = usuario.ID_USUARIO;
+                novoVinculo.ID_CAMPANHA = campanha.ID_CAMPANHA;
+                novoVinculo.FL_ADMIN = flAdmin;
+                novoVinculo.FL_MUTADO = false;
+                novoVinculo.DT_ENTRADA = DateTime.Now;
+                dbDiceHaven.tb_usuario_campanhas.Add(novoVinculo);
+                dbDiceHaven.SaveChanges();
+            }
+            catch(HttpDiceExcept ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw new HttpDiceExcept($"Ocorreu um erro ao vincular usuário a campanha! Message: {ex.Message}", HttpStatusCode.InternalServerError);
+            }
+
+        }
+
+        public void DesvincularUsuarioCampanha(int idCampanha, int idUsuario)
+        {
+            try
+            {
+                tb_campanha campanha = dbDiceHaven.tb_campanhas.Find(idCampanha);
+                tb_usuario usuario = dbDiceHaven.tb_usuarios.Find(idUsuario);
+                tb_usuario_campanha vinculo = dbDiceHaven.tb_usuario_campanhas.Where(x=> x.ID_USUARIO == usuario.ID_USUARIO && x.ID_CAMPANHA == campanha.ID_CAMPANHA).FirstOrDefault();
+
+                if (campanha is null)
+                    throw new HttpDiceExcept("A campanha informada não existe!", HttpStatusCode.NotFound);
+                if (usuario is null)
+                    throw new HttpDiceExcept("O usuário informado não existe!", HttpStatusCode.NotFound);
+                if (vinculo is null)
+                    throw new HttpDiceExcept("O usuário informado não está vinculado a essa campanha!", HttpStatusCode.InternalServerError);
+
+                int qntAdmins = dbDiceHaven.tb_usuario_campanhas.Where(x => x.ID_CAMPANHA == campanha.ID_CAMPANHA && x.FL_ADMIN).Count();
+                if (vinculo.FL_ADMIN && qntAdmins == 1)
+                    dbDiceHaven.tb_usuario_campanhas.Where(x => x.ID_CAMPANHA == campanha.ID_CAMPANHA).OrderBy(x => x.DT_ENTRADA).FirstOrDefault().FL_ADMIN = true;
+                dbDiceHaven.tb_usuario_campanhas.Remove(vinculo);
+                dbDiceHaven.SaveChanges();
+            }
+            catch (HttpDiceExcept ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw new HttpDiceExcept($"Ocorreu um erro ao desvincular usuário da campanha! Message: {ex.Message}", HttpStatusCode.InternalServerError);
+            }
+
+        }
+
+        public void AlterarAdmins(int idUsuario, int idCampanha, int idUsuarioLogado, bool flAdmin = false)
+        {
+            try
+            {
+                tb_campanha campanha = dbDiceHaven.tb_campanhas.Find(idCampanha);
+                tb_usuario usuario = dbDiceHaven.tb_usuarios.Find(idUsuario);
+                tb_usuario_campanha usuarioLogado = dbDiceHaven.tb_usuario_campanhas.Where(x => x.ID_USUARIO == idUsuarioLogado && x.ID_CAMPANHA == campanha.ID_CAMPANHA).FirstOrDefault();
+                tb_usuario_campanha vinculo = dbDiceHaven.tb_usuario_campanhas.Where(x => x.ID_USUARIO == usuario.ID_USUARIO && x.ID_CAMPANHA == campanha.ID_CAMPANHA).FirstOrDefault();
+
+                if (campanha is null)
+                    throw new HttpDiceExcept("A campanha informada não existe!", HttpStatusCode.NotFound);
+                if (usuario is null)
+                    throw new HttpDiceExcept("O usuário informado não existe!", HttpStatusCode.NotFound);
+                if (vinculo is null)
+                    throw new HttpDiceExcept("O usuário informado não está vinculado a essa campanha!", HttpStatusCode.InternalServerError);
+                if(!usuarioLogado.FL_ADMIN)
+                    throw new HttpDiceExcept("Você não tem permissão para executar essa ação!", HttpStatusCode.InternalServerError);
+
+                vinculo.FL_ADMIN = flAdmin;
+                dbDiceHaven.SaveChanges();
+            }
+            catch (HttpDiceExcept ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw new HttpDiceExcept($"Ocorreu um erro ao desvincular usuário da campanha! Message: {ex.Message}", HttpStatusCode.InternalServerError);
+            }
+        }
     }
 }

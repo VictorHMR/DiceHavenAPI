@@ -20,8 +20,9 @@ namespace DiceHaven_DTO
         public string DS_XP_SUBIR_LVL { get; set; }
         public DateTime? DT_CRIACAO { get; set; }
         public bool? FL_ATIVO { get; set; }
-        public int ID_USUARIO_CRIADOR { get; set; }
-        public int ID_MESTRE_CAMPANHA { get; set; }
+        public bool FL_PUBLICA { get; set; }
+        public int? ID_USUARIO_CRIADOR { get; set; }
+        public int? ID_MESTRE_CAMPANHA { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public List<PersonagemDTO>? PERSONAGENS { get; set; }
