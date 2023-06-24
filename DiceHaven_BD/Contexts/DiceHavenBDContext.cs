@@ -38,6 +38,8 @@ public partial class DiceHavenBDContext : DbContext
 
     public virtual DbSet<tb_usuario> tb_usuarios { get; set; }
 
+    public virtual DbSet<tb_usuario_campanha> tb_usuario_campanhas { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseMySql("server=localhost;port=3306;database=DiceHaven;user=root", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.31-mysql"));
@@ -128,6 +130,7 @@ public partial class DiceHavenBDContext : DbContext
 
             entity.HasIndex(e => e.ID_RACA, "ID_RACA");
 
+            entity.Property(e => e.DS_PASSADO).HasColumnType("text");
             entity.Property(e => e.DS_TENDENCIA).HasMaxLength(30);
 
             entity.HasOne(d => d.ID_CAMPANHANavigation).WithMany(p => p.tb_fichas)
@@ -259,6 +262,29 @@ public partial class DiceHavenBDContext : DbContext
                 .HasColumnType("text");
             entity.Property(e => e.DT_NASCIMENTO).HasColumnType("datetime");
             entity.Property(e => e.DT_ULTIMO_ACESSO).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<tb_usuario_campanha>(entity =>
+        {
+            entity.HasKey(e => e.ID_USUARIO_CAMPANHA).HasName("PRIMARY");
+
+            entity.ToTable("tb_usuario_campanha");
+
+            entity.HasIndex(e => e.ID_CAMPANHA, "ID_CAMPANHA");
+
+            entity.HasIndex(e => e.ID_USUARIO, "ID_USUARIO");
+
+            entity.Property(e => e.DT_ENTRADA).HasColumnType("datetime");
+
+            entity.HasOne(d => d.ID_CAMPANHANavigation).WithMany(p => p.tb_usuario_campanhas)
+                .HasForeignKey(d => d.ID_CAMPANHA)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("tb_usuario_campanha_ibfk_1");
+
+            entity.HasOne(d => d.ID_USUARIONavigation).WithMany(p => p.tb_usuario_campanhas)
+                .HasForeignKey(d => d.ID_USUARIO)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("tb_usuario_campanha_ibfk_2");
         });
 
         OnModelCreatingPartial(modelBuilder);

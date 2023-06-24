@@ -45,7 +45,7 @@ namespace DiceHaven_Controller.Controllers
         [ProducesResponseType(typeof(List<CampanhaDTO>), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Lista campanhas", Description = "Lista todas as campanhas ligadas a um usuário")]
         [HttpGet("listarCampanhas")]
-        public ActionResult listarCampanhas(int idUsuario)
+        public ActionResult listarCampanhas(int? idUsuario)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace DiceHaven_Controller.Controllers
                 Permissao permissaoModel = new Permissao(dbDiceHaven);
                 Campanha campanhaModel = new Campanha(dbDiceHaven);
 
-                return StatusCode(200, campanhaModel.ListarCampanhas());
+                return StatusCode(200, campanhaModel.ListarCampanhas(idUsuario ?? idUsuarioLogado));
             }
             catch (HttpDiceExcept ex)
             {
@@ -106,5 +106,75 @@ namespace DiceHaven_Controller.Controllers
                 return StatusCode((int)ex.CodeStatus, new { ex.Message });
             }
         }
+
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Entrar em campanha", 
+            Description = "Faz o vinculo de um usuario a uma campanha, caso o usuario não seja informado, será o usuario logado.")]
+        [HttpPost("vincularUsuarioCampanha")]
+        public ActionResult vincularUsuarioCampanha(int idCampanha, int? idUsuario)
+        {
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                List<Claim> claim = identity.Claims.ToList();
+                int idUsuarioLogado = int.Parse(claim[0].Value);
+                Permissao permissaoModel = new Permissao(dbDiceHaven);
+                Campanha campanhaModel = new Campanha(dbDiceHaven);
+
+                campanhaModel.VincularUsuarioCampanha(idCampanha, idUsuario ?? idUsuarioLogado);
+                return StatusCode(200, new { Message = "Usuário vinculado com sucesso!" });
+            }
+            catch (HttpDiceExcept ex)
+            {
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
+            }
+        }
+
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Sair de uma campanha",
+            Description = "Desvincula um usuario de uma campanha, caso o usuario não seja informado, será o usuario logado.")]
+        [HttpPost("desvincularUsuarioCampanha")]
+        public ActionResult desvincularUsuarioCampanha(int idCampanha, int? idUsuario)
+        {
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                List<Claim> claim = identity.Claims.ToList();
+                int idUsuarioLogado = int.Parse(claim[0].Value);
+                Permissao permissaoModel = new Permissao(dbDiceHaven);
+                Campanha campanhaModel = new Campanha(dbDiceHaven);
+
+                campanhaModel.DesvincularUsuarioCampanha(idCampanha, idUsuario ?? idUsuarioLogado);
+                return StatusCode(200, new { Message = "Usuário desvinculado com sucesso!" });
+            }
+            catch (HttpDiceExcept ex)
+            {
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
+            }
+        }
+
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Tornar usuário admin ou participante",
+            Description = "Torna um usuário um administrador ou participante da campanha de acordo com a flag.")]
+        [HttpPut("AlterarAdmins")]
+        public ActionResult AlterarAdmins(int idUsuario, int idCampanha, bool flAdmin)
+        {
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                List<Claim> claim = identity.Claims.ToList();
+                int idUsuarioLogado = int.Parse(claim[0].Value);
+                Permissao permissaoModel = new Permissao(dbDiceHaven);
+                Campanha campanhaModel = new Campanha(dbDiceHaven);
+
+                campanhaModel.AlterarAdmins(idUsuario, idCampanha,idUsuarioLogado,flAdmin);
+                return StatusCode(200, new { Message = "Membro atualizado com sucesso!" });
+            }
+            catch (HttpDiceExcept ex)
+            {
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
+            }
+        }
+
     }
 }

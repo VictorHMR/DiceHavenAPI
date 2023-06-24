@@ -28,4 +28,6 @@ public partial class tb_usuario
     public virtual tb_config_usuario tb_config_usuario { get; set; }
 
     public virtual ICollection<tb_personagem> tb_personagems { get; set; } = new List<tb_personagem>();
+
+    public virtual ICollection<tb_usuario_campanha> tb_usuario_campanhas { get; set; } = new List<tb_usuario_campanha>();
 }

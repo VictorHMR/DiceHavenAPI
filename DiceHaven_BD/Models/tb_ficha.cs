@@ -7,15 +7,21 @@ public partial class tb_ficha
 {
     public int ID_FICHA { get; set; }
 
+    public string DS_TENDENCIA { get; set; }
+
+    public string DS_PASSADO { get; set; }
+
     public int NR_XP { get; set; }
 
-    public int NR_PONTOS_VIDA { get; set; }
+    public int NR_MAX_PV { get; set; }
 
-    public int NR_PONTOS_MANA { get; set; }
+    public int NR_MAX_PM { get; set; }
+
+    public int NR_PV { get; set; }
+
+    public int NR_PM { get; set; }
 
     public int NR_PONTOS_HAB { get; set; }
-
-    public string DS_TENDENCIA { get; set; }
 
     public int? NR_STR { get; set; }
 
