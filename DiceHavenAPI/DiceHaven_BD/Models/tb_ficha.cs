@@ -9,7 +9,7 @@ public partial class tb_ficha
 
     public string DS_TENDENCIA { get; set; }
 
-    public string DS_PASSADO { get; set; }
+    public string DS_SOBRE { get; set; }
 
     public int NR_XP { get; set; }
 
