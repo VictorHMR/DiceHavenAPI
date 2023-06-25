@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using DiceHaven_Utils;
 using System.Net;
 
-namespace DiceHaven_Model.Models.Ficha
+namespace DiceHaven_Model.Models
 {
     public class Personagem
     {

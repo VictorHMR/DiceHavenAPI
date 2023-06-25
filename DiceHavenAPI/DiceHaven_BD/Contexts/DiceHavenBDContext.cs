@@ -130,7 +130,7 @@ public partial class DiceHavenBDContext : DbContext
 
             entity.HasIndex(e => e.ID_RACA, "ID_RACA");
 
-            entity.Property(e => e.DS_PASSADO).HasColumnType("text");
+            entity.Property(e => e.DS_SOBRE).HasColumnType("text");
             entity.Property(e => e.DS_TENDENCIA).HasMaxLength(30);
 
             entity.HasOne(d => d.ID_CAMPANHANavigation).WithMany(p => p.tb_fichas)

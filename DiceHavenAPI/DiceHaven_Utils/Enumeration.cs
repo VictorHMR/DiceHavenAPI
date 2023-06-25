@@ -29,8 +29,9 @@ namespace DiceHaven_Utils
         public enum TipoDefinicaoAtributos
         {
             Distribuicao = 1,
-            Rolagem = 2,
-            BaseadoEmRaca = 3
+            BaseadoEmRaca = 2,
+            BaseadoEmClasse = 3,
+            BaseadoEmAmbos = 4
 
         }
     }

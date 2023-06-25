@@ -1,7 +1,6 @@
 ﻿using DiceHaven_BD.Contexts;
 using DiceHaven_DTO;
 using DiceHaven_Model.Models;
-using DiceHaven_Model.Models.Ficha;
 using DiceHaven_Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 
-namespace DiceHaven_Controller.Controllers.Ficha
+namespace DiceHaven_Controller.Controllers
 {
     [Route("api/v1/[controller]")]
     [Authorize]
