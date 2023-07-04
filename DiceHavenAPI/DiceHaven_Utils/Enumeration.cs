@@ -26,13 +26,12 @@ namespace DiceHaven_Utils
             PMS_Ver_Fichas_Privadas = 6
         }
 
-        public enum TipoDefinicaoAtributos
+        public enum TipoCampoFicha
         {
-            Distribuicao = 1,
-            BaseadoEmRaca = 2,
-            BaseadoEmClasse = 3,
-            BaseadoEmAmbos = 4
-
+            texto = 0,
+            textarea = 1,
+            numero = 2,
+            flag = 3
         }
     }
 }

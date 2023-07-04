@@ -13,18 +13,18 @@ namespace DiceHaven_Controller.Controllers
     [Route("api/v1/[controller]")]
     [Authorize]
     [ApiController]
-    public class ClasseController : ControllerBase
+    public class CampoFichaController : ControllerBase
     {
         private DiceHavenBDContext dbDiceHaven;
-        public ClasseController(DiceHavenBDContext dbDiceHaven)
+        public CampoFichaController(DiceHavenBDContext dbDiceHaven)
         {
             this.dbDiceHaven = dbDiceHaven;
         }
 
-        [ProducesResponseType(typeof(List<ClasseDTO>), StatusCodes.Status200OK)]
-        [SwaggerOperation(Summary = "Listar Classes", Description = "Lista todas as classes baseado em um ID_CAMPANHA.")]
-        [HttpGet("ListarClasses")]
-        public ActionResult ListarClasses(int idCampanha)
+        [ProducesResponseType(typeof(List<CampoFichaDTO>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Lista todos os campos da ficha", Description = "Lista todos os campos da ficha baseado no ID_CAMPANHA")]
+        [HttpGet("ListarCamposFicha")]
+        public ActionResult ListarCamposFicha(int idCampanha)
         {
             try
             {
@@ -32,9 +32,9 @@ namespace DiceHaven_Controller.Controllers
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
                 Permissao permissaoModel = new Permissao(dbDiceHaven);
-                Classe classeModel = new Classe(dbDiceHaven);
+                CampoFicha campoFichaModel = new CampoFicha(dbDiceHaven);
 
-                return StatusCode(200, classeModel.ListarClasses(idCampanha));
+                return StatusCode(200, campoFichaModel.ListarCamposFicha(idCampanha));
             }
             catch (HttpDiceExcept ex)
             {
@@ -42,10 +42,10 @@ namespace DiceHaven_Controller.Controllers
             }
         }
 
-        [ProducesResponseType(typeof(ClasseDTO), StatusCodes.Status200OK)]
-        [SwaggerOperation(Summary = "Buscar classe", Description = "Busca uma classe baseado no ID_CLASSE.")]
-        [HttpGet("ObterClasse")]
-        public ActionResult ObterClasse(int idClasse)
+        [ProducesResponseType(typeof(CampoFichaDTO), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Busca um campo da ficha", Description = "Busca um campo da ficha baseado no ID")]
+        [HttpGet("BuscarCampoFicha")]
+        public ActionResult BuscarCampoFicha(int idCampoFicha)
         {
             try
             {
@@ -53,31 +53,9 @@ namespace DiceHaven_Controller.Controllers
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
                 Permissao permissaoModel = new Permissao(dbDiceHaven);
-                Classe classeModel = new Classe(dbDiceHaven);
+                CampoFicha campoFichaModel = new CampoFicha(dbDiceHaven);
 
-                return StatusCode(200, classeModel.ObterClasse(idClasse));
-            }
-            catch (HttpDiceExcept ex)
-            {
-                return StatusCode((int)ex.CodeStatus, new { ex.Message });
-            }
-        }
-
-        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-        [SwaggerOperation(Summary = "Adicionar classe", Description = "Adiciona uma classe a campanha.")]
-        [HttpPost("CadatrarClasse")]
-        public ActionResult CadatrarClasse(ClasseDTO novaClasse)
-        {
-            try
-            {
-                var identity = HttpContext.User.Identity as ClaimsIdentity;
-                List<Claim> claim = identity.Claims.ToList();
-                int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
-                Classe classeModel = new Classe(dbDiceHaven);
-                classeModel.CadastrarClasse(novaClasse, idUsuarioLogado);
-
-                return StatusCode(200, new {Message=$"Classe: {novaClasse.DS_CLASSE} Cadastrada com sucesso!"});
+                return StatusCode(200, campoFichaModel.ObterCampoFicha(idCampoFicha));
             }
             catch (HttpDiceExcept ex)
             {
@@ -86,9 +64,9 @@ namespace DiceHaven_Controller.Controllers
         }
 
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-        [SwaggerOperation(Summary = "Atualizar classe", Description = "Atualiza uma classe.")]
-        [HttpPut("EditarClasse")]
-        public ActionResult EditarClasse(ClasseDTO classe)
+        [SwaggerOperation(Summary = "Cadastra um campo no modelo de ficha", Description = "Cadastra um campo no modelo de ficha")]
+        [HttpPost("CadastrarCampoFicha")]
+        public ActionResult CadastrarCampoFicha(CampoFichaDTO novoCampo)
         {
             try
             {
@@ -96,10 +74,9 @@ namespace DiceHaven_Controller.Controllers
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
                 Permissao permissaoModel = new Permissao(dbDiceHaven);
-                Classe classeModel = new Classe(dbDiceHaven);
-                classeModel.EditarClasse(classe, idUsuarioLogado);
-
-                return StatusCode(200, new { Message = $"Classe editada com sucesso!" });
+                CampoFicha campoFichaModel = new CampoFicha(dbDiceHaven);
+                int idCampoFicha = campoFichaModel.CadastrarCampoFicha(novoCampo);
+                return StatusCode(200, new {Message="Campo Cadastrado com sucesso no modelo de ficha.", Id=idCampoFicha});
             }
             catch (HttpDiceExcept ex)
             {
@@ -108,9 +85,9 @@ namespace DiceHaven_Controller.Controllers
         }
 
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-        [SwaggerOperation(Summary = "Deletar classe", Description = "Deleta uma classe.")]
-        [HttpDelete("DeletarClasse")]
-        public ActionResult DeletarClasse(int idClasse)
+        [SwaggerOperation(Summary = "Edita um campo no modelo de ficha", Description = "Edita um campo no modelo de ficha")]
+        [HttpPut("EditarCampoFicha")]
+        public ActionResult EditarCampoFicha(CampoFichaDTO novoCampo)
         {
             try
             {
@@ -118,10 +95,30 @@ namespace DiceHaven_Controller.Controllers
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
                 Permissao permissaoModel = new Permissao(dbDiceHaven);
-                Classe classeModel = new Classe(dbDiceHaven);
-                classeModel.DeletarClasse(idClasse, idUsuarioLogado);
+                CampoFicha campoFichaModel = new CampoFicha(dbDiceHaven);
+                campoFichaModel.EditarCampoFicha(novoCampo);
+                return StatusCode(200, new { Message = "Campo Editado com sucesso no modelo de ficha."});
+            }
+            catch (HttpDiceExcept ex)
+            {
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
+            }
+        }
 
-                return StatusCode(200, new { Message = $"Classe deletada com sucesso!" });
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Deleta um campo no modelo de ficha", Description = "Deleta um campo no modelo de ficha baseado no ID")]
+        [HttpDelete("DeletarCampoFicha")]
+        public ActionResult DeletarCampoFicha(int idCampoFicha)
+        {
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                List<Claim> claim = identity.Claims.ToList();
+                int idUsuarioLogado = int.Parse(claim[0].Value);
+                Permissao permissaoModel = new Permissao(dbDiceHaven);
+                CampoFicha campoFichaModel = new CampoFicha(dbDiceHaven);
+                string tipoAcao = campoFichaModel.DeletarCampoFicha(idCampoFicha) ? "deletado" : "desativado";
+                return StatusCode(200, new { Message = $"Campo {tipoAcao} com sucesso do modelo de ficha." });
             }
             catch (HttpDiceExcept ex)
             {

@@ -14,10 +14,6 @@ namespace DiceHaven_DTO
         public int? ID_CAMPANHA { get; set; }
         public string DS_NOME_CAMPANHA { get; set; }
         public string DS_LORE { get; set; }
-        public string DS_PERIODO { get; set; }
-        public bool FL_EXISTE_MAGIA { get; set; }
-        public TipoDefinicaoAtributos DS_DEFINICAO_ATRIBUTOS { get; set; }
-        public string DS_XP_SUBIR_LVL { get; set; }
         public DateTime? DT_CRIACAO { get; set; }
         public bool? FL_ATIVO { get; set; }
         public bool FL_PUBLICA { get; set; }
