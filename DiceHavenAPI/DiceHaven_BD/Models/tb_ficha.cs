@@ -7,47 +7,17 @@ public partial class tb_ficha
 {
     public int ID_FICHA { get; set; }
 
-    public string DS_TENDENCIA { get; set; }
-
-    public string DS_SOBRE { get; set; }
-
-    public int NR_XP { get; set; }
-
-    public int NR_MAX_PV { get; set; }
-
-    public int NR_MAX_PM { get; set; }
-
-    public int NR_PV { get; set; }
-
-    public int NR_PM { get; set; }
-
-    public int NR_PONTOS_HAB { get; set; }
-
-    public int? NR_STR { get; set; }
-
-    public int? NR_DEX { get; set; }
-
-    public int? NR_CON { get; set; }
-
-    public int? NR_INT { get; set; }
-
-    public int? NR_WIS { get; set; }
-
-    public int? NR_CHA { get; set; }
-
-    public int? ID_RACA { get; set; }
-
-    public int? ID_CLASSE { get; set; }
+    public int ID_CAMPO_FICHA { get; set; }
 
     public int ID_PERSONAGEM { get; set; }
 
-    public int ID_CAMPANHA { get; set; }
+    public int ID_USUARIO { get; set; }
 
-    public virtual tb_campanha ID_CAMPANHANavigation { get; set; }
+    public string DS_VALOR { get; set; }
 
-    public virtual tb_classe ID_CLASSENavigation { get; set; }
+    public virtual tb_campo_ficha ID_CAMPO_FICHANavigation { get; set; }
 
     public virtual tb_personagem ID_PERSONAGEMNavigation { get; set; }
 
-    public virtual tb_raca ID_RACANavigation { get; set; }
+    public virtual tb_usuario ID_USUARIONavigation { get; set; }
 }

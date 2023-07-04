@@ -11,14 +11,6 @@ public partial class tb_campanha
 
     public string DS_LORE { get; set; }
 
-    public string DS_PERIODO { get; set; }
-
-    public bool FL_EXISTE_MAGIA { get; set; }
-
-    public int NR_DEFINICAO_ATRIBUTOS { get; set; }
-
-    public string DS_XP_SUBIR_LVL { get; set; }
-
     public DateTime DT_CRIACAO { get; set; }
 
     public bool FL_ATIVO { get; set; }
@@ -33,11 +25,7 @@ public partial class tb_campanha
 
     public virtual tb_usuario ID_USUARIO_CRIADORNavigation { get; set; }
 
-    public virtual ICollection<tb_classe> tb_classes { get; set; } = new List<tb_classe>();
-
-    public virtual ICollection<tb_ficha> tb_fichas { get; set; } = new List<tb_ficha>();
-
-    public virtual ICollection<tb_raca> tb_racas { get; set; } = new List<tb_raca>();
+    public virtual ICollection<tb_campo_ficha> tb_campo_fichas { get; set; } = new List<tb_campo_ficha>();
 
     public virtual ICollection<tb_usuario_campanha> tb_usuario_campanhas { get; set; } = new List<tb_usuario_campanha>();
 }
