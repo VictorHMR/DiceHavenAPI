@@ -23,5 +23,5 @@ public partial class tb_personagem
 
     public virtual tb_usuario ID_USUARIONavigation { get; set; }
 
-    public virtual ICollection<tb_ficha> tb_fichas { get; set; } = new List<tb_ficha>();
+    public virtual ICollection<tb_dados_ficha> tb_dados_fichas { get; set; } = new List<tb_dados_ficha>();
 }

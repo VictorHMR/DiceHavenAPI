@@ -152,7 +152,7 @@ namespace DiceHaven_Model.Models
             try
             {
                 tb_campo_ficha campoBD = dbDiceHaven.tb_campo_fichas.Find(idCampoFicha);
-                bool possuiFichas = dbDiceHaven.tb_fichas.Where(x => x.ID_CAMPO_FICHA == idCampoFicha).Any();
+                bool possuiFichas = dbDiceHaven.tb_dados_fichas.Where(x => x.ID_CAMPO_FICHA == idCampoFicha).Any();
                 if (!possuiFichas)
                 {
                     dbDiceHaven.tb_campo_fichas.Remove(campoBD);

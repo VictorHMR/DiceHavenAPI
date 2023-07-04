@@ -33,5 +33,5 @@ public partial class tb_campo_ficha
 
     public virtual tb_campanha ID_CAMPANHANavigation { get; set; }
 
-    public virtual ICollection<tb_ficha> tb_fichas { get; set; } = new List<tb_ficha>();
+    public virtual ICollection<tb_dados_ficha> tb_dados_fichas { get; set; } = new List<tb_dados_ficha>();
 }
