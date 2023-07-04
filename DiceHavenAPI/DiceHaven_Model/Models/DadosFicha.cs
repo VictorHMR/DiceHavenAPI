@@ -28,7 +28,7 @@ namespace DiceHaven_Model.Models
                 List<DadosFichaDTO> listaDeDados = (from df in dbDiceHaven.tb_dados_fichas
                                                     join cf in dbDiceHaven.tb_campo_fichas on df.ID_CAMPO_FICHA equals cf.ID_CAMPO_FICHA
                                                      join c in dbDiceHaven.tb_campanhas on cf.ID_CAMPANHA equals c.ID_CAMPANHA
-                                                     where cf.ID_CAMPANHA == idCampanha && cf.FL_ATIVO && df.ID_PERSONAGEM == idPersonagem
+                                                     where cf.ID_CAMPANHA == idCampanha && cf.FL_ATIVO && df.ID_PERSONAGEM == idPersonagem && cf.FL_ATIVO
                                                      select new DadosFichaDTO
                                                      {
                                                          ID_DADOS_FICHA = df.ID_DADO_FICHA,
@@ -51,7 +51,7 @@ namespace DiceHaven_Model.Models
             {
                 DadosFichaDTO dadosFicha = (from df in dbDiceHaven.tb_dados_fichas
                                             join cf in dbDiceHaven.tb_campo_fichas on df.ID_CAMPO_FICHA equals cf.ID_CAMPO_FICHA
-                                            where cf.FL_ATIVO && cf.ID_CAMPO_FICHA == idCampoFicha && df.ID_PERSONAGEM == idPersonagem
+                                            where cf.FL_ATIVO && cf.ID_CAMPO_FICHA == idCampoFicha && df.ID_PERSONAGEM == idPersonagem && cf.FL_ATIVO
                                             select new DadosFichaDTO
                                             {
                                                 ID_DADOS_FICHA = df.ID_DADO_FICHA,
