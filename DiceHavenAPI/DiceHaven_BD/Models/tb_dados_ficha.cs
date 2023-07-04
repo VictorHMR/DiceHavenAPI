@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace DiceHaven_BD.Models;
 
-public partial class tb_ficha
+public partial class tb_dados_ficha
 {
-    public int ID_FICHA { get; set; }
+    public int ID_DADO_FICHA { get; set; }
 
     public int ID_CAMPO_FICHA { get; set; }
 

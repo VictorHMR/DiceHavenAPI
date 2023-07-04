@@ -22,7 +22,7 @@ public partial class DiceHavenBDContext : DbContext
 
     public virtual DbSet<tb_config_usuario> tb_config_usuarios { get; set; }
 
-    public virtual DbSet<tb_ficha> tb_fichas { get; set; }
+    public virtual DbSet<tb_dados_ficha> tb_dados_fichas { get; set; }
 
     public virtual DbSet<tb_grupo> tb_grupos { get; set; }
 
@@ -89,7 +89,7 @@ public partial class DiceHavenBDContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50);
             entity.Property(e => e.DS_REFERENCIA).HasMaxLength(30);
-            entity.Property(e => e.DS_VALOR_PADRAO).HasMaxLength(50);
+            entity.Property(e => e.DS_VALOR_PADRAO).HasColumnType("text");
 
             entity.HasOne(d => d.ID_CAMPANHANavigation).WithMany(p => p.tb_campo_fichas)
                 .HasForeignKey(d => d.ID_CAMPANHA)
@@ -111,34 +111,27 @@ public partial class DiceHavenBDContext : DbContext
                 .HasConstraintName("tb_config_usuario_ibfk_1");
         });
 
-        modelBuilder.Entity<tb_ficha>(entity =>
+        modelBuilder.Entity<tb_dados_ficha>(entity =>
         {
-            entity.HasKey(e => e.ID_FICHA).HasName("PRIMARY");
+            entity.HasKey(e => e.ID_DADO_FICHA).HasName("PRIMARY");
 
-            entity.ToTable("tb_ficha");
+            entity.ToTable("tb_dados_ficha");
 
             entity.HasIndex(e => e.ID_CAMPO_FICHA, "ID_CAMPO_FICHA");
 
             entity.HasIndex(e => e.ID_PERSONAGEM, "ID_PERSONAGEM");
 
-            entity.HasIndex(e => e.ID_USUARIO, "ID_USUARIO");
-
             entity.Property(e => e.DS_VALOR).HasColumnType("text");
 
-            entity.HasOne(d => d.ID_CAMPO_FICHANavigation).WithMany(p => p.tb_fichas)
+            entity.HasOne(d => d.ID_CAMPO_FICHANavigation).WithMany(p => p.tb_dados_fichas)
                 .HasForeignKey(d => d.ID_CAMPO_FICHA)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("tb_ficha_ibfk_1");
+                .HasConstraintName("tb_dados_ficha_ibfk_1");
 
-            entity.HasOne(d => d.ID_PERSONAGEMNavigation).WithMany(p => p.tb_fichas)
+            entity.HasOne(d => d.ID_PERSONAGEMNavigation).WithMany(p => p.tb_dados_fichas)
                 .HasForeignKey(d => d.ID_PERSONAGEM)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("tb_ficha_ibfk_2");
-
-            entity.HasOne(d => d.ID_USUARIONavigation).WithMany(p => p.tb_fichas)
-                .HasForeignKey(d => d.ID_USUARIO)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("tb_ficha_ibfk_3");
+                .HasConstraintName("tb_dados_ficha_ibfk_2");
         });
 
         modelBuilder.Entity<tb_grupo>(entity =>
