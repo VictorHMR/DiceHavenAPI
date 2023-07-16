@@ -8,13 +8,22 @@ using System.Text;
 using System.Threading.Tasks;
 using DiceHaven_Utils;
 using System.Net;
+using Microsoft.Extensions.Configuration;
+using DiceHaven_Utils.API;
 
 namespace DiceHaven_Model.Models
 {
     public class Personagem
     {
         public DiceHavenBDContext dbDiceHaven;
+        private readonly IConfiguration _configuration;
 
+
+        public Personagem(DiceHavenBDContext dbDiceHaven, IConfiguration configuration)
+        {
+            this.dbDiceHaven = dbDiceHaven;
+            this._configuration = configuration;
+        }
         public Personagem(DiceHavenBDContext dbDiceHaven)
         {
             this.dbDiceHaven = dbDiceHaven;
@@ -31,7 +40,7 @@ namespace DiceHaven_Model.Models
                                                             ID_PERSONAGEM = ps.ID_PERSONAGEM,
                                                             DS_NOME = ps.DS_NOME,
                                                             DS_BACKSTORY = ps.DS_BACKSTORY,
-                                                            DS_FOTO = Conversor.ConvertToBase64(ps.DS_FOTO),
+                                                            DS_FOTO = ps.DS_FOTO,
                                                             NR_IDADE = ps.NR_IDADE,
                                                             DS_GENERO = ps.DS_GENERO,
                                                             DS_CAMPO_LIVRE = ps.DS_CAMPO_LIVRE,
@@ -49,6 +58,8 @@ namespace DiceHaven_Model.Models
         {
             try
             {
+                Imgur imgurModels = new Imgur(_configuration);
+
                 bool PersonagemExiste = dbDiceHaven.tb_personagems.Where(x => x.DS_NOME == novoPersonagem.DS_NOME).Any();
 
                 if (PersonagemExiste)
@@ -57,7 +68,7 @@ namespace DiceHaven_Model.Models
                 tb_personagem novoPersonagemBD = new tb_personagem();
                 novoPersonagemBD.DS_NOME = novoPersonagem.DS_NOME;
                 novoPersonagemBD.DS_BACKSTORY = novoPersonagem.DS_BACKSTORY;
-                novoPersonagemBD.DS_FOTO = Conversor.ConvertToByteArray(novoPersonagem.DS_FOTO);
+                novoPersonagemBD.DS_FOTO = imgurModels.uploadImageBase64(novoPersonagem.DS_FOTO);
                 novoPersonagemBD.NR_IDADE = novoPersonagem.NR_IDADE;
                 novoPersonagemBD.DS_GENERO = novoPersonagem.DS_GENERO;
                 novoPersonagemBD.DS_CAMPO_LIVRE = novoPersonagem.DS_CAMPO_LIVRE;
@@ -82,6 +93,7 @@ namespace DiceHaven_Model.Models
         {
             try
             {
+                Imgur imgurModels = new Imgur(_configuration);
                 tb_personagem Personagem = dbDiceHaven.tb_personagems.Find(personagemInfo.ID_PERSONAGEM);
 
                 if (Personagem is null)
@@ -89,7 +101,7 @@ namespace DiceHaven_Model.Models
 
                 Personagem.DS_NOME = personagemInfo.DS_NOME;
                 Personagem.DS_BACKSTORY = personagemInfo.DS_BACKSTORY;
-                Personagem.DS_FOTO = Conversor.ConvertToByteArray(personagemInfo.DS_FOTO);
+                Personagem.DS_FOTO = personagemInfo.DS_FOTO is null ? imgurModels.uploadImageBase64(personagemInfo.DS_FOTO) : Personagem.DS_FOTO;
                 Personagem.NR_IDADE = personagemInfo.NR_IDADE;
                 Personagem.DS_GENERO = personagemInfo.DS_GENERO;
                 Personagem.DS_CAMPO_LIVRE = personagemInfo.DS_CAMPO_LIVRE;

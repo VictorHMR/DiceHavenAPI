@@ -58,6 +58,7 @@ public partial class DiceHavenBDContext : DbContext
 
             entity.HasIndex(e => e.ID_USUARIO_CRIADOR, "ID_USUARIO_CRIADOR");
 
+            entity.Property(e => e.DS_FOTO).HasColumnType("text");
             entity.Property(e => e.DS_LORE).HasColumnType("text");
             entity.Property(e => e.DS_NOME_CAMPANHA)
                 .IsRequired()
@@ -194,6 +195,7 @@ public partial class DiceHavenBDContext : DbContext
 
             entity.Property(e => e.DS_BACKSTORY).HasColumnType("text");
             entity.Property(e => e.DS_CAMPO_LIVRE).HasColumnType("text");
+            entity.Property(e => e.DS_FOTO).HasColumnType("text");
             entity.Property(e => e.DS_GENERO).HasMaxLength(20);
             entity.Property(e => e.DS_NOME)
                 .IsRequired()

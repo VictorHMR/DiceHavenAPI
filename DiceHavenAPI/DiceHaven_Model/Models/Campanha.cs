@@ -2,6 +2,8 @@
 using DiceHaven_BD.Models;
 using DiceHaven_DTO;
 using DiceHaven_Utils;
+using DiceHaven_Utils.API;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +18,18 @@ namespace DiceHaven_Model.Models
     public class Campanha
     {
         public DiceHavenBDContext dbDiceHaven;
+        private readonly IConfiguration _configuration;
 
+        public Campanha(DiceHavenBDContext dbDiceHaven, IConfiguration configuration)
+        {
+            this.dbDiceHaven = dbDiceHaven;
+            this._configuration = configuration;
+        }
         public Campanha(DiceHavenBDContext dbDiceHaven)
         {
             this.dbDiceHaven = dbDiceHaven;
         }
-        
+
         public CampanhaDTO ObterCampanha(int idCampanha)
         {
             try
@@ -36,6 +44,7 @@ namespace DiceHaven_Model.Models
                                             DT_CRIACAO = c.DT_CRIACAO,
                                             FL_ATIVO = c.FL_ATIVO,
                                             FL_PUBLICA = c.FL_PUBLICA,
+                                            DS_FOTO = c.DS_FOTO,
                                             ID_USUARIO_CRIADOR = c.ID_USUARIO_CRIADOR,
                                             ID_MESTRE_CAMPANHA = c.ID_MESTRE_CAMPANHA
                                         }).FirstOrDefault();
@@ -68,6 +77,7 @@ namespace DiceHaven_Model.Models
                                                     DT_CRIACAO = c.DT_CRIACAO,
                                                     FL_ATIVO = c.FL_ATIVO,
                                                     FL_PUBLICA = c.FL_PUBLICA,
+                                                    DS_FOTO = c.DS_FOTO,
                                                     ID_USUARIO_CRIADOR = c.ID_USUARIO_CRIADOR,
                                                     ID_MESTRE_CAMPANHA = c.ID_MESTRE_CAMPANHA
                                                 }).ToList();
@@ -89,12 +99,14 @@ namespace DiceHaven_Model.Models
         {
             try
             {
+                Imgur imgurModels = new Imgur(_configuration);
                 tb_campanha novaCampanhaBD = new tb_campanha();
                 novaCampanhaBD.DS_NOME_CAMPANHA = novaCampanha.DS_NOME_CAMPANHA;
                 novaCampanhaBD.DS_LORE = novaCampanha.DS_LORE;
                 novaCampanhaBD.DT_CRIACAO = DateTime.Now;
                 novaCampanhaBD.FL_ATIVO = true;
                 novaCampanhaBD.FL_PUBLICA = novaCampanha.FL_PUBLICA;
+                novaCampanhaBD.DS_FOTO = imgurModels.uploadImageBase64(novaCampanha.DS_FOTO);
                 novaCampanhaBD.ID_USUARIO_CRIADOR = idUsuarioLogado;
                 novaCampanhaBD.ID_MESTRE_CAMPANHA = novaCampanha?.ID_MESTRE_CAMPANHA ?? idUsuarioLogado;
 
@@ -120,6 +132,7 @@ namespace DiceHaven_Model.Models
         {
             try
             {
+                Imgur imgurModels = new Imgur(_configuration);
 
                 tb_campanha CampanhaBD = dbDiceHaven.tb_campanhas.Find(campanhaAtualizada.ID_CAMPANHA);
                 if (CampanhaBD is null)
@@ -128,6 +141,7 @@ namespace DiceHaven_Model.Models
                 CampanhaBD.DS_LORE = campanhaAtualizada.DS_LORE;
                 CampanhaBD.FL_ATIVO = campanhaAtualizada.FL_ATIVO ?? true;
                 CampanhaBD.FL_PUBLICA = campanhaAtualizada.FL_PUBLICA;
+                CampanhaBD.DS_FOTO = campanhaAtualizada.DS_FOTO is null ? imgurModels.uploadImageBase64(campanhaAtualizada.DS_FOTO) : CampanhaBD.DS_FOTO;
                 CampanhaBD.ID_MESTRE_CAMPANHA = campanhaAtualizada?.ID_MESTRE_CAMPANHA ?? CampanhaBD.ID_MESTRE_CAMPANHA;
                 dbDiceHaven.SaveChanges();
 

@@ -17,6 +17,8 @@ public partial class tb_campanha
 
     public bool FL_PUBLICA { get; set; }
 
+    public string DS_FOTO { get; set; }
+
     public int ID_USUARIO_CRIADOR { get; set; }
 
     public int ID_MESTRE_CAMPANHA { get; set; }
