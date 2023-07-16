@@ -16,9 +16,12 @@ namespace DiceHaven_Controller.Controllers
     public class CampanhaController : ControllerBase
     {
         private DiceHavenBDContext dbDiceHaven;
-        public CampanhaController(DiceHavenBDContext dbDiceHaven)
+        private readonly IConfiguration _configuration;
+
+        public CampanhaController(DiceHavenBDContext dbDiceHaven, IConfiguration configuration)
         {
             this.dbDiceHaven = dbDiceHaven;
+            _configuration = configuration;
         }
 
         [ProducesResponseType(typeof(CampanhaDTO), StatusCodes.Status200OK)]
@@ -74,7 +77,7 @@ namespace DiceHaven_Controller.Controllers
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
                 Permissao permissaoModel = new Permissao(dbDiceHaven);
-                Campanha campanhaModel = new Campanha(dbDiceHaven);
+                Campanha campanhaModel = new Campanha(dbDiceHaven, _configuration);
 
                 int idCampanha = campanhaModel.CadastrarCampanha(novaCampanha, idUsuarioLogado);
                 return StatusCode(200, new { Message="Campanha cadastrada com sucesso!", Id=idCampanha});
@@ -96,7 +99,7 @@ namespace DiceHaven_Controller.Controllers
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
                 Permissao permissaoModel = new Permissao(dbDiceHaven);
-                Campanha campanhaModel = new Campanha(dbDiceHaven);
+                Campanha campanhaModel = new Campanha(dbDiceHaven, _configuration);
 
                 campanhaModel.AtualizarCampanha(campanhaAtualizada);
                 return StatusCode(200, new { Message = "Campanha atualizada com sucesso!"});

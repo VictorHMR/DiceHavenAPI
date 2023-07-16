@@ -63,13 +63,21 @@ namespace DiceHaven_Controller.Controllers
 
         [ProducesResponseType(typeof(UsuarioDTO), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Busca um usuario", Description = "Busca um usuario pelo ID_USUARIO.")]
+        [Authorize]
         [HttpGet("obterUsuario")]
         public ActionResult obterUsuario(int idUsuario)
         {
             try
             {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                List<Claim> claim = identity.Claims.ToList();
+                int idUsuarioLogado = int.Parse(claim[0].Value);
+
                 Usuario usuarioModel = new Usuario(dbDiceHaven);
-                return StatusCode(200, usuarioModel.obterUsuario(idUsuario));
+                if(idUsuario != 0)
+                    return StatusCode(200, usuarioModel.obterUsuario(idUsuario));
+                else
+                    return StatusCode(200, usuarioModel.obterUsuario(idUsuarioLogado));
             }
             catch (Exception ex)
             {

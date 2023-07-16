@@ -11,7 +11,7 @@ public partial class tb_personagem
 
     public string DS_BACKSTORY { get; set; }
 
-    public byte[] DS_FOTO { get; set; }
+    public string DS_FOTO { get; set; }
 
     public int NR_IDADE { get; set; }
 

@@ -16,9 +16,12 @@ namespace DiceHaven_Controller.Controllers
     public class PersonagemController : ControllerBase
     {
         private DiceHavenBDContext dbDiceHaven;
-        public PersonagemController(DiceHavenBDContext dbDiceHaven)
+        private readonly IConfiguration _configuration;
+
+        public PersonagemController(DiceHavenBDContext dbDiceHaven, IConfiguration configuration)
         {
             this.dbDiceHaven = dbDiceHaven;
+            _configuration = configuration;
         }
 
         [ProducesResponseType(typeof(List<PersonagemDTO>), StatusCodes.Status200OK)]
@@ -62,7 +65,7 @@ namespace DiceHaven_Controller.Controllers
                 int idUsuarioLogado = int.Parse(claim[0].Value);
                 Permissao permissaoModel = new Permissao(dbDiceHaven);
                 permissaoModel.VerificaPermissaoUsuario(idUsuarioLogado, (int)Enumeration.Permissoes.PMS_Adm_Fichas);
-                Personagem personagemModel = new Personagem(dbDiceHaven);
+                Personagem personagemModel = new Personagem(dbDiceHaven, _configuration);
 
                 novoPersonagem.ID_USUARIO = idUsuarioLogado;
                 personagemModel.CadastrarPersonagem(novoPersonagem);
@@ -87,7 +90,7 @@ namespace DiceHaven_Controller.Controllers
                 int idUsuarioLogado = int.Parse(claim[0].Value);
                 Permissao permissaoModel = new Permissao(dbDiceHaven);
                 permissaoModel.VerificaPermissaoUsuario(idUsuarioLogado, (int)Enumeration.Permissoes.PMS_Adm_Fichas);
-                Personagem personagemModel = new Personagem(dbDiceHaven);
+                Personagem personagemModel = new Personagem(dbDiceHaven, _configuration);
                 personagemModel.EditarPersonagem(novoPersonagem);
 
                 return StatusCode(200, new { Message = "Personagem editado com sucesso!" });

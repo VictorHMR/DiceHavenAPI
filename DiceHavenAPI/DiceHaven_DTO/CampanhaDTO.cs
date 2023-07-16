@@ -17,6 +17,7 @@ namespace DiceHaven_DTO
         public DateTime? DT_CRIACAO { get; set; }
         public bool? FL_ATIVO { get; set; }
         public bool FL_PUBLICA { get; set; }
+        public string DS_FOTO { get; set; }
         public int? ID_USUARIO_CRIADOR { get; set; }
         public int? ID_MESTRE_CAMPANHA { get; set; }
 
