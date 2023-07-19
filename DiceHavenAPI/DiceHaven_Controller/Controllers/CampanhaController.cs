@@ -1,5 +1,6 @@
 ﻿using DiceHaven_BD.Contexts;
 using DiceHaven_DTO;
+using DiceHaven_Model.Interfaces;
 using DiceHaven_Model.Models;
 using DiceHaven_Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -17,11 +18,13 @@ namespace DiceHaven_Controller.Controllers
     {
         private DiceHavenBDContext dbDiceHaven;
         private readonly IConfiguration _configuration;
+        private ICampanha _campanha;
 
-        public CampanhaController(DiceHavenBDContext dbDiceHaven, IConfiguration configuration)
+        public CampanhaController(DiceHavenBDContext dbDiceHaven, IConfiguration configuration, ICampanha campanha)
         {
             this.dbDiceHaven = dbDiceHaven;
-            _configuration = configuration;
+            this._configuration = configuration;
+            this._campanha = campanha;
         }
 
         [ProducesResponseType(typeof(CampanhaDTO), StatusCodes.Status200OK)]
@@ -34,9 +37,8 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Campanha campanhaModel = new Campanha(dbDiceHaven);
 
-                return StatusCode(200, campanhaModel.ObterCampanha(idCampanha));
+                return StatusCode(200, _campanha.ObterCampanha(idCampanha));
             }
             catch(HttpDiceExcept ex)
             {
@@ -54,9 +56,8 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Campanha campanhaModel = new Campanha(dbDiceHaven);
 
-                return StatusCode(200, campanhaModel.ListarCampanhas(idUsuario ?? idUsuarioLogado));
+                return StatusCode(200, _campanha.ListarCampanhas(idUsuario ?? idUsuarioLogado));
             }
             catch (HttpDiceExcept ex)
             {
@@ -74,9 +75,8 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Campanha campanhaModel = new Campanha(dbDiceHaven, _configuration);
 
-                int idCampanha = campanhaModel.CadastrarCampanha(novaCampanha, idUsuarioLogado);
+                int idCampanha = _campanha.CadastrarCampanha(novaCampanha, idUsuarioLogado);
                 return StatusCode(200, new { Message="Campanha cadastrada com sucesso!", Id=idCampanha});
             }
             catch (HttpDiceExcept ex)
@@ -95,9 +95,8 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Campanha campanhaModel = new Campanha(dbDiceHaven, _configuration);
 
-                campanhaModel.AtualizarCampanha(campanhaAtualizada);
+                _campanha.AtualizarCampanha(campanhaAtualizada);
                 return StatusCode(200, new { Message = "Campanha atualizada com sucesso!"});
             }
             catch (HttpDiceExcept ex)
@@ -117,9 +116,8 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Campanha campanhaModel = new Campanha(dbDiceHaven);
 
-                campanhaModel.VincularUsuarioCampanha(idCampanha, idUsuario ?? idUsuarioLogado);
+                _campanha.VincularUsuarioCampanha(idCampanha, idUsuario ?? idUsuarioLogado);
                 return StatusCode(200, new { Message = "Usuário vinculado com sucesso!" });
             }
             catch (HttpDiceExcept ex)
@@ -139,9 +137,8 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Campanha campanhaModel = new Campanha(dbDiceHaven);
 
-                campanhaModel.DesvincularUsuarioCampanha(idCampanha, idUsuario ?? idUsuarioLogado);
+                _campanha.DesvincularUsuarioCampanha(idCampanha, idUsuario ?? idUsuarioLogado);
                 return StatusCode(200, new { Message = "Usuário desvinculado com sucesso!" });
             }
             catch (HttpDiceExcept ex)
@@ -161,9 +158,8 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Campanha campanhaModel = new Campanha(dbDiceHaven);
 
-                campanhaModel.AlterarAdmins(idUsuario, idCampanha,idUsuarioLogado,flAdmin);
+                _campanha.AlterarAdmins(idUsuario, idCampanha,idUsuarioLogado,flAdmin);
                 return StatusCode(200, new { Message = "Membro atualizado com sucesso!" });
             }
             catch (HttpDiceExcept ex)

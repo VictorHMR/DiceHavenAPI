@@ -1,5 +1,6 @@
 ﻿using DiceHaven_BD.Contexts;
 using DiceHaven_DTO;
+using DiceHaven_Model.Interfaces;
 using DiceHaven_Model.Models;
 using DiceHaven_Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -17,11 +18,13 @@ namespace DiceHaven_Controller.Controllers
     {
         private DiceHavenBDContext dbDiceHaven;
         private readonly IConfiguration _configuration;
+        private IPersonagem _personagem;
 
-        public PersonagemController(DiceHavenBDContext dbDiceHaven, IConfiguration configuration)
+        public PersonagemController(DiceHavenBDContext dbDiceHaven, IConfiguration configuration, IPersonagem personagem)
         {
             this.dbDiceHaven = dbDiceHaven;
-            _configuration = configuration;
+            this._configuration = configuration;
+            this._personagem = personagem;
         }
 
         [ProducesResponseType(typeof(List<PersonagemDTO>), StatusCodes.Status200OK)]
@@ -35,12 +38,11 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Personagem personagemModel = new Personagem(dbDiceHaven);
                 List<PersonagemDTO> listaPersonagem;
                 if (idUsuario == 0 || idUsuario is null)
-                    listaPersonagem = personagemModel.ListarPersonagem(idUsuarioLogado);
+                    listaPersonagem = _personagem.ListarPersonagem(idUsuarioLogado);
                 else
-                    listaPersonagem = personagemModel.ListarPersonagem(idUsuario ?? 0);
+                    listaPersonagem = _personagem.ListarPersonagem(idUsuario ?? 0);
 
                 return StatusCode(200, listaPersonagem);
 
@@ -61,10 +63,9 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Personagem personagemModel = new Personagem(dbDiceHaven, _configuration);
 
                 novoPersonagem.ID_USUARIO = idUsuarioLogado;
-                personagemModel.CadastrarPersonagem(novoPersonagem);
+                _personagem.CadastrarPersonagem(novoPersonagem);
 
                 return StatusCode(200, new { Message = "Personagem Cadastrado com sucesso!" });
             }
@@ -84,8 +85,7 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Personagem personagemModel = new Personagem(dbDiceHaven, _configuration);
-                personagemModel.EditarPersonagem(novoPersonagem);
+                _personagem.EditarPersonagem(novoPersonagem);
 
                 return StatusCode(200, new { Message = "Personagem editado com sucesso!" });
             }

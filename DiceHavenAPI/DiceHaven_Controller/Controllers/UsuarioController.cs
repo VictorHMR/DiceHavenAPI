@@ -1,5 +1,6 @@
 using DiceHaven_BD.Contexts;
 using DiceHaven_DTO;
+using DiceHaven_Model.Interfaces;
 using DiceHaven_Model.Models;
 using DiceHaven_Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -17,11 +18,13 @@ namespace DiceHaven_Controller.Controllers
     {
         private DiceHavenBDContext dbDiceHaven;
         private readonly IConfiguration _configuration;
+        private IUsuario _usuario;
 
-        public UsuarioController(DiceHavenBDContext dbDiceHaven, IConfiguration config)
+        public UsuarioController(DiceHavenBDContext dbDiceHaven, IConfiguration config, IUsuario usuario)
         {
             this.dbDiceHaven = dbDiceHaven;
             this._configuration = config;
+            this._usuario = usuario;
         }
 
         [ProducesResponseType(typeof(AuthTokenDTO), StatusCodes.Status200OK)]
@@ -31,10 +34,9 @@ namespace DiceHaven_Controller.Controllers
         {
             try
             {
-                Usuario usuarioModel = new Usuario(dbDiceHaven, _configuration);
-                UsuarioDTO usuario = usuarioModel.Login(login, senha);
+                UsuarioDTO usuario = _usuario.Login(login, senha);
 
-                return StatusCode(200, usuarioModel.GerarToken(usuario));
+                return StatusCode(200, _usuario.GerarToken(usuario));
             }
             catch (Exception ex)
             {
@@ -50,8 +52,7 @@ namespace DiceHaven_Controller.Controllers
         {
             try
             {
-                Usuario usuarioModel = new Usuario(dbDiceHaven);
-                usuarioModel.cadastrarUsuario(novoUsuario);
+                _usuario.cadastrarUsuario(novoUsuario);
                 return StatusCode(200, new { Message = "Usuário cadastrado com sucesso!" });
             }
             catch (HttpDiceExcept ex)
@@ -73,11 +74,10 @@ namespace DiceHaven_Controller.Controllers
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
 
-                Usuario usuarioModel = new Usuario(dbDiceHaven);
                 if(idUsuario != 0)
-                    return StatusCode(200, usuarioModel.obterUsuario(idUsuario));
+                    return StatusCode(200, _usuario.obterUsuario(idUsuario));
                 else
-                    return StatusCode(200, usuarioModel.obterUsuario(idUsuarioLogado));
+                    return StatusCode(200, _usuario.obterUsuario(idUsuarioLogado));
             }
             catch (Exception ex)
             {
@@ -93,8 +93,7 @@ namespace DiceHaven_Controller.Controllers
         {
             try
             {
-                Usuario usuarioModel = new Usuario(dbDiceHaven);
-                usuarioModel.alterarDadosUsuario(Usuario);
+                _usuario.alterarDadosUsuario(Usuario);
                 return StatusCode(200, new { Message = "Usuário atualizado com sucesso!" });
             }
             catch (HttpDiceExcept ex)
@@ -114,8 +113,7 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuario = int.Parse(claim[0].Value);
-                Usuario userModel = new Usuario(dbDiceHaven);
-                userModel.alterarConfigUsuario(configsUsuario, idUsuario);
+                _usuario.alterarConfigUsuario(configsUsuario, idUsuario);
                 return StatusCode(200, new { Message = "Configurações alteradas com sucesso" });
 
             }

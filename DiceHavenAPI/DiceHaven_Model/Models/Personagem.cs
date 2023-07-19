@@ -10,10 +10,11 @@ using DiceHaven_Utils;
 using System.Net;
 using Microsoft.Extensions.Configuration;
 using DiceHaven_Utils.API;
+using DiceHaven_Model.Interfaces;
 
 namespace DiceHaven_Model.Models
 {
-    public class Personagem
+    public class Personagem : IPersonagem
     {
         public DiceHavenBDContext dbDiceHaven;
         private readonly IConfiguration _configuration;
