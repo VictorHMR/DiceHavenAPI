@@ -34,7 +34,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
                 Campanha campanhaModel = new Campanha(dbDiceHaven);
 
                 return StatusCode(200, campanhaModel.ObterCampanha(idCampanha));
@@ -55,7 +54,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
                 Campanha campanhaModel = new Campanha(dbDiceHaven);
 
                 return StatusCode(200, campanhaModel.ListarCampanhas(idUsuario ?? idUsuarioLogado));
@@ -76,7 +74,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
                 Campanha campanhaModel = new Campanha(dbDiceHaven, _configuration);
 
                 int idCampanha = campanhaModel.CadastrarCampanha(novaCampanha, idUsuarioLogado);
@@ -98,7 +95,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
                 Campanha campanhaModel = new Campanha(dbDiceHaven, _configuration);
 
                 campanhaModel.AtualizarCampanha(campanhaAtualizada);
@@ -121,7 +117,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
                 Campanha campanhaModel = new Campanha(dbDiceHaven);
 
                 campanhaModel.VincularUsuarioCampanha(idCampanha, idUsuario ?? idUsuarioLogado);
@@ -144,7 +139,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
                 Campanha campanhaModel = new Campanha(dbDiceHaven);
 
                 campanhaModel.DesvincularUsuarioCampanha(idCampanha, idUsuario ?? idUsuarioLogado);
@@ -167,7 +161,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
                 Campanha campanhaModel = new Campanha(dbDiceHaven);
 
                 campanhaModel.AlterarAdmins(idUsuario, idCampanha,idUsuarioLogado,flAdmin);

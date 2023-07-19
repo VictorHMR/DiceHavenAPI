@@ -35,8 +35,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
-                permissaoModel.VerificaPermissaoUsuario(idUsuarioLogado, (int)Enumeration.Permissoes.PMS_Adm_Fichas);
                 Personagem personagemModel = new Personagem(dbDiceHaven);
                 List<PersonagemDTO> listaPersonagem;
                 if (idUsuario == 0 || idUsuario is null)
@@ -63,8 +61,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
-                permissaoModel.VerificaPermissaoUsuario(idUsuarioLogado, (int)Enumeration.Permissoes.PMS_Adm_Fichas);
                 Personagem personagemModel = new Personagem(dbDiceHaven, _configuration);
 
                 novoPersonagem.ID_USUARIO = idUsuarioLogado;
@@ -88,8 +84,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
-                permissaoModel.VerificaPermissaoUsuario(idUsuarioLogado, (int)Enumeration.Permissoes.PMS_Adm_Fichas);
                 Personagem personagemModel = new Personagem(dbDiceHaven, _configuration);
                 personagemModel.EditarPersonagem(novoPersonagem);
 

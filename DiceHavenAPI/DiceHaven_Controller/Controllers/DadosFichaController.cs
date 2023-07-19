@@ -31,7 +31,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
                 DadosFicha dadosFichaModel = new DadosFicha(dbDiceHaven);
 
                 return StatusCode(200, dadosFichaModel.ListarDadosFicha(idCampanha, idPersonagem));
@@ -52,7 +51,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
                 DadosFicha dadosFichaModel = new DadosFicha(dbDiceHaven);
 
                 return StatusCode(200, dadosFichaModel.ObterDadosFicha(idCampoFicha, idPersonagem));
@@ -73,7 +71,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
                 DadosFicha dadosFichaModel = new DadosFicha(dbDiceHaven);
                 dadosFichaModel.GerarFichaPersonagem(idPersonagem, idCampanha);
                 return StatusCode(200, new {Message="Ficha criada com sucesso!"});
@@ -94,7 +91,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
                 DadosFicha dadosFichaModel = new DadosFicha(dbDiceHaven);
                 dadosFichaModel.AtualizarDadosFicha(novosDados);
                 return StatusCode(200, new { Message = "Dado alterado com sucesso!" });

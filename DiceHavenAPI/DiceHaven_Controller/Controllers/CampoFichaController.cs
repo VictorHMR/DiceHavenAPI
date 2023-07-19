@@ -31,7 +31,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
                 CampoFicha campoFichaModel = new CampoFicha(dbDiceHaven);
 
                 return StatusCode(200, campoFichaModel.ListarCamposFicha(idCampanha));
@@ -52,7 +51,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
                 CampoFicha campoFichaModel = new CampoFicha(dbDiceHaven);
 
                 return StatusCode(200, campoFichaModel.ObterCampoFicha(idCampoFicha));
@@ -73,7 +71,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
                 CampoFicha campoFichaModel = new CampoFicha(dbDiceHaven);
                 int idCampoFicha = campoFichaModel.CadastrarCampoFicha(novoCampo);
                 return StatusCode(200, new {Message="Campo Cadastrado com sucesso no modelo de ficha.", Id=idCampoFicha});
@@ -94,7 +91,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
                 CampoFicha campoFichaModel = new CampoFicha(dbDiceHaven);
                 campoFichaModel.EditarCampoFicha(novoCampo);
                 return StatusCode(200, new { Message = "Campo Editado com sucesso no modelo de ficha."});
@@ -115,7 +111,6 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                Permissao permissaoModel = new Permissao(dbDiceHaven);
                 CampoFicha campoFichaModel = new CampoFicha(dbDiceHaven);
                 string tipoAcao = campoFichaModel.DeletarCampoFicha(idCampoFicha) ? "deletado" : "desativado";
                 return StatusCode(200, new { Message = $"Campo {tipoAcao} com sucesso do modelo de ficha." });
