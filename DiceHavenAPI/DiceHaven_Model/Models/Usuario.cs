@@ -126,9 +126,6 @@ namespace DiceHaven_Model.Models
                     dbDiceHaven.SaveChanges();
                     dbDiceHaven.Database.CommitTransaction();
 
-                    Grupo grupoModels = new Grupo(dbDiceHaven);
-                    grupoModels.VincularUsuarioGrupo(novoUsuario.ID_USUARIO, (int)Enumeration.Grupo.Comum);
-
                     return novoUsuario.ID_USUARIO;
                 }
             }
