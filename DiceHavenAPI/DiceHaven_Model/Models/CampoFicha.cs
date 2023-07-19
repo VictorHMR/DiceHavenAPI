@@ -8,10 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using DiceHaven_BD.Models;
+using DiceHaven_Model.Interfaces;
 
 namespace DiceHaven_Model.Models
 {
-    public class CampoFicha
+    public class CampoFicha : ICampoFicha
     {
         public DiceHavenBDContext dbDiceHaven;
 

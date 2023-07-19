@@ -9,10 +9,11 @@ using System.Threading.Tasks;
 using System.Net; 
 using DiceHaven_BD.Models;
 using Microsoft.AspNetCore.Mvc;
+using DiceHaven_Model.Interfaces;
 
 namespace DiceHaven_Model.Models
 {
-    public class DadosFicha
+    public class DadosFicha: IDadosFicha
     {
         public DiceHavenBDContext dbDiceHaven;
 

@@ -1,5 +1,6 @@
 ﻿using DiceHaven_BD.Contexts;
 using DiceHaven_DTO;
+using DiceHaven_Model.Interfaces;
 using DiceHaven_Model.Models;
 using DiceHaven_Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -16,9 +17,11 @@ namespace DiceHaven_Controller.Controllers
     public class DadosFichaController : ControllerBase
     {
         private DiceHavenBDContext dbDiceHaven;
-        public DadosFichaController(DiceHavenBDContext dbDiceHaven)
+        private IDadosFicha _dadosFicha;
+        public DadosFichaController(DiceHavenBDContext dbDiceHaven, IDadosFicha dadosFicha)
         {
             this.dbDiceHaven = dbDiceHaven;
+            this._dadosFicha = dadosFicha;
         }
 
         [ProducesResponseType(typeof(List<DadosFichaDTO>), StatusCodes.Status200OK)]
@@ -31,9 +34,8 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                DadosFicha dadosFichaModel = new DadosFicha(dbDiceHaven);
 
-                return StatusCode(200, dadosFichaModel.ListarDadosFicha(idCampanha, idPersonagem));
+                return StatusCode(200, _dadosFicha.ListarDadosFicha(idCampanha, idPersonagem));
             }
             catch (HttpDiceExcept ex)
             {
@@ -51,9 +53,8 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                DadosFicha dadosFichaModel = new DadosFicha(dbDiceHaven);
 
-                return StatusCode(200, dadosFichaModel.ObterDadosFicha(idCampoFicha, idPersonagem));
+                return StatusCode(200, _dadosFicha.ObterDadosFicha(idCampoFicha, idPersonagem));
             }
             catch (HttpDiceExcept ex)
             {
@@ -71,8 +72,8 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                DadosFicha dadosFichaModel = new DadosFicha(dbDiceHaven);
-                dadosFichaModel.GerarFichaPersonagem(idPersonagem, idCampanha);
+
+                _dadosFicha.GerarFichaPersonagem(idPersonagem, idCampanha);
                 return StatusCode(200, new {Message="Ficha criada com sucesso!"});
             }
             catch (HttpDiceExcept ex)
@@ -91,8 +92,8 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                DadosFicha dadosFichaModel = new DadosFicha(dbDiceHaven);
-                dadosFichaModel.AtualizarDadosFicha(novosDados);
+
+                _dadosFicha.AtualizarDadosFicha(novosDados);
                 return StatusCode(200, new { Message = "Dado alterado com sucesso!" });
             }
             catch (HttpDiceExcept ex)

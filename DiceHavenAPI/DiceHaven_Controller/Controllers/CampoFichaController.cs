@@ -1,5 +1,6 @@
 ﻿using DiceHaven_BD.Contexts;
 using DiceHaven_DTO;
+using DiceHaven_Model.Interfaces;
 using DiceHaven_Model.Models;
 using DiceHaven_Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -16,9 +17,11 @@ namespace DiceHaven_Controller.Controllers
     public class CampoFichaController : ControllerBase
     {
         private DiceHavenBDContext dbDiceHaven;
-        public CampoFichaController(DiceHavenBDContext dbDiceHaven)
+        private ICampoFicha _campoFicha;
+        public CampoFichaController(DiceHavenBDContext dbDiceHaven, ICampoFicha campoFicha)
         {
             this.dbDiceHaven = dbDiceHaven;
+            this._campoFicha = campoFicha;
         }
 
         [ProducesResponseType(typeof(List<CampoFichaDTO>), StatusCodes.Status200OK)]
@@ -31,9 +34,8 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                CampoFicha campoFichaModel = new CampoFicha(dbDiceHaven);
 
-                return StatusCode(200, campoFichaModel.ListarCamposFicha(idCampanha));
+                return StatusCode(200, _campoFicha.ListarCamposFicha(idCampanha));
             }
             catch (HttpDiceExcept ex)
             {
@@ -51,9 +53,8 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                CampoFicha campoFichaModel = new CampoFicha(dbDiceHaven);
 
-                return StatusCode(200, campoFichaModel.ObterCampoFicha(idCampoFicha));
+                return StatusCode(200, _campoFicha.ObterCampoFicha(idCampoFicha));
             }
             catch (HttpDiceExcept ex)
             {
@@ -64,15 +65,15 @@ namespace DiceHaven_Controller.Controllers
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Cadastra um campo no modelo de ficha", Description = "Cadastra um campo no modelo de ficha")]
         [HttpPost("CadastrarCampoFicha")]
-        public ActionResult CadastrarCampoFicha(CampoFichaDTO novoCampo)
+        public ActionResult CadastrarCampoFicha([FromForm]CampoFichaDTO novoCampo)
         {
             try
             {
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                CampoFicha campoFichaModel = new CampoFicha(dbDiceHaven);
-                int idCampoFicha = campoFichaModel.CadastrarCampoFicha(novoCampo);
+
+                int idCampoFicha = _campoFicha.CadastrarCampoFicha(novoCampo);
                 return StatusCode(200, new {Message="Campo Cadastrado com sucesso no modelo de ficha.", Id=idCampoFicha});
             }
             catch (HttpDiceExcept ex)
@@ -84,15 +85,15 @@ namespace DiceHaven_Controller.Controllers
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Edita um campo no modelo de ficha", Description = "Edita um campo no modelo de ficha")]
         [HttpPut("EditarCampoFicha")]
-        public ActionResult EditarCampoFicha(CampoFichaDTO novoCampo)
+        public ActionResult EditarCampoFicha([FromForm] CampoFichaDTO novoCampo)
         {
             try
             {
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                CampoFicha campoFichaModel = new CampoFicha(dbDiceHaven);
-                campoFichaModel.EditarCampoFicha(novoCampo);
+
+                _campoFicha.EditarCampoFicha(novoCampo);
                 return StatusCode(200, new { Message = "Campo Editado com sucesso no modelo de ficha."});
             }
             catch (HttpDiceExcept ex)
@@ -111,8 +112,8 @@ namespace DiceHaven_Controller.Controllers
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                CampoFicha campoFichaModel = new CampoFicha(dbDiceHaven);
-                string tipoAcao = campoFichaModel.DeletarCampoFicha(idCampoFicha) ? "deletado" : "desativado";
+
+                string tipoAcao = _campoFicha.DeletarCampoFicha(idCampoFicha) ? "deletado" : "desativado";
                 return StatusCode(200, new { Message = $"Campo {tipoAcao} com sucesso do modelo de ficha." });
             }
             catch (HttpDiceExcept ex)

@@ -1,6 +1,7 @@
 ﻿using DiceHaven_BD.Contexts;
 using DiceHaven_BD.Models;
 using DiceHaven_DTO;
+using DiceHaven_Model.Interfaces;
 using DiceHaven_Utils;
 using DiceHaven_Utils.API;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +16,7 @@ using static DiceHaven_Utils.Enumeration;
 
 namespace DiceHaven_Model.Models
 {
-    public class Campanha
+    public class Campanha: ICampanha
     {
         public DiceHavenBDContext dbDiceHaven;
         private readonly IConfiguration _configuration;

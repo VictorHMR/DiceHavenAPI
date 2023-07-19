@@ -19,7 +19,7 @@ using Pomelo.EntityFrameworkCore.MySql;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using DiceHaven_Model.Models;
-
+using DiceHaven_Model.Interfaces;
 
 namespace DiceHaven_API
 {
@@ -103,6 +103,12 @@ namespace DiceHaven_API
             services.AddRouting(options => options.LowercaseUrls = true);
 
             #region Injeção de Dependência 
+
+            services.AddScoped<ICampanha, Campanha>();
+            services.AddScoped<ICampoFicha, CampoFicha>();
+            services.AddScoped<IDadosFicha, DadosFicha>();
+            services.AddScoped<IPersonagem, Personagem>();
+            services.AddScoped<IUsuario, Usuario>();
 
 
             #endregion

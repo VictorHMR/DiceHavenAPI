@@ -12,10 +12,11 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using DiceHaven_DTO;
+using DiceHaven_Model.Interfaces;
 
 namespace DiceHaven_Model.Models
 {
-    public class Usuario
+    public class Usuario : IUsuario
     {
         public DiceHavenBDContext dbDiceHaven;
         private readonly IConfiguration _configuration;
