@@ -106,6 +106,8 @@ namespace DiceHaven_API
 
             services.AddScoped<ICampanha, Campanha>();
             services.AddScoped<ICampoFicha, CampoFicha>();
+            services.AddScoped<IChat, Chat>();
+            services.AddScoped<IContato, Contato>();
             services.AddScoped<IDadosFicha, DadosFicha>();
             services.AddScoped<IPersonagem, Personagem>();
             services.AddScoped<IUsuario, Usuario>();
