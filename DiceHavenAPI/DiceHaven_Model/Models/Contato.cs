@@ -25,10 +25,12 @@ namespace DiceHaven_Model.Models
         {
             try
             {
+                dbDiceHaven.Database.BeginTransaction();
+                if(idUsuario == idUsuarioLogado)
+                    throw new HttpDiceExcept("Você não pode se adicionar a lista de contatos!", HttpStatusCode.Forbidden);
+
                 if (!dbDiceHaven.tb_usuario_contatos.Where(x => x.ID_USUARIO == idUsuarioLogado && x.ID_CONTATO == idUsuario).Any())
                 {
-                    dbDiceHaven.Database.BeginTransaction();
-
                     tb_usuario_contato novoContatoBD = new tb_usuario_contato();
                     novoContatoBD.ID_USUARIO = idUsuarioLogado;
                     novoContatoBD.ID_CONTATO = idUsuario;
@@ -37,12 +39,12 @@ namespace DiceHaven_Model.Models
 
                     dbDiceHaven.SaveChanges();
                     dbDiceHaven.Database.CommitTransaction();
-
                 }
                 else
                     throw new HttpDiceExcept("Usuário já existe na sua lista de contatos", HttpStatusCode.Forbidden);
+
             }
-            catch(HttpDiceExcept ex)
+            catch (HttpDiceExcept ex)
             {
                 dbDiceHaven.Database.RollbackTransaction();
                 throw ex;
@@ -70,12 +72,10 @@ namespace DiceHaven_Model.Models
             }
             catch (HttpDiceExcept ex)
             {
-                dbDiceHaven.Database.RollbackTransaction();
                 throw ex;
             }
             catch (Exception ex)
             {
-                dbDiceHaven.Database.RollbackTransaction();
                 throw new HttpDiceExcept($"Ocorreu um erro ao deletar contato. Message: {ex.Message}", HttpStatusCode.InternalServerError);
 
             }
@@ -85,14 +85,24 @@ namespace DiceHaven_Model.Models
         {
             try
             {
-                IUsuario usuario = new Usuario(dbDiceHaven);
                 List<ContatoDTO> lstContatos = (from uc in dbDiceHaven.tb_usuario_contatos
+                                                join u in dbDiceHaven.tb_usuarios on uc.ID_USUARIO equals u.ID_USUARIO
                                                 where uc.ID_USUARIO == idUsuarioLogado
                                                 select new ContatoDTO
                                                 {
                                                     ID_USUARIO_CONTATO = uc.ID_USUARIO_CONTATO,
                                                     ID_USUARIO = uc.ID_USUARIO,
-                                                    CONTATO = usuario.obterUsuario(uc.ID_CONTATO),
+                                                    CONTATO = new UsuarioDTO
+                                                    {
+                                                        ID_USUARIO = u.ID_USUARIO,
+                                                        DS_NOME = u.DS_NOME,
+                                                        DT_NASCIMENTO = u.DT_NASCIMENTO,
+                                                        DS_LOGIN = u.DS_LOGIN,
+                                                        DS_SENHA = u.DS_SENHA,
+                                                        DS_EMAIL = u.DS_EMAIL,
+                                                        FL_ATIVO = u.FL_ATIVO,
+                                                        DT_ULTIMO_ACESSO = u.DT_ULTIMO_ACESSO
+                                                    },
                                                     FL_MUTADO = uc.FL_MUTADO
                                                 }).ToList();
                 return lstContatos;

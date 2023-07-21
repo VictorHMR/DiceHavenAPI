@@ -103,7 +103,7 @@ namespace DiceHaven_Controller.Controllers
                 int idUsuarioLogado = int.Parse(claim[0].Value);
                 _contato.MuteDesmuteContato(idUsuarioContato,flMute);
 
-                return StatusCode(200, new { Message = "Contato Removido com sucesso!" });
+                return StatusCode(200, new { Message = "Contato" + (flMute ? "mutado": "desmutado") +  "com sucesso!" });
 
             }
             catch (HttpDiceExcept ex)
