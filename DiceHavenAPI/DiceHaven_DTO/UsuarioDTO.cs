@@ -16,6 +16,7 @@ namespace DiceHaven_DTO
         public string DS_EMAIL { get; set; }
         public bool FL_ATIVO { get; set; }
         public DateTime? DT_ULTIMO_ACESSO { get; set; }
+        public string DS_FOTO { get; set; } 
 
     }
 }
