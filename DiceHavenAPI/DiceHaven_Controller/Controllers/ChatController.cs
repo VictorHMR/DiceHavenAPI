@@ -25,7 +25,7 @@ namespace DiceHaven_Controller.Controllers
             this._chat = chat;
         }
 
-        [ProducesResponseType(typeof(List<UsuarioDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<ChatUsuarioDTO>), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Listar chats", Description = "Lista todos os usuários que possuem chat com o usuário logado")]
         [HttpGet("ListarChatsUsuario")]
         public ActionResult ListarChatsUsuario()

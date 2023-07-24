@@ -9,7 +9,7 @@ namespace DiceHaven_Model.Interfaces
 {
     public interface IChat
     {
-        List<UsuarioDTO> ListarChatsUsuario(int idUsuarioLogado);
+        List<ChatUsuarioDTO> ListarChatsUsuario(int idUsuarioLogado);
         void IniciarChat(int idUsuarioLogado, int idUsuario);
         void RemoverChat(int idUsuarioLogado, int idChat);
         List<MensagemDTO> ListarMensagensChat(int idChat, int idUsuarioLogado);

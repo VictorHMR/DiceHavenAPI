@@ -212,6 +212,7 @@ public partial class DiceHavenBDContext : DbContext
             entity.Property(e => e.DS_EMAIL)
                 .IsRequired()
                 .HasMaxLength(100);
+            entity.Property(e => e.DS_FOTO).HasColumnType("text");
             entity.Property(e => e.DS_LOGIN)
                 .IsRequired()
                 .HasMaxLength(30);

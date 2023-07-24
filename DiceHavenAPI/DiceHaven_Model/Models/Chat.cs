@@ -22,22 +22,33 @@ namespace DiceHaven_Model.Models
         }
 
 
-        public List<UsuarioDTO> ListarChatsUsuario(int idUsuarioLogado)
+        public List<ChatUsuarioDTO> ListarChatsUsuario(int idUsuarioLogado)
         {
             try
             {
+                List<ChatUsuarioDTO> lstChatUsuario = new List<ChatUsuarioDTO>();
+
                 List<tb_chat> lstChats = dbDiceHaven.tb_chats.Where(x => (x.ID_USUARIO_1 == idUsuarioLogado && x.FL_ATIVO_USR_1) || (x.ID_USUARIO_2 == idUsuarioLogado && x.FL_ATIVO_USR_2)).ToList();
-                List<UsuarioDTO> lstUsuariosChat = new List<UsuarioDTO>();
                 IUsuario _usuario = new Usuario(dbDiceHaven);
                 foreach(tb_chat chat in lstChats)
                 {
+                    UsuarioDTO usuario;
+                    MensagemDTO ultimaMensagem = ListarMensagensChat(chat.ID_CHAT, idUsuarioLogado).OrderByDescending(x => x.DT_DATA_ENVIO).FirstOrDefault();;
                     if (chat.ID_USUARIO_1 == idUsuarioLogado)
-                        lstUsuariosChat.Add(_usuario.obterUsuario(chat.ID_USUARIO_2));
+                    {
+                        usuario = _usuario.obterUsuario(chat.ID_USUARIO_2);
+                    }
                     else
-                        lstUsuariosChat.Add(_usuario.obterUsuario(chat.ID_USUARIO_1));
+                        usuario = _usuario.obterUsuario(chat.ID_USUARIO_1);
+                    lstChatUsuario.Add(new ChatUsuarioDTO
+                    {
+                        IdChat = chat.ID_CHAT,
+                        Usuario = usuario,
+                        UltimaMensagem = ultimaMensagem
+                    });
                 }
 
-                return lstUsuariosChat;
+                return lstChatUsuario;
 
             }
             catch (HttpDiceExcept ex)

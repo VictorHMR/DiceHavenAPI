@@ -13,6 +13,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using DiceHaven_DTO;
 using DiceHaven_Model.Interfaces;
+using DiceHaven_Utils.API;
 
 namespace DiceHaven_Model.Models
 {
@@ -99,6 +100,7 @@ namespace DiceHaven_Model.Models
         {
             try
             {
+                Imgur imgurModels = new Imgur(_configuration);
 
                 if (!loginValido(request.DS_LOGIN))
                     throw new HttpDiceExcept("Usuário já existe", HttpStatusCode.Conflict);
@@ -117,6 +119,7 @@ namespace DiceHaven_Model.Models
                     novoUsuario.DS_EMAIL = request.DS_EMAIL?.ToLower();
                     novoUsuario.FL_ATIVO = request.FL_ATIVO;
                     novoUsuario.DT_ULTIMO_ACESSO = DateTime.Now;
+                    novoUsuario.DS_FOTO = imgurModels.uploadImageBase64(request.DS_FOTO);
                     dbDiceHaven.Add(novoUsuario);
                     dbDiceHaven.SaveChanges();
 
@@ -146,6 +149,8 @@ namespace DiceHaven_Model.Models
         {
             try
             {
+                Imgur imgurModels = new Imgur(_configuration);
+
                 if (!loginValido(request.DS_LOGIN))
                     throw new HttpDiceExcept("Usuário já existe", HttpStatusCode.Conflict);
 
@@ -158,6 +163,7 @@ namespace DiceHaven_Model.Models
                     tb_usuario Usuario = dbDiceHaven.tb_usuarios.Find(request.ID_USUARIO);
                     Usuario.DS_LOGIN = request.DS_LOGIN ?? Usuario.DS_LOGIN;
                     Usuario.DS_EMAIL = request.DS_EMAIL?.ToLower() ?? Usuario.DS_EMAIL;
+                    Usuario.DS_FOTO = imgurModels.uploadImageBase64(request.DS_FOTO) ?? Usuario.DS_FOTO;
                     dbDiceHaven.SaveChanges();
                     dbDiceHaven.Database.CommitTransaction();
                 }
@@ -186,7 +192,8 @@ namespace DiceHaven_Model.Models
                                       DS_SENHA = u.DS_SENHA,
                                       DS_EMAIL = u.DS_EMAIL,
                                       FL_ATIVO = u.FL_ATIVO,
-                                      DT_ULTIMO_ACESSO = u.DT_ULTIMO_ACESSO
+                                      DT_ULTIMO_ACESSO = u.DT_ULTIMO_ACESSO,
+                                      DS_FOTO = u.DS_FOTO
                                   }).FirstOrDefault();
             return usuario;
         }
