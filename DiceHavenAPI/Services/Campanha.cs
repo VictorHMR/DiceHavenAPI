@@ -3,7 +3,6 @@ using DiceHavenAPI.Models;
 using DiceHavenAPI.DTOs;
 using DiceHavenAPI.Interfaces;
 using DiceHavenAPI.Utils;
-using DiceHavenAPI.Utils.API;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -67,6 +66,8 @@ namespace DiceHavenAPI.Services
         {
             try
             {
+                ImageService imageService = new ImageService(_configuration);
+
                 List<CampanhaDTO> campanhas = (from c in dbDiceHaven.tb_campanhas
                                                join uc in dbDiceHaven.tb_usuario_campanhas on c.ID_CAMPANHA equals uc.ID_CAMPANHA
                                                where (idUsuario == 0 || uc.ID_USUARIO == idUsuario)
@@ -78,7 +79,7 @@ namespace DiceHavenAPI.Services
                                                     DT_CRIACAO = c.DT_CRIACAO,
                                                     FL_ATIVO = c.FL_ATIVO,
                                                     FL_PUBLICA = c.FL_PUBLICA,
-                                                    DS_FOTO = c.DS_FOTO,
+                                                    DS_FOTO = imageService.GetImageAsBase64(c.DS_FOTO),
                                                     ID_USUARIO_CRIADOR = c.ID_USUARIO_CRIADOR,
                                                     ID_MESTRE_CAMPANHA = c.ID_MESTRE_CAMPANHA
                                                 }).ToList();
@@ -100,14 +101,14 @@ namespace DiceHavenAPI.Services
         {
             try
             {
-                Imgur imgurModels = new Imgur(_configuration);
+                ImageService imageService = new ImageService(_configuration);
                 tb_campanha novaCampanhaBD = new tb_campanha();
                 novaCampanhaBD.DS_NOME_CAMPANHA = novaCampanha.DS_NOME_CAMPANHA;
                 novaCampanhaBD.DS_LORE = novaCampanha.DS_LORE;
                 novaCampanhaBD.DT_CRIACAO = DateTime.Now;
                 novaCampanhaBD.FL_ATIVO = true;
                 novaCampanhaBD.FL_PUBLICA = novaCampanha.FL_PUBLICA;
-                novaCampanhaBD.DS_FOTO = imgurModels.uploadImageBase64(novaCampanha.DS_FOTO);
+                novaCampanhaBD.DS_FOTO = imageService.SaveImageFromBase64(novaCampanha.DS_FOTO);
                 novaCampanhaBD.ID_USUARIO_CRIADOR = idUsuarioLogado;
                 novaCampanhaBD.ID_MESTRE_CAMPANHA = novaCampanha?.ID_MESTRE_CAMPANHA ?? idUsuarioLogado;
 
@@ -133,7 +134,7 @@ namespace DiceHavenAPI.Services
         {
             try
             {
-                Imgur imgurModels = new Imgur(_configuration);
+                ImageService imageService = new ImageService(_configuration);
 
                 tb_campanha CampanhaBD = dbDiceHaven.tb_campanhas.Find(campanhaAtualizada.ID_CAMPANHA);
                 if (CampanhaBD is null)
@@ -142,7 +143,7 @@ namespace DiceHavenAPI.Services
                 CampanhaBD.DS_LORE = campanhaAtualizada.DS_LORE;
                 CampanhaBD.FL_ATIVO = campanhaAtualizada.FL_ATIVO ?? true;
                 CampanhaBD.FL_PUBLICA = campanhaAtualizada.FL_PUBLICA;
-                CampanhaBD.DS_FOTO = campanhaAtualizada.DS_FOTO is null ? imgurModels.uploadImageBase64(campanhaAtualizada.DS_FOTO) : CampanhaBD.DS_FOTO;
+                CampanhaBD.DS_FOTO = campanhaAtualizada.DS_FOTO is null ? imageService.SaveImageFromBase64(campanhaAtualizada.DS_FOTO) : CampanhaBD.DS_FOTO;
                 CampanhaBD.ID_MESTRE_CAMPANHA = campanhaAtualizada?.ID_MESTRE_CAMPANHA ?? CampanhaBD.ID_MESTRE_CAMPANHA;
                 dbDiceHaven.SaveChanges();
 

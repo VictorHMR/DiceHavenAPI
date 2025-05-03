@@ -9,8 +9,9 @@ namespace DiceHavenAPI.DTOs
     public class ContatoDTO
     {
         public int ID_USUARIO_CONTATO { get; set; }
-        public int ID_USUARIO { get; set; }
-        public UsuarioDTO CONTATO { get; set; }
+        public int ID_CONTATO { get; set; }
+        public string DS_NOME_CONTATO { get; set; }
+        public string DS_FOTO_CONTATO { get; set; }
         public bool FL_MUTADO { get; set; }
 
     }

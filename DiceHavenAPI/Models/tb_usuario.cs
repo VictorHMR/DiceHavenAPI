@@ -17,7 +17,7 @@ public partial class tb_usuario
 
     public string DS_EMAIL { get; set; }
 
-    public bool FL_ATIVO { get; set; }
+    public bool FL_ATIVO { get; set; } = true;
 
     public DateTime? DT_ULTIMO_ACESSO { get; set; }
 

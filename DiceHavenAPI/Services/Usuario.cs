@@ -13,7 +13,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using DiceHavenAPI.DTOs;
 using DiceHavenAPI.Interfaces;
-using DiceHavenAPI.Utils.API;
+using DiceHaven_API.DTOs;
 
 namespace DiceHavenAPI.Services
 {
@@ -62,12 +62,12 @@ namespace DiceHavenAPI.Services
 
         }
 
-        public UsuarioDTO Login(string login, string password)
+        public UsuarioDTO Login(LoginDTO login)
         {
             try
             {
                 UsuarioDTO usuario = (from u in dbDiceHaven.tb_usuarios
-                                      where (u.DS_LOGIN == login || u.DS_EMAIL == login) && u.DS_SENHA == Conversor.HashPassword(password) && u.FL_ATIVO == true
+                                      where (u.DS_LOGIN == login.Login || u.DS_EMAIL == login.Login) && u.DS_SENHA == Conversor.HashPassword(login.Password) && u.FL_ATIVO == true
                                       select new UsuarioDTO
                                       {
                                           ID_USUARIO = u.ID_USUARIO,
@@ -100,7 +100,7 @@ namespace DiceHavenAPI.Services
         {
             try
             {
-                Imgur imgurModels = new Imgur(_configuration);
+                ImageService imageService = new ImageService(_configuration);
 
                 if (!loginValido(request.DS_LOGIN))
                     throw new HttpDiceExcept("Usuário já existe", HttpStatusCode.Conflict);
@@ -119,7 +119,7 @@ namespace DiceHavenAPI.Services
                     novoUsuario.DS_EMAIL = request.DS_EMAIL?.ToLower();
                     novoUsuario.FL_ATIVO = request.FL_ATIVO;
                     novoUsuario.DT_ULTIMO_ACESSO = DateTime.Now;
-                    novoUsuario.DS_FOTO = string.IsNullOrEmpty(request.DS_FOTO) ? null: imgurModels.uploadImageBase64(request.DS_FOTO);
+                    novoUsuario.DS_FOTO = string.IsNullOrEmpty(request.DS_FOTO) ? null: imageService.SaveImageFromBase64(request.DS_FOTO);
                     dbDiceHaven.Add(novoUsuario);
                     dbDiceHaven.SaveChanges();
 
@@ -149,7 +149,7 @@ namespace DiceHavenAPI.Services
         {
             try
             {
-                Imgur imgurModels = new Imgur(_configuration);
+                ImageService imageService = new ImageService(_configuration);
 
                 if (!loginValido(request.DS_LOGIN))
                     throw new HttpDiceExcept("Usuário já existe", HttpStatusCode.Conflict);
@@ -163,7 +163,8 @@ namespace DiceHavenAPI.Services
                     tb_usuario Usuario = dbDiceHaven.tb_usuarios.Find(request.ID_USUARIO);
                     Usuario.DS_LOGIN = request.DS_LOGIN ?? Usuario.DS_LOGIN;
                     Usuario.DS_EMAIL = request.DS_EMAIL?.ToLower() ?? Usuario.DS_EMAIL;
-                    Usuario.DS_FOTO = imgurModels.uploadImageBase64(request.DS_FOTO) ?? Usuario.DS_FOTO;
+                    Usuario.DS_FOTO = !string.IsNullOrEmpty(request.DS_FOTO) ? imageService.SaveImageFromBase64(request.DS_FOTO) : Usuario.DS_FOTO;
+                    Usuario.FL_ATIVO = true;
                     dbDiceHaven.SaveChanges();
                     dbDiceHaven.Database.CommitTransaction();
                 }
@@ -181,6 +182,8 @@ namespace DiceHavenAPI.Services
 
         public UsuarioDTO obterUsuario(int idUsuario)
         {
+            ImageService imageService = new ImageService(_configuration);
+
             UsuarioDTO usuario = (from u in dbDiceHaven.tb_usuarios
                                   where u.ID_USUARIO == idUsuario
                                   select new UsuarioDTO
@@ -193,7 +196,7 @@ namespace DiceHavenAPI.Services
                                       DS_EMAIL = u.DS_EMAIL,
                                       FL_ATIVO = u.FL_ATIVO,
                                       DT_ULTIMO_ACESSO = u.DT_ULTIMO_ACESSO,
-                                      DS_FOTO = u.DS_FOTO
+                                      DS_FOTO = string.IsNullOrEmpty(u.DS_FOTO) ? null : imageService.GetImageAsBase64(u.DS_FOTO)
                                   }).FirstOrDefault();
             return usuario;
         }

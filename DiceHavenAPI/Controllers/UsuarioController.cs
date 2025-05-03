@@ -1,3 +1,4 @@
+using DiceHaven_API.DTOs;
 using DiceHavenAPI.Contexts;
 using DiceHavenAPI.DTOs;
 using DiceHavenAPI.Interfaces;
@@ -29,12 +30,12 @@ namespace DiceHavenAPI.Controllers
 
         [ProducesResponseType(typeof(AuthTokenDTO), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Faz login no sistema", Description = "Verifica as credenciais, se estiver tudo certo, retorna um Bearer token e sua duração.")]
-        [HttpGet("Login")]
-        public ActionResult Login(string login, string senha)
+        [HttpPost("Login")]
+        public ActionResult Login(LoginDTO login)
         {
             try
             {
-                UsuarioDTO usuario = _usuario.Login(login, senha);
+                UsuarioDTO usuario = _usuario.Login(login);
 
                 return StatusCode(200, _usuario.GerarToken(usuario));
             }
@@ -93,6 +94,10 @@ namespace DiceHavenAPI.Controllers
         {
             try
             {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                List<Claim> claim = identity.Claims.ToList();
+                Usuario.ID_USUARIO = int.Parse(claim[0].Value);
+
                 _usuario.alterarDadosUsuario(Usuario);
                 return StatusCode(200, new { Message = "Usuário atualizado com sucesso!" });
             }

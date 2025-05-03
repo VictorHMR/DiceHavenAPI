@@ -9,16 +9,20 @@ using System.Threading.Tasks;
 using System.Net;
 using DiceHavenAPI.Models;
 using DiceHavenAPI.Interfaces;
+using Microsoft.Extensions.Configuration;
 
 namespace DiceHavenAPI.Services
 {
     public class Contato : IContato
     {
         public DiceHavenBDContext dbDiceHaven;
+        private readonly IConfiguration _configuration;
 
-        public Contato(DiceHavenBDContext dbDiceHaven)
+
+        public Contato(DiceHavenBDContext dbDiceHaven, IConfiguration configuration)
         {
             this.dbDiceHaven = dbDiceHaven;
+            _configuration = configuration;
         }
 
         public void AdicionarContato(int idUsuario, int idUsuarioLogado)
@@ -85,24 +89,17 @@ namespace DiceHavenAPI.Services
         {
             try
             {
+                ImageService imageService = new ImageService(_configuration);
+
                 List<ContatoDTO> lstContatos = (from uc in dbDiceHaven.tb_usuario_contatos
-                                                join u in dbDiceHaven.tb_usuarios on uc.ID_USUARIO equals u.ID_USUARIO
+                                                join u in dbDiceHaven.tb_usuarios on uc.ID_CONTATO equals u.ID_USUARIO
                                                 where uc.ID_USUARIO == idUsuarioLogado
                                                 select new ContatoDTO
                                                 {
                                                     ID_USUARIO_CONTATO = uc.ID_USUARIO_CONTATO,
-                                                    ID_USUARIO = uc.ID_USUARIO,
-                                                    CONTATO = new UsuarioDTO
-                                                    {
-                                                        ID_USUARIO = u.ID_USUARIO,
-                                                        DS_NOME = u.DS_NOME,
-                                                        DT_NASCIMENTO = u.DT_NASCIMENTO,
-                                                        DS_LOGIN = u.DS_LOGIN,
-                                                        DS_SENHA = u.DS_SENHA,
-                                                        DS_EMAIL = u.DS_EMAIL,
-                                                        FL_ATIVO = u.FL_ATIVO,
-                                                        DT_ULTIMO_ACESSO = u.DT_ULTIMO_ACESSO
-                                                    },
+                                                    ID_CONTATO = uc.ID_CONTATO,
+                                                    DS_NOME_CONTATO = u.DS_NOME,
+                                                    DS_FOTO_CONTATO = imageService.GetImageAsBase64(u.DS_FOTO),
                                                     FL_MUTADO = uc.FL_MUTADO
                                                 }).ToList();
                 return lstContatos;
