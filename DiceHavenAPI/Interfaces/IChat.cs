@@ -1,0 +1,20 @@
+﻿using DiceHavenAPI.DTOs;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DiceHavenAPI.Interfaces
+{
+    public interface IChat
+    {
+        List<ChatUsuarioDTO> ListarChatsUsuario(int idUsuarioLogado);
+        void IniciarChat(int idUsuarioLogado, int idUsuario);
+        void RemoverChat(int idUsuarioLogado, int idChat);
+        List<MensagemDTO> ListarMensagensChat(int idChat, int idUsuarioLogado);
+        void EnviarMensagem(MensagemDTO novaMensagem, int idUsuarioLogado);
+        void EditarMensagem(MensagemDTO mensagemEditada, int idUsuarioLogado);
+        void DesativarMensagem(int idChatMensagem, int idUsuarioLogado);
+    }
+}

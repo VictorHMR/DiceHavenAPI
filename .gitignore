@@ -366,3 +366,5 @@ Migracao.txt
 
 DiceHaven/
 DiceHavenAPP/
+DiceHaven.db
+DiceHavenAPI/Migration.bat
