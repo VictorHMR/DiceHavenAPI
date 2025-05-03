@@ -15,7 +15,6 @@ using System.Text;
 using DiceHaven_BD;
 using DiceHaven_BD.Contexts;
 using Microsoft.EntityFrameworkCore;
-using Pomelo.EntityFrameworkCore.MySql;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using DiceHaven_Model.Models;
@@ -29,6 +28,12 @@ namespace DiceHaven_API
 
         private readonly IConfiguration _configuration;
 
+        static Startup()
+        {
+            SQLitePCL.Batteries.Init();
+        }
+
+
         public Startup(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -36,8 +41,9 @@ namespace DiceHaven_API
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddDbContext<DiceHavenBDContext>(options => 
-                options.UseMySql(_configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new Version(8, 0, 28))));
+            services.AddDbContext<DiceHavenBDContext>(options =>
+                options.UseSqlite(_configuration.GetConnectionString("DefaultConnection")));
+
 
             var key = Encoding.ASCII.GetBytes(_configuration["JWT:key"]); 
             services.AddAuthentication(auth =>

@@ -119,7 +119,7 @@ namespace DiceHaven_Model.Models
                     novoUsuario.DS_EMAIL = request.DS_EMAIL?.ToLower();
                     novoUsuario.FL_ATIVO = request.FL_ATIVO;
                     novoUsuario.DT_ULTIMO_ACESSO = DateTime.Now;
-                    novoUsuario.DS_FOTO = imgurModels.uploadImageBase64(request.DS_FOTO);
+                    novoUsuario.DS_FOTO = string.IsNullOrEmpty(request.DS_FOTO) ? null: imgurModels.uploadImageBase64(request.DS_FOTO);
                     dbDiceHaven.Add(novoUsuario);
                     dbDiceHaven.SaveChanges();
 
