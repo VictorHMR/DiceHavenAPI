@@ -11,9 +11,9 @@ namespace DiceHavenAPI.Utils
 
         public enum TipoCampoFicha
         {
-            texto = 0,
+            text = 0,
             textarea = 1,
-            numero = 2,
+            number = 2,
             flag = 3
         }
     }

@@ -67,32 +67,18 @@ namespace DiceHaven_API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("DS_DESCRICAO")
-                        .HasColumnType("text");
-
-                    b.Property<string>("DS_FORMULA_MODIFICADOR")
-                        .HasMaxLength(50)
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("DS_NOME_CAMPO")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("DS_REFERENCIA")
-                        .HasMaxLength(30)
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("DS_VALOR_PADRAO")
                         .HasColumnType("text");
-
-                    b.Property<bool>("FL_ATIVO")
-                        .HasColumnType("INTEGER");
 
                     b.Property<bool?>("FL_BLOQUEADO")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("FL_TEM_MODIFICADOR")
+                    b.Property<bool>("FL_MODIFICADOR")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool?>("FL_VISIVEL")
@@ -230,18 +216,8 @@ namespace DiceHaven_API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("DS_BACKSTORY")
-                        .HasColumnType("text");
-
-                    b.Property<string>("DS_CAMPO_LIVRE")
-                        .HasColumnType("text");
-
                     b.Property<string>("DS_FOTO")
                         .HasColumnType("text");
-
-                    b.Property<string>("DS_GENERO")
-                        .HasMaxLength(20)
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("DS_NOME")
                         .IsRequired()
@@ -249,9 +225,6 @@ namespace DiceHaven_API.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("ID_USUARIO")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("NR_IDADE")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("ID_PERSONAGEM")

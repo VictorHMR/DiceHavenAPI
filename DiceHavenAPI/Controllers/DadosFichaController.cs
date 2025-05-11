@@ -16,11 +16,9 @@ namespace DiceHavenAPI.Controllers
     [ApiController]
     public class DadosFichaController : ControllerBase
     {
-        private DiceHavenBDContext dbDiceHaven;
         private IDadosFicha _dadosFicha;
-        public DadosFichaController(DiceHavenBDContext dbDiceHaven, IDadosFicha dadosFicha)
+        public DadosFichaController(IDadosFicha dadosFicha)
         {
-            this.dbDiceHaven = dbDiceHaven;
             this._dadosFicha = dadosFicha;
         }
 

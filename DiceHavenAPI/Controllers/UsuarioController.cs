@@ -1,4 +1,4 @@
-using DiceHaven_API.DTOs;
+using DiceHaven_API.DTOs.Response;
 using DiceHavenAPI.Contexts;
 using DiceHavenAPI.DTOs;
 using DiceHavenAPI.Interfaces;
@@ -17,14 +17,10 @@ namespace DiceHavenAPI.Controllers
     [Route("api/v1/[controller]")]
     public class UsuarioController : ControllerBase
     {
-        private DiceHavenBDContext dbDiceHaven;
-        private readonly IConfiguration _configuration;
         private IUsuario _usuario;
 
-        public UsuarioController(DiceHavenBDContext dbDiceHaven, IConfiguration config, IUsuario usuario)
+        public UsuarioController(IUsuario usuario)
         {
-            this.dbDiceHaven = dbDiceHaven;
-            this._configuration = config;
             this._usuario = usuario;
         }
 
@@ -67,7 +63,7 @@ namespace DiceHavenAPI.Controllers
         [SwaggerOperation(Summary = "Busca um usuario", Description = "Busca um usuario pelo ID_USUARIO.")]
         [Authorize]
         [HttpGet("obterUsuario")]
-        public ActionResult obterUsuario(int idUsuario)
+        public ActionResult obterUsuario(int? idUsuario)
         {
             try
             {
@@ -75,8 +71,8 @@ namespace DiceHavenAPI.Controllers
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
 
-                if(idUsuario != 0)
-                    return StatusCode(200, _usuario.obterUsuario(idUsuario));
+                if(idUsuario is not null)
+                    return StatusCode(200, _usuario.obterUsuario((int)idUsuario));
                 else
                     return StatusCode(200, _usuario.obterUsuario(idUsuarioLogado));
             }

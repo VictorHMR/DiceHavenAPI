@@ -1,4 +1,5 @@
-﻿using DiceHavenAPI.DTOs;
+﻿using DiceHaven_API.DTOs.Response;
+using DiceHavenAPI.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace DiceHavenAPI.Interfaces
 {
     public interface IPersonagem
     {
+        PersonagemDTO ObterPersonagem(int idPersonagem);
         List<PersonagemDTO> ListarPersonagem(int idUsuario);
         void CadastrarPersonagem(PersonagemDTO novoPersonagem);
         void EditarPersonagem(PersonagemDTO personagemInfo);

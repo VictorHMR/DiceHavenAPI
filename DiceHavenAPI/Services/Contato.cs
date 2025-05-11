@@ -25,19 +25,24 @@ namespace DiceHavenAPI.Services
             _configuration = configuration;
         }
 
-        public void AdicionarContato(int idUsuario, int idUsuarioLogado)
+        public void AdicionarContato(string username, int idUsuarioLogado)
         {
             try
             {
                 dbDiceHaven.Database.BeginTransaction();
-                if(idUsuario == idUsuarioLogado)
-                    throw new HttpDiceExcept("Você não pode se adicionar a lista de contatos!", HttpStatusCode.Forbidden);
 
-                if (!dbDiceHaven.tb_usuario_contatos.Where(x => x.ID_USUARIO == idUsuarioLogado && x.ID_CONTATO == idUsuario).Any())
+                var usuario = dbDiceHaven.tb_usuarios.Where(x => x.DS_LOGIN == username).FirstOrDefault();
+
+                if(usuario is null)
+                    throw new HttpDiceExcept("usuário não encontrado!", HttpStatusCode.Forbidden);
+
+                if(usuario.ID_USUARIO == idUsuarioLogado)
+                    throw new HttpDiceExcept("Você não pode se adicionar a lista de contatos!", HttpStatusCode.Forbidden);
+                if (!dbDiceHaven.tb_usuario_contatos.Where(x => x.ID_USUARIO == idUsuarioLogado && x.ID_CONTATO == usuario.ID_USUARIO).Any())
                 {
                     tb_usuario_contato novoContatoBD = new tb_usuario_contato();
                     novoContatoBD.ID_USUARIO = idUsuarioLogado;
-                    novoContatoBD.ID_CONTATO = idUsuario;
+                    novoContatoBD.ID_CONTATO = usuario.ID_USUARIO;
                     novoContatoBD.FL_MUTADO = false;
                     dbDiceHaven.tb_usuario_contatos.Add(novoContatoBD);
 

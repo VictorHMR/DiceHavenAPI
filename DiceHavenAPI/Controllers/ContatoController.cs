@@ -15,12 +15,10 @@ namespace DiceHavenAPI.Controllers
     [ApiController]
     public class ContatoController : ControllerBase
     {
-        private DiceHavenBDContext dbDiceHaven;
         private IContato _contato;
 
-        public ContatoController(DiceHavenBDContext dbDiceHaven, IContato contato)
+        public ContatoController(IContato contato)
         {
-            this.dbDiceHaven = dbDiceHaven;
             this._contato = contato;
         }
 
@@ -28,14 +26,14 @@ namespace DiceHavenAPI.Controllers
         [SwaggerOperation(Summary = "Adicionar Usuário a lista de contatos",
            Description = "Adiciona um usuário a lista de contatos do usuário logado")]
         [HttpPost("AdicionarContato")]
-        public ActionResult AdicionarContato(int idUsuario)
+        public ActionResult AdicionarContato(string username)
         {
             try
             {
                 var identity = HttpContext.User.Identity as ClaimsIdentity;
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
-                _contato.AdicionarContato(idUsuario, idUsuarioLogado);
+                _contato.AdicionarContato(username, idUsuarioLogado);
 
                 return StatusCode(200, new {Message="Contato Adicionado com sucesso!"});
 

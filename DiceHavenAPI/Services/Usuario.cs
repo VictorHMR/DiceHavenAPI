@@ -13,7 +13,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using DiceHavenAPI.DTOs;
 using DiceHavenAPI.Interfaces;
-using DiceHaven_API.DTOs;
+using DiceHaven_API.DTOs.Response;
 
 namespace DiceHavenAPI.Services
 {
@@ -51,7 +51,8 @@ namespace DiceHavenAPI.Services
                 return new AuthTokenDTO
                 {
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
-                    Expiration = expiration
+                    Expiration = expiration,
+                    ID_USUARIO = usuario.ID_USUARIO
                 };
             }
             catch (Exception ex)
@@ -150,24 +151,30 @@ namespace DiceHavenAPI.Services
             try
             {
                 ImageService imageService = new ImageService(_configuration);
+                
+                dbDiceHaven.Database.BeginTransaction();
 
-                if (!loginValido(request.DS_LOGIN))
+                tb_usuario Usuario = dbDiceHaven.tb_usuarios.Find(request.ID_USUARIO);
+
+                if(Usuario is null )
+                    throw new HttpDiceExcept("Usuário não encontrado", HttpStatusCode.Conflict);
+                else if (request.DS_LOGIN != Usuario.DS_LOGIN && !loginValido(request.DS_LOGIN))
                     throw new HttpDiceExcept("Usuário já existe", HttpStatusCode.Conflict);
-
-                else if (!emailValido(request.DS_EMAIL))
+                else if (request.DS_EMAIL != Usuario.DS_EMAIL && !emailValido(request.DS_EMAIL))
                     throw new HttpDiceExcept("email já existe", HttpStatusCode.Conflict);
-                else
-                {
-                    dbDiceHaven.Database.BeginTransaction();
 
-                    tb_usuario Usuario = dbDiceHaven.tb_usuarios.Find(request.ID_USUARIO);
-                    Usuario.DS_LOGIN = request.DS_LOGIN ?? Usuario.DS_LOGIN;
-                    Usuario.DS_EMAIL = request.DS_EMAIL?.ToLower() ?? Usuario.DS_EMAIL;
-                    Usuario.DS_FOTO = !string.IsNullOrEmpty(request.DS_FOTO) ? imageService.SaveImageFromBase64(request.DS_FOTO) : Usuario.DS_FOTO;
-                    Usuario.FL_ATIVO = true;
-                    dbDiceHaven.SaveChanges();
-                    dbDiceHaven.Database.CommitTransaction();
+                Usuario.DS_NOME = request.DS_NOME ?? Usuario.DS_NOME;
+                Usuario.DS_LOGIN = request.DS_LOGIN ?? Usuario.DS_LOGIN;
+                Usuario.DS_EMAIL = request.DS_EMAIL?.ToLower() ?? Usuario.DS_EMAIL;
+                Usuario.FL_ATIVO = true;
+                if (!string.IsNullOrEmpty(request.DS_FOTO) && request.DS_FOTO != Usuario.DS_FOTO)
+                {
+                    imageService.DeleteImage(Usuario.DS_FOTO);
+                    Usuario.DS_FOTO = imageService.SaveImageFromBase64(request.DS_FOTO);
                 }
+                dbDiceHaven.SaveChanges();
+                dbDiceHaven.Database.CommitTransaction();
+                
             }
             catch (HttpDiceExcept ex)
             {

@@ -1,4 +1,4 @@
-﻿using DiceHaven_API.DTOs;
+﻿using DiceHaven_API.DTOs.Response;
 using DiceHavenAPI.DTOs;
 using System;
 using System.Collections.Generic;

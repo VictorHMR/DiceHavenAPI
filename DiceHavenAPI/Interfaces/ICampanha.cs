@@ -1,4 +1,6 @@
-﻿using DiceHavenAPI.DTOs;
+﻿using DiceHaven_API.DTOs.Request;
+using DiceHaven_API.DTOs.Response;
+using DiceHavenAPI.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,9 @@ namespace DiceHavenAPI.Interfaces
         void AtualizarCampanha(CampanhaDTO campanhaAtualizada);
         void VincularUsuarioCampanha(int idCampanha, int idUsuario, bool flAdmin = false);
         void DesvincularUsuarioCampanha(int idCampanha, int idUsuario);
-        void AlterarAdmins(int idUsuario, int idCampanha, int idUsuarioLogado, bool flAdmin = false);
+        void AlterarAdmins(GerenciarAdminDTO gerenciarAdmin,  int idUsuarioLogado);
+        List<UsuarioBasicoDTO> ListarUsuarios(int idUsuarioLogado, int? idCampanha);
+        List<CampoFichaDTO> ListarCamposFicha(int idCampanha);
+        void EditarModeloDeFicha(List<CampoFichaDTO> lstCampos);
     }
 }

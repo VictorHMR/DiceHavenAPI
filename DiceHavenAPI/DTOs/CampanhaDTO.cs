@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DiceHaven_API.DTOs.Response;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,6 @@ namespace DiceHavenAPI.DTOs
         public int? ID_USUARIO_CRIADOR { get; set; }
         public int? ID_MESTRE_CAMPANHA { get; set; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public List<PersonagemDTO>? PERSONAGENS { get; set; }
+        public List<int>? LST_USUARIOS { get; set; }
     }
 }

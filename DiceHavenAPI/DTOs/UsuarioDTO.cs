@@ -14,7 +14,7 @@ namespace DiceHavenAPI.DTOs
         public string DS_LOGIN { get; set; }
         public string DS_SENHA { get; set; }
         public string DS_EMAIL { get; set; }
-        public bool FL_ATIVO { get; set; }
+        public bool FL_ATIVO { get; set; } = true;
         public DateTime? DT_ULTIMO_ACESSO { get; set; }
         public string DS_FOTO { get; set; } 
 

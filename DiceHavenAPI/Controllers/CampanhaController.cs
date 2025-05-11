@@ -1,4 +1,6 @@
-﻿using DiceHavenAPI.Contexts;
+﻿using DiceHaven_API.DTOs.Request;
+using DiceHaven_API.DTOs.Response;
+using DiceHavenAPI.Contexts;
 using DiceHavenAPI.DTOs;
 using DiceHavenAPI.Interfaces;
 using DiceHavenAPI.Services;
@@ -16,14 +18,10 @@ namespace DiceHavenAPI.Controllers
     [ApiController]
     public class CampanhaController : ControllerBase
     {
-        private DiceHavenBDContext dbDiceHaven;
-        private readonly IConfiguration _configuration;
         private ICampanha _campanha;
 
-        public CampanhaController(DiceHavenBDContext dbDiceHaven, IConfiguration configuration, ICampanha campanha)
+        public CampanhaController(ICampanha campanha)
         {
-            this.dbDiceHaven = dbDiceHaven;
-            this._configuration = configuration;
             this._campanha = campanha;
         }
 
@@ -68,7 +66,7 @@ namespace DiceHavenAPI.Controllers
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Cadastra uma nova campanha", Description = "Cadastra uma nova campanha com as informações passadas pelo usuário")]
         [HttpPost("cadastrarCampanha")]
-        public ActionResult cadastrarCampanha([FromForm]CampanhaDTO novaCampanha)
+        public ActionResult cadastrarCampanha([FromBody]CampanhaDTO novaCampanha)
         {
             try
             {
@@ -109,7 +107,7 @@ namespace DiceHavenAPI.Controllers
         [SwaggerOperation(Summary = "Entrar em campanha", 
             Description = "Faz o vinculo de um usuario a uma campanha, caso o usuario não seja informado, será o usuario logado.")]
         [HttpPost("vincularUsuarioCampanha")]
-        public ActionResult vincularUsuarioCampanha(int idCampanha, int? idUsuario)
+        public ActionResult vincularUsuarioCampanha([FromBody] VincularUsuarioCampanhaDTO vincularUsuarios)
         {
             try
             {
@@ -117,7 +115,8 @@ namespace DiceHavenAPI.Controllers
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
 
-                _campanha.VincularUsuarioCampanha(idCampanha, idUsuario ?? idUsuarioLogado);
+                foreach(int usuario in vincularUsuarios.LST_USUARIOS)
+                    _campanha.VincularUsuarioCampanha(vincularUsuarios.ID_CAMPANHA, usuario, usuario == idUsuarioLogado);
                 return StatusCode(200, new { Message = "Usuário vinculado com sucesso!" });
             }
             catch (HttpDiceExcept ex)
@@ -130,7 +129,7 @@ namespace DiceHavenAPI.Controllers
         [SwaggerOperation(Summary = "Sair de uma campanha",
             Description = "Desvincula um usuario de uma campanha, caso o usuario não seja informado, será o usuario logado.")]
         [HttpPost("desvincularUsuarioCampanha")]
-        public ActionResult desvincularUsuarioCampanha(int idCampanha, int? idUsuario)
+        public ActionResult desvincularUsuarioCampanha([FromBody] DesvincularUsuarioCampanhaDTO desvincularUsuario)
         {
             try
             {
@@ -138,7 +137,7 @@ namespace DiceHavenAPI.Controllers
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
 
-                _campanha.DesvincularUsuarioCampanha(idCampanha, idUsuario ?? idUsuarioLogado);
+                _campanha.DesvincularUsuarioCampanha(desvincularUsuario.IdCampanha, desvincularUsuario.IdUsuario );
                 return StatusCode(200, new { Message = "Usuário desvinculado com sucesso!" });
             }
             catch (HttpDiceExcept ex)
@@ -151,7 +150,7 @@ namespace DiceHavenAPI.Controllers
         [SwaggerOperation(Summary = "Tornar usuário admin ou participante",
             Description = "Torna um usuário um administrador ou participante da campanha de acordo com a flag.")]
         [HttpPut("AlterarAdmins")]
-        public ActionResult AlterarAdmins(int idUsuario, int idCampanha, bool flAdmin)
+        public ActionResult AlterarAdmins([FromBody] GerenciarAdminDTO gerenciarAdmin)
         {
             try
             {
@@ -159,7 +158,7 @@ namespace DiceHavenAPI.Controllers
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
 
-                _campanha.AlterarAdmins(idUsuario, idCampanha,idUsuarioLogado,flAdmin);
+                _campanha.AlterarAdmins(gerenciarAdmin, idUsuarioLogado);
                 return StatusCode(200, new { Message = "Membro atualizado com sucesso!" });
             }
             catch (HttpDiceExcept ex)
@@ -168,5 +167,64 @@ namespace DiceHavenAPI.Controllers
             }
         }
 
+
+        [ProducesResponseType(typeof(List<UsuarioBasicoDTO>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Lista usuário pertencentes a campanha",
+            Description = "Lista usuário pertencentes a campanha.")]
+        [HttpGet("listarUsuarios")]
+        public ActionResult ListarUsuarios(int? idCampanha)
+        {
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                List<Claim> claim = identity.Claims.ToList();
+                int idUsuarioLogado = int.Parse(claim[0].Value);
+
+                return StatusCode(200, _campanha.ListarUsuarios(idUsuarioLogado, idCampanha));
+            }
+            catch (HttpDiceExcept ex)
+            {
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
+            }
+        }
+
+        [ProducesResponseType(typeof(List<CampoFichaDTO>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Lista todos os campos da ficha", Description = "Lista todos os campos da ficha baseado no ID_CAMPANHA")]
+        [HttpGet("ListarCamposFicha")]
+        public ActionResult ListarCamposFicha(int idCampanha)
+        {
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                List<Claim> claim = identity.Claims.ToList();
+                int idUsuarioLogado = int.Parse(claim[0].Value);
+
+                return StatusCode(200, _campanha.ListarCamposFicha(idCampanha));
+            }
+            catch (HttpDiceExcept ex)
+            {
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
+            }
+        }
+
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Edita os campos no modelo de ficha", Description = "Edita os campos no modelo de ficha")]
+        [HttpPut("EditarModeloDeFicha")]
+        public ActionResult EditarCampoFicha([FromBody] List<CampoFichaDTO> lstCampos)
+        {
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                List<Claim> claim = identity.Claims.ToList();
+                int idUsuarioLogado = int.Parse(claim[0].Value);
+
+                _campanha.EditarModeloDeFicha(lstCampos);
+                return StatusCode(200, new { Message = "Campo Editado com sucesso no modelo de ficha." });
+            }
+            catch (HttpDiceExcept ex)
+            {
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
+            }
+        }
     }
 }

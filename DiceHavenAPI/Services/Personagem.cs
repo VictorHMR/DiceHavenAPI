@@ -10,6 +10,7 @@ using DiceHavenAPI.Utils;
 using System.Net;
 using Microsoft.Extensions.Configuration;
 using DiceHavenAPI.Interfaces;
+using DiceHaven_API.DTOs.Response;
 
 namespace DiceHavenAPI.Services
 {
@@ -29,6 +30,30 @@ namespace DiceHavenAPI.Services
             this.dbDiceHaven = dbDiceHaven;
         }
 
+        public PersonagemDTO ObterPersonagem(int idPersonagem)
+        {
+            try
+            {
+                ImageService imageService = new ImageService(_configuration);
+
+                PersonagemDTO personagem = (from ps in dbDiceHaven.tb_personagems
+                                            where ps.ID_PERSONAGEM == idPersonagem
+                                            select new PersonagemDTO
+                                            {
+                                                ID_PERSONAGEM = ps.ID_PERSONAGEM,
+                                                DS_NOME = ps.DS_NOME,
+                                                DS_FOTO = imageService.GetImageAsBase64(ps.DS_FOTO),
+                                                ID_USUARIO = ps.ID_USUARIO
+                                            }).FirstOrDefault();
+
+                return personagem;
+            }
+            catch (Exception ex)
+            {
+                throw new HttpDiceExcept($"Ocorreu um erro na listagem do personagem. Message: {ex.Message}", HttpStatusCode.InternalServerError);
+            }
+        }
+
         public List<PersonagemDTO> ListarPersonagem(int idUsuario)
         {
             try
@@ -41,11 +66,7 @@ namespace DiceHavenAPI.Services
                                                         {
                                                             ID_PERSONAGEM = ps.ID_PERSONAGEM,
                                                             DS_NOME = ps.DS_NOME,
-                                                            DS_BACKSTORY = ps.DS_BACKSTORY,
                                                             DS_FOTO = imageService.GetImageAsBase64(ps.DS_FOTO),
-                                                            NR_IDADE = ps.NR_IDADE,
-                                                            DS_GENERO = ps.DS_GENERO,
-                                                            DS_CAMPO_LIVRE = ps.DS_CAMPO_LIVRE,
                                                             ID_USUARIO = ps.ID_USUARIO
                                                         }).ToList();
                 return listaPersonagens;
@@ -69,11 +90,7 @@ namespace DiceHavenAPI.Services
 
                 tb_personagem novoPersonagemBD = new tb_personagem();
                 novoPersonagemBD.DS_NOME = novoPersonagem.DS_NOME;
-                novoPersonagemBD.DS_BACKSTORY = novoPersonagem.DS_BACKSTORY;
                 novoPersonagemBD.DS_FOTO = imageService.SaveImageFromBase64(novoPersonagem.DS_FOTO);
-                novoPersonagemBD.NR_IDADE = novoPersonagem.NR_IDADE;
-                novoPersonagemBD.DS_GENERO = novoPersonagem.DS_GENERO;
-                novoPersonagemBD.DS_CAMPO_LIVRE = novoPersonagem.DS_CAMPO_LIVRE;
                 novoPersonagemBD.ID_USUARIO = novoPersonagem.ID_USUARIO;
 
                 dbDiceHaven.tb_personagems.Add(novoPersonagemBD);
@@ -102,12 +119,14 @@ namespace DiceHavenAPI.Services
                     throw new HttpDiceExcept("O personagem informado não existe.", HttpStatusCode.InternalServerError);
 
                 Personagem.DS_NOME = personagemInfo.DS_NOME;
-                Personagem.DS_BACKSTORY = personagemInfo.DS_BACKSTORY;
-                Personagem.DS_FOTO = personagemInfo.DS_FOTO is null ? imageService.SaveImageFromBase64(personagemInfo.DS_FOTO) : Personagem.DS_FOTO;
-                Personagem.NR_IDADE = personagemInfo.NR_IDADE;
-                Personagem.DS_GENERO = personagemInfo.DS_GENERO;
-                Personagem.DS_CAMPO_LIVRE = personagemInfo.DS_CAMPO_LIVRE;
                 Personagem.ID_USUARIO = personagemInfo.ID_USUARIO;
+
+                if (!string.IsNullOrEmpty(personagemInfo.DS_FOTO) && personagemInfo.DS_FOTO != Personagem.DS_FOTO)
+                {
+                    imageService.DeleteImage(Personagem.DS_FOTO);
+                    Personagem.DS_FOTO = imageService.SaveImageFromBase64(personagemInfo.DS_FOTO);
+                }
+
                 dbDiceHaven.SaveChanges();
             }
             catch (HttpDiceExcept ex)

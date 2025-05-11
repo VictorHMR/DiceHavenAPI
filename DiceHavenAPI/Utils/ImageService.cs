@@ -68,6 +68,30 @@ public class ImageService
         }
     }
 
+    public bool DeleteImage(string relativeOrFullPath)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(relativeOrFullPath))
+                return false;
+
+            string fullPath = Path.IsPathRooted(relativeOrFullPath)
+                ? relativeOrFullPath
+                : Path.Combine(_imageDirectory, relativeOrFullPath);
+
+            if (!File.Exists(fullPath))
+                return false;
+
+            File.Delete(fullPath);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Erro ao excluir a imagem.", ex);
+        }
+    }
+
+
     private string GetMimeType(string filePath)
     {
         string extension = Path.GetExtension(filePath).ToLower();

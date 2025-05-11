@@ -80,12 +80,9 @@ public partial class DiceHavenBDContext : DbContext
 
             entity.HasIndex(e => e.ID_CAMPANHA, "ID_CAMPANHA");
 
-            entity.Property(e => e.DS_DESCRICAO).HasColumnType("text");
-            entity.Property(e => e.DS_FORMULA_MODIFICADOR).HasMaxLength(50);
             entity.Property(e => e.DS_NOME_CAMPO)
                 .IsRequired()
                 .HasMaxLength(50);
-            entity.Property(e => e.DS_REFERENCIA).HasMaxLength(30);
             entity.Property(e => e.DS_VALOR_PADRAO).HasColumnType("text");
 
             entity.HasOne(d => d.ID_CAMPANHANavigation).WithMany(p => p.tb_campo_fichas)
@@ -186,11 +183,7 @@ public partial class DiceHavenBDContext : DbContext
             entity.ToTable("tb_personagem");
 
             entity.HasIndex(e => e.ID_USUARIO, "ID_USUARIO");
-
-            entity.Property(e => e.DS_BACKSTORY).HasColumnType("text");
-            entity.Property(e => e.DS_CAMPO_LIVRE).HasColumnType("text");
             entity.Property(e => e.DS_FOTO).HasColumnType("text");
-            entity.Property(e => e.DS_GENERO).HasMaxLength(20);
             entity.Property(e => e.DS_NOME)
                 .IsRequired()
                 .HasMaxLength(75);

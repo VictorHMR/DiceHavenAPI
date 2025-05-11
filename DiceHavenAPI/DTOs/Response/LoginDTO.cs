@@ -1,4 +1,4 @@
-﻿namespace DiceHaven_API.DTOs
+﻿namespace DiceHaven_API.DTOs.Response
 {
     public class LoginDTO
     {

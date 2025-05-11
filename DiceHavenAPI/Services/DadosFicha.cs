@@ -29,7 +29,7 @@ namespace DiceHavenAPI.Services
                 List<DadosFichaDTO> listaDeDados = (from df in dbDiceHaven.tb_dados_fichas
                                                     join cf in dbDiceHaven.tb_campo_fichas on df.ID_CAMPO_FICHA equals cf.ID_CAMPO_FICHA
                                                      join c in dbDiceHaven.tb_campanhas on cf.ID_CAMPANHA equals c.ID_CAMPANHA
-                                                     where cf.ID_CAMPANHA == idCampanha && cf.FL_ATIVO && df.ID_PERSONAGEM == idPersonagem && cf.FL_ATIVO
+                                                     where cf.ID_CAMPANHA == idCampanha && df.ID_PERSONAGEM == idPersonagem 
                                                      select new DadosFichaDTO
                                                      {
                                                          ID_DADOS_FICHA = df.ID_DADO_FICHA,
@@ -52,7 +52,7 @@ namespace DiceHavenAPI.Services
             {
                 DadosFichaDTO dadosFicha = (from df in dbDiceHaven.tb_dados_fichas
                                             join cf in dbDiceHaven.tb_campo_fichas on df.ID_CAMPO_FICHA equals cf.ID_CAMPO_FICHA
-                                            where cf.FL_ATIVO && cf.ID_CAMPO_FICHA == idCampoFicha && df.ID_PERSONAGEM == idPersonagem && cf.FL_ATIVO
+                                            where cf.ID_CAMPO_FICHA == idCampoFicha && df.ID_PERSONAGEM == idPersonagem 
                                             select new DadosFichaDTO
                                             {
                                                 ID_DADOS_FICHA = df.ID_DADO_FICHA,
@@ -73,14 +73,14 @@ namespace DiceHavenAPI.Services
             try
             {
                 dbDiceHaven.Database.BeginTransaction();
-                CampoFicha campoFichaModels = new CampoFicha(dbDiceHaven);
+                Campanha campoFichaModels = new Campanha(dbDiceHaven);
                 List<CampoFichaDTO> listaDeCampos =  campoFichaModels.ListarCamposFicha(idCampanha);
 
                 foreach(CampoFichaDTO campo in listaDeCampos)
                 {
 
                     tb_dados_ficha novoDado = new tb_dados_ficha();
-                    novoDado.ID_CAMPO_FICHA = campo.ID_CAMPO_FICHA;
+                    novoDado.ID_CAMPO_FICHA = campo.ID_CAMPO_FICHA ?? 0;
                     novoDado.ID_PERSONAGEM = idPersonagem;
                     novoDado.DS_VALOR = campo.DS_VALOR_PADRAO;
                     dbDiceHaven.tb_dados_fichas.Add(novoDado);
@@ -105,7 +105,7 @@ namespace DiceHavenAPI.Services
         {
             try
             {
-                CampoFicha campoFichaModels = new CampoFicha(dbDiceHaven);
+                Campanha campoFichaModels = new Campanha(dbDiceHaven);
                 tb_dados_ficha dadosficha = dbDiceHaven.tb_dados_fichas.Where(x => x.ID_CAMPO_FICHA == novosDados.ID_CAMPO_FICHA && x.ID_PERSONAGEM == novosDados.ID_PERSONAGEM).FirstOrDefault();
                 if (dadosficha is null)
                     throw new HttpDiceExcept("O campo informado não possui valor!", HttpStatusCode.InternalServerError);

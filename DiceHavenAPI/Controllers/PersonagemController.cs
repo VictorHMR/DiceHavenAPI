@@ -1,4 +1,5 @@
-﻿using DiceHavenAPI.Contexts;
+﻿using DiceHaven_API.DTOs.Response;
+using DiceHavenAPI.Contexts;
 using DiceHavenAPI.DTOs;
 using DiceHavenAPI.Interfaces;
 using DiceHavenAPI.Services;
@@ -16,20 +17,30 @@ namespace DiceHavenAPI.Controllers
     [ApiController]
     public class PersonagemController : ControllerBase
     {
-        private DiceHavenBDContext dbDiceHaven;
-        private readonly IConfiguration _configuration;
         private IPersonagem _personagem;
 
-        public PersonagemController(DiceHavenBDContext dbDiceHaven, IConfiguration configuration, IPersonagem personagem)
+        public PersonagemController(IPersonagem personagem)
         {
-            this.dbDiceHaven = dbDiceHaven;
-            this._configuration = configuration;
             this._personagem = personagem;
         }
 
+        [ProducesResponseType(typeof(PersonagemDTO), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Lista todos os dados de um personagem", Description = "Lista dados detalhados de um personagem")]
+        [HttpGet("ObterPersonagem")]
+        public ActionResult ObterPersonagem(int idPersonagem)
+        {
+            try
+            {
+                return StatusCode(200, _personagem.ObterPersonagem(idPersonagem));
+            }
+            catch (HttpDiceExcept ex)
+            {
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
+            }
+        }
+
         [ProducesResponseType(typeof(List<PersonagemDTO>), StatusCodes.Status200OK)]
-        [SwaggerOperation(Summary = "Lista todos os personagens de um usuário", 
-            Description = "Lista todos os personagens de um usuário. por padrão o usuário logado")]
+        [SwaggerOperation(Summary = "Lista todos os personagens de um usuário", Description = "Lista todos os personagens de um usuário. por padrão o usuário logado")]
         [HttpGet("ListarPersonagens")]
         public ActionResult ListarPersonagens(int? idUsuario)
         {
@@ -52,6 +63,7 @@ namespace DiceHavenAPI.Controllers
                 return StatusCode((int)ex.CodeStatus, new { ex.Message });
             }
         }
+
 
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Cadastra um novo personagem", Description = "Cadastra um novo personagem")]
