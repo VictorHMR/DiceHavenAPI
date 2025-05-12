@@ -17,7 +17,7 @@ namespace DiceHavenAPI.DTOs
         public bool FL_MODIFICADOR { get; set; }
         public string DS_VALOR_PADRAO { get; set; }
         public int NR_ORDEM { get; set; }
-        public int ID_CAMPANHA { get; set; }
+        public int ID_SECAO_FICHA { get; set; }
         public bool FL_DELETE { get; set; }
     }
 }

@@ -84,7 +84,7 @@ namespace DiceHaven_API.Migrations
                     b.Property<bool?>("FL_VISIVEL")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ID_CAMPANHA")
+                    b.Property<int>("ID_SECAO_FICHA")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("NR_ORDEM")
@@ -96,7 +96,7 @@ namespace DiceHaven_API.Migrations
                     b.HasKey("ID_CAMPO_FICHA")
                         .HasName("PRIMARY");
 
-                    b.HasIndex(new[] { "ID_CAMPANHA" }, "ID_CAMPANHA");
+                    b.HasIndex(new[] { "ID_SECAO_FICHA" }, "ID_CAMPANHA");
 
                     b.ToTable("tb_campo_ficha", (string)null);
                 });
@@ -193,6 +193,9 @@ namespace DiceHaven_API.Migrations
 
                     b.Property<string>("DS_VALOR")
                         .HasColumnType("text");
+
+                    b.Property<int?>("DS_VALOR_MODIFICADOR")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("ID_CAMPO_FICHA")
                         .HasColumnType("INTEGER");
@@ -338,6 +341,61 @@ namespace DiceHaven_API.Migrations
                     b.ToTable("tb_usuario_contato", (string)null);
                 });
 
+            modelBuilder.Entity("DiceHaven_API.Models.tb_personagem_campanha", b =>
+                {
+                    b.Property<int>("ID_PERSONAGEM_CAMPANHA")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DT_REGISTRO")
+                        .HasColumnType("datetime");
+
+                    b.Property<int>("ID_CAMPANHA")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ID_PERSONAGEM")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ID_PERSONAGEM_CAMPANHA")
+                        .HasName("PRIMARY");
+
+                    b.HasIndex(new[] { "ID_CAMPANHA" }, "ID_CAMPANHA")
+                        .HasDatabaseName("ID_CAMPANHA2");
+
+                    b.HasIndex(new[] { "ID_PERSONAGEM" }, "ID_PERSONAGEM")
+                        .HasDatabaseName("ID_PERSONAGEM1");
+
+                    b.ToTable("tb_personagem_campanha", (string)null);
+                });
+
+            modelBuilder.Entity("DiceHaven_API.Models.tb_secao_ficha", b =>
+                {
+                    b.Property<int>("ID_SECAO_FICHA")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("DS_NOME_SECAO")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ID_CAMPANHA")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("NR_ORDEM")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("'0'");
+
+                    b.HasKey("ID_SECAO_FICHA")
+                        .HasName("PRIMARY");
+
+                    b.HasIndex(new[] { "ID_CAMPANHA" }, "ID_CAMPANHA")
+                        .HasDatabaseName("ID_CAMPANHA3");
+
+                    b.ToTable("tb_secao_ficha", (string)null);
+                });
+
             modelBuilder.Entity("DiceHavenAPI.Models.tb_campanha", b =>
                 {
                     b.HasOne("DiceHavenAPI.Models.tb_usuario", "ID_MESTRE_CAMPANHANavigation")
@@ -359,13 +417,13 @@ namespace DiceHaven_API.Migrations
 
             modelBuilder.Entity("DiceHavenAPI.Models.tb_campo_ficha", b =>
                 {
-                    b.HasOne("DiceHavenAPI.Models.tb_campanha", "ID_CAMPANHANavigation")
+                    b.HasOne("DiceHaven_API.Models.tb_secao_ficha", "ID_SECAO_FICHANavigation")
                         .WithMany("tb_campo_fichas")
-                        .HasForeignKey("ID_CAMPANHA")
+                        .HasForeignKey("ID_SECAO_FICHA")
                         .IsRequired()
                         .HasConstraintName("tb_campo_ficha_ibfk_1");
 
-                    b.Navigation("ID_CAMPANHANavigation");
+                    b.Navigation("ID_SECAO_FICHANavigation");
                 });
 
             modelBuilder.Entity("DiceHavenAPI.Models.tb_chat", b =>
@@ -485,9 +543,41 @@ namespace DiceHaven_API.Migrations
                     b.Navigation("ID_USUARIONavigation");
                 });
 
+            modelBuilder.Entity("DiceHaven_API.Models.tb_personagem_campanha", b =>
+                {
+                    b.HasOne("DiceHavenAPI.Models.tb_campanha", "ID_CAMPANHANavigation")
+                        .WithMany("tb_personagem_campanhas")
+                        .HasForeignKey("ID_CAMPANHA")
+                        .IsRequired()
+                        .HasConstraintName("tb_personagem_campanha_ibfk_1");
+
+                    b.HasOne("DiceHavenAPI.Models.tb_personagem", "ID_PERSONAGEMNavigation")
+                        .WithMany("tb_personagem_campanhas")
+                        .HasForeignKey("ID_PERSONAGEM")
+                        .IsRequired()
+                        .HasConstraintName("tb_personagem_campanha_ibfk_2");
+
+                    b.Navigation("ID_CAMPANHANavigation");
+
+                    b.Navigation("ID_PERSONAGEMNavigation");
+                });
+
+            modelBuilder.Entity("DiceHaven_API.Models.tb_secao_ficha", b =>
+                {
+                    b.HasOne("DiceHavenAPI.Models.tb_campanha", "ID_CAMPANHANavigation")
+                        .WithMany("tb_secao_ficha")
+                        .HasForeignKey("ID_CAMPANHA")
+                        .IsRequired()
+                        .HasConstraintName("tb_secao_ficha_ibfk_1");
+
+                    b.Navigation("ID_CAMPANHANavigation");
+                });
+
             modelBuilder.Entity("DiceHavenAPI.Models.tb_campanha", b =>
                 {
-                    b.Navigation("tb_campo_fichas");
+                    b.Navigation("tb_personagem_campanhas");
+
+                    b.Navigation("tb_secao_ficha");
 
                     b.Navigation("tb_usuario_campanhas");
                 });
@@ -505,6 +595,8 @@ namespace DiceHaven_API.Migrations
             modelBuilder.Entity("DiceHavenAPI.Models.tb_personagem", b =>
                 {
                     b.Navigation("tb_dados_fichas");
+
+                    b.Navigation("tb_personagem_campanhas");
                 });
 
             modelBuilder.Entity("DiceHavenAPI.Models.tb_usuario", b =>
@@ -528,6 +620,11 @@ namespace DiceHaven_API.Migrations
                     b.Navigation("tb_usuario_contatoID_CONTATONavigations");
 
                     b.Navigation("tb_usuario_contatoID_USUARIONavigations");
+                });
+
+            modelBuilder.Entity("DiceHaven_API.Models.tb_secao_ficha", b =>
+                {
+                    b.Navigation("tb_campo_fichas");
                 });
 #pragma warning restore 612, 618
         }

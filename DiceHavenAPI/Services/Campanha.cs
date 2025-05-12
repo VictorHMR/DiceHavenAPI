@@ -310,32 +310,28 @@ namespace DiceHavenAPI.Services
             }
             catch (Exception ex)
             {
-                throw new HttpDiceExcept($"Ocorreu um erro ao desvincular usuário da campanha! Message: {ex.Message}", HttpStatusCode.InternalServerError);
+                throw new HttpDiceExcept($"Ocorreu um erro ao `listar usuários da campanha! Message: {ex.Message}", HttpStatusCode.InternalServerError);
             }
         }
 
-        public List<CampoFichaDTO> ListarCamposFicha(int idCampanha)
+        public List<PersonagemDTO> ListarPersonagens(int idCampanha)
         {
             try
             {
-                List<CampoFichaDTO> listaDeCampos = (from lc in dbDiceHaven.tb_campo_fichas
-                                                     join c in dbDiceHaven.tb_campanhas on lc.ID_CAMPANHA equals c.ID_CAMPANHA
-                                                     where lc.ID_CAMPANHA == idCampanha 
-                                                     select new CampoFichaDTO
-                                                     {
-                                                         ID_CAMPO_FICHA = lc.ID_CAMPO_FICHA,
-                                                         DS_NOME_CAMPO = lc.DS_NOME_CAMPO,
-                                                         TIPO_CAMPO = (Enumeration.TipoCampoFicha)lc.NR_TIPO_CAMPO,
-                                                         FL_BLOQUEADO = lc.FL_BLOQUEADO,
-                                                         FL_VISIVEL = lc.FL_VISIVEL,
-                                                         FL_MODIFICADOR = lc.FL_MODIFICADOR,
-                                                         DS_VALOR_PADRAO = lc.DS_VALOR_PADRAO,
-                                                         NR_ORDEM = lc.NR_ORDEM,
-                                                         ID_CAMPANHA = lc.ID_CAMPANHA
-                                                     }).ToList();
-                if (listaDeCampos is null)
-                    throw new HttpDiceExcept("Não existe modelo de ficha cadastrado para essa campanha. Contade o mestre.", HttpStatusCode.InternalServerError);
-                return listaDeCampos;
+                ImageService imageService = new ImageService(_configuration);
+                List<PersonagemDTO> lstPersonagens = (from c in dbDiceHaven.tb_campanhas
+                                                      join pc in dbDiceHaven.tb_personagem_campanhas on c.ID_CAMPANHA equals pc.ID_CAMPANHA
+                                                      join p in dbDiceHaven.tb_personagems on pc.ID_PERSONAGEM equals p.ID_PERSONAGEM
+                                                      where c.ID_CAMPANHA == idCampanha
+                                                      select new PersonagemDTO
+                                                      {
+                                                          ID_PERSONAGEM = p.ID_PERSONAGEM,
+                                                          DS_NOME = p.DS_NOME,
+                                                          DS_FOTO = imageService.GetImageAsBase64(p.DS_FOTO),
+                                                          ID_USUARIO = p.ID_USUARIO,
+                                                      }).ToList();
+
+                return lstPersonagens;
             }
             catch (HttpDiceExcept ex)
             {
@@ -343,65 +339,7 @@ namespace DiceHavenAPI.Services
             }
             catch (Exception ex)
             {
-                throw new HttpDiceExcept($"Ocorreu um erro ao listar campos da ficha. Message: {ex.Message}", HttpStatusCode.InternalServerError);
-            }
-
-        }
-
-        public void EditarModeloDeFicha(List<CampoFichaDTO> lstCampos)
-        {
-            try
-            {
-                dbDiceHaven.Database.BeginTransaction();
-
-
-                foreach (var novoCampo in lstCampos)
-                {
-                    if (novoCampo.ID_CAMPO_FICHA is null)
-                    {
-                        tb_campo_ficha campoBD = new tb_campo_ficha();
-                        campoBD.DS_NOME_CAMPO = novoCampo.DS_NOME_CAMPO;
-                        campoBD.NR_TIPO_CAMPO = (int)novoCampo.TIPO_CAMPO;
-                        campoBD.FL_BLOQUEADO = novoCampo.FL_BLOQUEADO;
-                        campoBD.FL_VISIVEL = novoCampo.FL_VISIVEL;
-                        campoBD.FL_MODIFICADOR = novoCampo.FL_MODIFICADOR;
-                        campoBD.DS_VALOR_PADRAO = novoCampo.DS_VALOR_PADRAO;
-                        campoBD.NR_ORDEM = novoCampo.NR_ORDEM;
-                        campoBD.ID_CAMPANHA = novoCampo.ID_CAMPANHA;
-
-                        dbDiceHaven.tb_campo_fichas.Add(campoBD);
-                    }
-                    else
-                    {
-                        tb_campo_ficha campoBD = dbDiceHaven.tb_campo_fichas.Find(novoCampo.ID_CAMPO_FICHA);
-                        if (novoCampo.FL_DELETE)
-                        {
-                            List<tb_dados_ficha> lstDadosPersonagem = dbDiceHaven.tb_dados_fichas.Where(x => x.ID_CAMPO_FICHA == campoBD.ID_CAMPO_FICHA).ToList();
-                            dbDiceHaven.tb_dados_fichas.RemoveRange(lstDadosPersonagem);
-                            dbDiceHaven.tb_campo_fichas.Remove(campoBD);
-                        }
-                        else
-                        {
-                            campoBD.DS_NOME_CAMPO = novoCampo.DS_NOME_CAMPO;
-                            campoBD.NR_TIPO_CAMPO = (int)novoCampo.TIPO_CAMPO;
-                            campoBD.FL_MODIFICADOR = novoCampo.FL_MODIFICADOR;
-                            campoBD.FL_BLOQUEADO = novoCampo.FL_BLOQUEADO;
-                            campoBD.FL_VISIVEL = novoCampo.FL_VISIVEL;
-                            campoBD.DS_VALOR_PADRAO = novoCampo.DS_VALOR_PADRAO;
-                            campoBD.NR_ORDEM = novoCampo.NR_ORDEM;
-                            campoBD.ID_CAMPANHA = novoCampo.ID_CAMPANHA;
-                        }
-                    }
-
-                    dbDiceHaven.SaveChanges();
-                }
-                dbDiceHaven.Database.CommitTransaction();
-
-            }
-            catch (Exception ex)
-            {
-                dbDiceHaven.Database.RollbackTransaction();
-                throw new HttpDiceExcept($"Ocorreu um erro ao listar campos da ficha. Message: {ex.Message}", HttpStatusCode.InternalServerError);
+                throw new HttpDiceExcept($"Ocorreu um erro ao listar personagens da campanha! Message: {ex.Message}", HttpStatusCode.InternalServerError);
             }
         }
     }

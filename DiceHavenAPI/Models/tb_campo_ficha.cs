@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DiceHaven_API.Models;
+using System;
 using System.Collections.Generic;
 
 namespace DiceHavenAPI.Models;
@@ -21,9 +22,9 @@ public partial class tb_campo_ficha
 
     public int NR_ORDEM { get; set; }
 
-    public int ID_CAMPANHA { get; set; }
+    public int ID_SECAO_FICHA { get; set; }
 
-    public virtual tb_campanha ID_CAMPANHANavigation { get; set; }
+    public virtual tb_secao_ficha ID_SECAO_FICHANavigation { get; set; }
 
     public virtual ICollection<tb_dados_ficha> tb_dados_fichas { get; set; } = new List<tb_dados_ficha>();
 }

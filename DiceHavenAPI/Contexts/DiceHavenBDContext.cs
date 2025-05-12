@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DiceHaven_API.Models;
 using DiceHavenAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,9 +31,13 @@ public partial class DiceHavenBDContext : DbContext
 
     public virtual DbSet<tb_personagem> tb_personagems { get; set; }
 
+    public virtual DbSet<tb_secao_ficha> tb_secao_fichas { get; set; }
+
     public virtual DbSet<tb_usuario> tb_usuarios { get; set; }
 
     public virtual DbSet<tb_usuario_campanha> tb_usuario_campanhas { get; set; }
+
+    public virtual DbSet<tb_personagem_campanha> tb_personagem_campanhas { get; set; }
 
     public virtual DbSet<tb_usuario_contato> tb_usuario_contatos { get; set; }
 
@@ -75,20 +80,48 @@ public partial class DiceHavenBDContext : DbContext
         modelBuilder.Entity<tb_campo_ficha>(entity =>
         {
             entity.HasKey(e => e.ID_CAMPO_FICHA).HasName("PRIMARY");
-
             entity.ToTable("tb_campo_ficha");
-
-            entity.HasIndex(e => e.ID_CAMPANHA, "ID_CAMPANHA");
-
+            entity.HasIndex(e => e.ID_SECAO_FICHA, "ID_CAMPANHA");
             entity.Property(e => e.DS_NOME_CAMPO)
                 .IsRequired()
                 .HasMaxLength(50);
             entity.Property(e => e.DS_VALOR_PADRAO).HasColumnType("text");
-
-            entity.HasOne(d => d.ID_CAMPANHANavigation).WithMany(p => p.tb_campo_fichas)
-                .HasForeignKey(d => d.ID_CAMPANHA)
+            entity.HasOne(d => d.ID_SECAO_FICHANavigation).WithMany(p => p.tb_campo_fichas)
+                .HasForeignKey(d => d.ID_SECAO_FICHA)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("tb_campo_ficha_ibfk_1");
+        });
+
+        modelBuilder.Entity<tb_secao_ficha>(entity =>
+        {
+            entity.HasKey(e => e.ID_SECAO_FICHA).HasName("PRIMARY");
+            entity.ToTable("tb_secao_ficha");
+            entity.HasIndex(e => e.ID_CAMPANHA, "ID_CAMPANHA");
+            entity.Property(e => e.DS_NOME_SECAO)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.NR_ORDEM).HasDefaultValueSql("'0'");
+            entity.HasOne(d => d.ID_CAMPANHANavigation).WithMany(p => p.tb_secao_ficha)
+                .HasForeignKey(d => d.ID_CAMPANHA)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("tb_secao_ficha_ibfk_1");
+        });
+
+        modelBuilder.Entity<tb_personagem_campanha>(entity =>
+        {
+            entity.HasKey(e => e.ID_PERSONAGEM_CAMPANHA).HasName("PRIMARY");
+            entity.ToTable("tb_personagem_campanha");
+            entity.HasIndex(e => e.ID_CAMPANHA, "ID_CAMPANHA");
+            entity.HasIndex(e => e.ID_PERSONAGEM, "ID_PERSONAGEM");
+            entity.Property(e => e.DT_REGISTRO).HasColumnType("datetime");
+            entity.HasOne(d => d.ID_CAMPANHANavigation).WithMany(p => p.tb_personagem_campanhas)
+                .HasForeignKey(d => d.ID_CAMPANHA)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("tb_personagem_campanha_ibfk_1");
+            entity.HasOne(d => d.ID_PERSONAGEMNavigation).WithMany(p => p.tb_personagem_campanhas)
+                .HasForeignKey(d => d.ID_PERSONAGEM)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("tb_personagem_campanha_ibfk_2");
         });
 
         modelBuilder.Entity<tb_chat>(entity =>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DiceHaven_API.Models;
+using System;
 using System.Collections.Generic;
 
 namespace DiceHavenAPI.Models;
@@ -27,7 +28,9 @@ public partial class tb_campanha
 
     public virtual tb_usuario ID_USUARIO_CRIADORNavigation { get; set; }
 
-    public virtual ICollection<tb_campo_ficha> tb_campo_fichas { get; set; } = new List<tb_campo_ficha>();
+    public virtual ICollection<tb_secao_ficha> tb_secao_ficha { get; set; } = new List<tb_secao_ficha>();
 
     public virtual ICollection<tb_usuario_campanha> tb_usuario_campanhas { get; set; } = new List<tb_usuario_campanha>();
+
+    public virtual ICollection<tb_personagem_campanha> tb_personagem_campanhas { get; set; } = new List<tb_personagem_campanha>();
 }

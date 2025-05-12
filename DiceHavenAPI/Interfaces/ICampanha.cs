@@ -17,9 +17,8 @@ namespace DiceHavenAPI.Interfaces
         void AtualizarCampanha(CampanhaDTO campanhaAtualizada);
         void VincularUsuarioCampanha(int idCampanha, int idUsuario, bool flAdmin = false);
         void DesvincularUsuarioCampanha(int idCampanha, int idUsuario);
-        void AlterarAdmins(GerenciarAdminDTO gerenciarAdmin,  int idUsuarioLogado);
+        void AlterarAdmins(GerenciarAdminDTO gerenciarAdmin, int idUsuarioLogado);
         List<UsuarioBasicoDTO> ListarUsuarios(int idUsuarioLogado, int? idCampanha);
-        List<CampoFichaDTO> ListarCamposFicha(int idCampanha);
-        void EditarModeloDeFicha(List<CampoFichaDTO> lstCampos);
+        List<PersonagemDTO> ListarPersonagens(int idCampanha);
     }
 }
