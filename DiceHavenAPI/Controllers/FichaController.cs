@@ -82,5 +82,25 @@ namespace DiceHavenAPI.Controllers
                 return StatusCode((int)ex.CodeStatus, new { ex.Message });
             }
         }
+
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Grava todos os dados da ficha", Description = "Grava todos os dados da ficha baseado no ID_CAMPANHA")]
+        [HttpPost("GravarFicha")]
+        public ActionResult GravarFicha(FichaDTO DadosFicha)
+        {
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                List<Claim> claim = identity.Claims.ToList();
+                int idUsuarioLogado = int.Parse(claim[0].Value);
+
+                _fichaService.GravarFicha(DadosFicha);
+                return StatusCode(200, new { Message = "Ficha Gravada com sucesso!" });
+            }
+            catch (HttpDiceExcept ex)
+            {
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
+            }
+        }
     }
 }

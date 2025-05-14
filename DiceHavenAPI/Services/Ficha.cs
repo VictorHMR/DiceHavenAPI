@@ -104,7 +104,7 @@ namespace DiceHavenAPI.Services
                         else
                         {
                             secaoBD.DS_NOME_SECAO = secao.DS_NOME_SECAO;
-                            secao.NR_ORDEM = secao.NR_ORDEM;
+                            secaoBD.NR_ORDEM = secao.NR_ORDEM;
                             dbDiceHaven.tb_secao_fichas.Update(secaoBD);
                             secao.CAMPOS.ForEach(C => C.ID_SECAO_FICHA = secaoBD.ID_SECAO_FICHA);
 
@@ -173,6 +173,7 @@ namespace DiceHavenAPI.Services
             try
             {
 
+                PersonagemDTO personagem = idPersonagem is not null ? personagemService.ObterPersonagem(idPersonagem ?? 0) : new PersonagemDTO();
                 List<SecaoDTO> lstSecao = dbDiceHaven.tb_secao_fichas.Where(s => s.ID_CAMPANHA == idCampanha).Select(x => new SecaoDTO
                 {
                     ID_SECAO_FICHA = x.ID_SECAO_FICHA,
@@ -214,7 +215,7 @@ namespace DiceHavenAPI.Services
                 return new FichaDTO
                 {
                     ID_CAMPANHA = idCampanha,
-                    PERSONAGEM = idPersonagem is not null ? personagemService.ObterPersonagem(idPersonagem??0) : new PersonagemDTO(),
+                    PERSONAGEM = personagem,
                     LST_SECAO_FICHA = lstSecao
                 };
             }
@@ -223,6 +224,52 @@ namespace DiceHavenAPI.Services
                 throw new HttpDiceExcept($"Ocorreu um erro ao listar valores dos campos da ficha. Message: {ex.Message}", HttpStatusCode.InternalServerError);
             }
 
+        }
+
+        public void GravarFicha(FichaDTO dadosFicha)
+        {
+            try
+            {
+                dbDiceHaven.Database.BeginTransaction();
+
+                if(dadosFicha.PERSONAGEM?.ID_PERSONAGEM is null)
+                    dadosFicha.PERSONAGEM.ID_PERSONAGEM = personagemService.CadastrarPersonagem(dadosFicha.PERSONAGEM);
+                else
+                    personagemService.EditarPersonagem(dadosFicha.PERSONAGEM);
+                
+
+                if (!dbDiceHaven.tb_personagem_campanhas.Any(x => x.ID_PERSONAGEM == dadosFicha.PERSONAGEM.ID_PERSONAGEM && x.ID_CAMPANHA == dadosFicha.ID_CAMPANHA))
+                {
+                    tb_personagem_campanha personagemCampanha = new tb_personagem_campanha();
+                    personagemCampanha.ID_PERSONAGEM = dadosFicha.PERSONAGEM.ID_PERSONAGEM ?? 0;
+                    personagemCampanha.ID_CAMPANHA = dadosFicha.ID_CAMPANHA;
+                    personagemCampanha.DT_REGISTRO = DateTime.Now;
+                    dbDiceHaven.Add(personagemCampanha);
+                }
+                foreach (var secao in dadosFicha.LST_SECAO_FICHA)
+                {
+                    foreach (var dado in secao.LST_DADOS_FICHA)
+                    {
+                        tb_dados_ficha dadosFichaBD = dbDiceHaven.tb_dados_fichas.Find(dado.ID_DADO_FICHA) ?? new tb_dados_ficha();
+                        dadosFichaBD.ID_PERSONAGEM = dadosFicha.PERSONAGEM.ID_PERSONAGEM ?? 0;
+                        dadosFichaBD.ID_CAMPO_FICHA = dado.CAMPO_FICHA.ID_CAMPO_FICHA ?? 0;
+                        dadosFichaBD.DS_VALOR = dado.DS_VALOR ?? dado.CAMPO_FICHA.DS_VALOR_PADRAO;
+                        dadosFichaBD.DS_VALOR_MODIFICADOR = dado.DS_VALOR_MODIFICADOR;
+
+                        if (dado.ID_DADO_FICHA is null)
+                            dbDiceHaven.Add(dadosFichaBD);
+                        else
+                            dbDiceHaven.tb_dados_fichas.Update(dadosFichaBD);
+                    }
+                }
+                dbDiceHaven.SaveChanges();
+                dbDiceHaven.Database.CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                dbDiceHaven.Database.RollbackTransaction();
+                throw new HttpDiceExcept($"Ocorreu um erro ao gravar ficha. Message: {ex.Message}", HttpStatusCode.InternalServerError);
+            }
         }
     }
 }

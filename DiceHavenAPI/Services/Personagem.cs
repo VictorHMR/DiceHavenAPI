@@ -77,7 +77,7 @@ namespace DiceHavenAPI.Services
             }
         }
 
-        public void CadastrarPersonagem(PersonagemDTO novoPersonagem)
+        public int CadastrarPersonagem(PersonagemDTO novoPersonagem)
         {
             try
             {
@@ -95,6 +95,8 @@ namespace DiceHavenAPI.Services
 
                 dbDiceHaven.tb_personagems.Add(novoPersonagemBD);
                 dbDiceHaven.SaveChanges();
+
+                return novoPersonagemBD.ID_PERSONAGEM;
             }
             catch(HttpDiceExcept ex)
             {
