@@ -3,6 +3,7 @@ using System;
 using DiceHavenAPI.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DiceHaven_API.Migrations
 {
     [DbContext(typeof(DiceHavenBDContext))]
-    partial class DiceHavenBDContextModelSnapshot : ModelSnapshot
+    [Migration("20250517165029_Migration_20250517135023")]
+    partial class Migration_20250517135023
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

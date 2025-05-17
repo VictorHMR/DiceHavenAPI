@@ -9,248 +9,85 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using DiceHaven_API.Models;
+using DiceHaven_API.DTOs;
 
 namespace DiceHavenAPI.Services
 {
     public class Chat : IChat
     {
         public DiceHavenBDContext dbDiceHaven;
+        public ICampanha campanhaService;
 
-        public Chat(DiceHavenBDContext dbDiceHaven)
+        public Chat(DiceHavenBDContext dbDiceHaven, ICampanha campanhaService)
         {
             this.dbDiceHaven = dbDiceHaven;
+            this.campanhaService = campanhaService;
         }
 
-
-        public List<ChatUsuarioDTO> ListarChatsUsuario(int idUsuarioLogado)
+        public int EnviarMensagemCampanha(MensagemCampanhaDTO novaMensagem)
         {
             try
             {
-                List<ChatUsuarioDTO> lstChatUsuario = new List<ChatUsuarioDTO>();
+                dbDiceHaven.Database.BeginTransaction();
+                var campanha = campanhaService.ObterCampanha(novaMensagem.ID_CAMPANHA);
 
-                List<tb_chat> lstChats = dbDiceHaven.tb_chats.Where(x => (x.ID_USUARIO_1 == idUsuarioLogado && x.FL_ATIVO_USR_1) || (x.ID_USUARIO_2 == idUsuarioLogado && x.FL_ATIVO_USR_2)).ToList();
-                IUsuario _usuario = new Usuario(dbDiceHaven);
-                foreach(tb_chat chat in lstChats)
+                var mensagem = new tb_campanha_mensagem
                 {
-                    UsuarioDTO usuario;
-                    MensagemDTO ultimaMensagem = ListarMensagensChat(chat.ID_CHAT, idUsuarioLogado).OrderByDescending(x => x.DT_DATA_ENVIO).FirstOrDefault();;
-                    if (chat.ID_USUARIO_1 == idUsuarioLogado)
-                    {
-                        usuario = _usuario.obterUsuario(chat.ID_USUARIO_2);
-                    }
-                    else
-                        usuario = _usuario.obterUsuario(chat.ID_USUARIO_1);
-                    lstChatUsuario.Add(new ChatUsuarioDTO
-                    {
-                        IdChat = chat.ID_CHAT,
-                        Usuario = usuario,
-                        UltimaMensagem = ultimaMensagem
-                    });
-                }
-
-                return lstChatUsuario;
-
-            }
-            catch (HttpDiceExcept ex)
-            {
-                throw ex;
-
-            }
-            catch (Exception ex)
-            {
-                throw new HttpDiceExcept($"Ocorreu um erro ao listar chats. Message: {ex.Message}", HttpStatusCode.InternalServerError);
-
-            }
-
-        }
-        public void IniciarChat(int idUsuarioLogado, int idUsuario)
-        {
-            try
-            {
-                tb_chat chat = dbDiceHaven.tb_chats.Where(x => (x.ID_USUARIO_1 == idUsuarioLogado && x.ID_USUARIO_2 == idUsuario) ||
-                                                             (x.ID_USUARIO_2 == idUsuario && x.ID_USUARIO_1 == idUsuarioLogado)).FirstOrDefault();
-                if (chat is null)
-                {
-                    tb_chat novoChatBD = new tb_chat();
-                    novoChatBD.ID_USUARIO_1 = idUsuarioLogado;
-                    novoChatBD.ID_USUARIO_2 = idUsuario;
-                    novoChatBD.FL_ATIVO_USR_1 = true;
-                    novoChatBD.FL_ATIVO_USR_2 = true;
-                    dbDiceHaven.tb_chats.Add(novoChatBD);
-                }
-                else
-                {
-                    if (idUsuarioLogado == chat.ID_USUARIO_1 && chat.FL_ATIVO_USR_1 == false)
-                        chat.FL_ATIVO_USR_1 = true;
-                    else if (idUsuarioLogado == chat.ID_USUARIO_2 && chat.FL_ATIVO_USR_2 == false)
-                        chat.FL_ATIVO_USR_2 = true;
-                    else
-                        throw new HttpDiceExcept("Voce já possui um chat com esse usuário!", HttpStatusCode.InternalServerError);
-                }
+                    DS_MENSAGEM = novaMensagem.DS_MENSAGEM,
+                    FL_MESTRE = campanha.ID_MESTRE_CAMPANHA == novaMensagem.ID_USUARIO,
+                    DT_MENSAGEM = novaMensagem?.DT_MENSAGEM ?? DateTime.Now,
+                    ID_USUARIO = novaMensagem.ID_USUARIO,
+                    ID_CAMPANHA = novaMensagem.ID_CAMPANHA,
+                    ID_PERSONAGEM = novaMensagem.ID_PERSONAGEM
+                };
+                dbDiceHaven.Add(mensagem);
                 dbDiceHaven.SaveChanges();
+                dbDiceHaven.Database.CommitTransaction();
+
+                return mensagem.ID_CAMPANHA_MENSAGEM;
             }
             catch (HttpDiceExcept ex)
             {
-                throw ex;
+                dbDiceHaven.Database.RollbackTransaction();
+                throw;
             }
             catch (Exception ex)
             {
-                throw new HttpDiceExcept($"Ocorreu um erro ao iniciar chat. Message: {ex.Message}", HttpStatusCode.InternalServerError);
+                dbDiceHaven.Database.RollbackTransaction();
+                throw new HttpDiceExcept($"Ocorreu um erro ao gravar mensagem. Message: {ex.Message}", HttpStatusCode.InternalServerError);
 
             }
         }
 
-        public void RemoverChat(int idUsuarioLogado, int idUsuario)
+        public List<MensagemCampanhaDTO> ListarMensagensCampanha(int idCampanha)
         {
             try
             {
-                tb_chat chat = dbDiceHaven.tb_chats.Where(x => (x.ID_USUARIO_1 == idUsuarioLogado && x.ID_USUARIO_2 == idUsuario) ||
-                                                             (x.ID_USUARIO_2 == idUsuario && x.ID_USUARIO_1 == idUsuarioLogado)).FirstOrDefault();
-                if (chat is null)
-                    throw new HttpDiceExcept("O chat informado não existe", HttpStatusCode.InternalServerError);
-                else
-                {
-                    if (idUsuarioLogado == chat.ID_USUARIO_1)
-                        chat.FL_ATIVO_USR_1 = false;
-                    else if (idUsuarioLogado == chat.ID_USUARIO_2)
-                        chat.FL_ATIVO_USR_2 = false;
-                }
-                dbDiceHaven.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw new HttpDiceExcept($"Ocorreu um erro ao iniciar chat. Message: {ex.Message}", HttpStatusCode.InternalServerError);
 
-            }
-        }
-
-        public List<MensagemDTO> ListarMensagensChat(int idChat, int idUsuarioLogado)
-        {
-            try
-            {
-                tb_chat chat = dbDiceHaven.tb_chats.Where(x => x.ID_CHAT == idChat && (x.ID_USUARIO_1 == idUsuarioLogado || x.ID_USUARIO_2 == idUsuarioLogado)).FirstOrDefault();
-                if (chat is not null)
-                {
-                    List<MensagemDTO> lstMensagens = (from mc in dbDiceHaven.tb_chat_mensagems
-                                                      where mc.FL_ATIVA == true
-                                                      select new MensagemDTO
-                                                      {
-                                                          ID_CHAT_MENSAGEM = mc.ID_CHAT_MENSAGEM,
-                                                          DS_MENSAGEM = mc.DS_MENSAGEM,
-                                                          DT_DATA_ENVIO = mc.DT_DATA_ENVIO,
-                                                          FL_EDITADA = mc.FL_EDITADA,
-                                                          DS_LINK_IMAGEM = mc.DS_LINK_IMAGEM,
-                                                          ID_USUARIO = mc.ID_USUARIO,
-                                                          FL_ATIVA = mc.FL_ATIVA,
-                                                          FL_VISUALIZADA = mc.FL_VISUALIZADA,
-                                                          ID_CHAT = mc.ID_CHAT
-                                                      }).ToList();
-                    return lstMensagens;
-                }
-                else
-                    throw new HttpDiceExcept("Não foi possivel encontrar o chat.", HttpStatusCode.InternalServerError);
-
+                return (from cm in dbDiceHaven.tb_campanha_mensagens 
+                        where cm.ID_CAMPANHA == idCampanha
+                        select new MensagemCampanhaDTO
+                        {
+                            ID_CAMPANHA_MENSAGEM = cm.ID_CAMPANHA_MENSAGEM,
+                            DS_MENSAGEM = cm.DS_MENSAGEM,
+                            FL_MESTRE = cm.FL_MESTRE,
+                            DT_MENSAGEM = cm.DT_MENSAGEM,
+                            ID_USUARIO = cm.ID_USUARIO,
+                            ID_CAMPANHA = cm.ID_CAMPANHA,
+                            ID_PERSONAGEM = cm.ID_PERSONAGEM
+                        }).ToList();
             }
             catch (HttpDiceExcept ex)
             {
-                throw ex;
+                dbDiceHaven.Database.RollbackTransaction();
+                throw;
             }
             catch (Exception ex)
             {
-                throw new HttpDiceExcept($"Ocorreu um erro ao listar mensagens do chat. Message: {ex.Message}", HttpStatusCode.InternalServerError);
-            }
-        }
+                dbDiceHaven.Database.RollbackTransaction();
+                throw new HttpDiceExcept($"Ocorreu um erro ao listar mensagem. Message: {ex.Message}", HttpStatusCode.InternalServerError);
 
-        public void EnviarMensagem(MensagemDTO novaMensagem, int idUsuarioLogado)
-        {
-            try
-            {
-                tb_chat chat = dbDiceHaven.tb_chats.Where(x => x.ID_CHAT == novaMensagem.ID_CHAT && 
-                                                         (x.ID_USUARIO_1 == idUsuarioLogado || x.ID_USUARIO_2 == idUsuarioLogado)).FirstOrDefault();
-                if(chat is not null)
-                {
-                    tb_chat_mensagem novaMensagemBD = new tb_chat_mensagem();
-                    novaMensagemBD.DS_MENSAGEM = novaMensagem.DS_MENSAGEM;
-                    novaMensagemBD.DT_DATA_ENVIO = DateTime.Now;
-                    novaMensagemBD.FL_EDITADA = false;
-                    novaMensagemBD.DS_LINK_IMAGEM = novaMensagem.DS_LINK_IMAGEM;
-                    novaMensagemBD.ID_USUARIO = idUsuarioLogado;
-                    novaMensagemBD.FL_ATIVA = true;
-                    novaMensagemBD.FL_VISUALIZADA = false;
-                    novaMensagemBD.ID_CHAT = novaMensagem.ID_CHAT;
-
-                    dbDiceHaven.tb_chat_mensagems.Add(novaMensagemBD);
-                    dbDiceHaven.SaveChanges();
-
-                    //Implementar lógica de real time, provavelmente será feito usando Firebase.
-                }
-                else
-                    throw new HttpDiceExcept($"Você não tem permissão para enviar mensagens nesse chat.", HttpStatusCode.InternalServerError);
-
-
-            }
-            catch (HttpDiceExcept ex)
-            {
-                throw ex;
-            }
-            catch (Exception ex)
-            {
-                throw new HttpDiceExcept($"Ocorreu um erro ao enviar mensagem. Message: {ex.Message}", HttpStatusCode.InternalServerError);
-            }
-        }
-
-        public void EditarMensagem(MensagemDTO mensagemEditada, int idUsuarioLogado)
-        {
-            try
-            {
-                tb_chat_mensagem mensagem = dbDiceHaven.tb_chat_mensagems.Find(mensagemEditada.ID_CHAT_MENSAGEM);
-                if (mensagem.ID_USUARIO == idUsuarioLogado)
-                {
-                    mensagem.DS_MENSAGEM = mensagemEditada.DS_MENSAGEM;
-                    mensagem.DS_LINK_IMAGEM = mensagemEditada.DS_LINK_IMAGEM;
-                    mensagem.FL_EDITADA = true;
-                    dbDiceHaven.SaveChanges();
-                    //Implementar lógica de real time, provavelmente será feito usando Firebase.
-
-                }
-                else
-                    throw new HttpDiceExcept($"Você não tem permissão para editar essa mensagem.", HttpStatusCode.InternalServerError);
-
-
-            }
-            catch (HttpDiceExcept ex)
-            {
-                throw ex;
-            }
-            catch (Exception ex)
-            {
-                throw new HttpDiceExcept($"Ocorreu um erro ao editar mensagem. Message: {ex.Message}", HttpStatusCode.InternalServerError);
-            }
-        }
-
-        public void DesativarMensagem(int idChatMensagem, int idUsuarioLogado)
-        {
-            try
-            {
-                tb_chat_mensagem mensagem = dbDiceHaven.tb_chat_mensagems.Find(idChatMensagem);
-                if(mensagem.ID_USUARIO == idUsuarioLogado)
-                {
-                    mensagem.FL_ATIVA = false;
-                    dbDiceHaven.SaveChanges();
-                    //Implementar lógica de real time, provavelmente será feito usando Firebase.
-
-                }
-                else
-                    throw new HttpDiceExcept($"Você não tem permissão para desativar essa mensagem.", HttpStatusCode.InternalServerError);
-
-            }
-            catch(HttpDiceExcept ex)
-            {
-                throw ex;
-            }
-            catch (Exception ex)
-            {
-                throw new HttpDiceExcept($"Ocorreu um erro ao editar mensagem. Message: {ex.Message}", HttpStatusCode.InternalServerError);
             }
         }
     }

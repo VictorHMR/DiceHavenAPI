@@ -21,10 +21,6 @@ public partial class DiceHavenBDContext : DbContext
 
     public virtual DbSet<tb_campo_ficha> tb_campo_fichas { get; set; }
 
-    public virtual DbSet<tb_chat> tb_chats { get; set; }
-
-    public virtual DbSet<tb_chat_mensagem> tb_chat_mensagems { get; set; }
-
     public virtual DbSet<tb_config_usuario> tb_config_usuarios { get; set; }
 
     public virtual DbSet<tb_dados_ficha> tb_dados_fichas { get; set; }
@@ -40,6 +36,8 @@ public partial class DiceHavenBDContext : DbContext
     public virtual DbSet<tb_personagem_campanha> tb_personagem_campanhas { get; set; }
 
     public virtual DbSet<tb_usuario_contato> tb_usuario_contatos { get; set; }
+
+    public virtual DbSet<tb_campanha_mensagem> tb_campanha_mensagens { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlite("Data Source=../DiceHaven.db");
@@ -124,54 +122,6 @@ public partial class DiceHavenBDContext : DbContext
                 .HasConstraintName("tb_personagem_campanha_ibfk_2");
         });
 
-        modelBuilder.Entity<tb_chat>(entity =>
-        {
-            entity.HasKey(e => e.ID_CHAT).HasName("PRIMARY");
-
-            entity.ToTable("tb_chat");
-
-            entity.HasIndex(e => e.ID_USUARIO_1, "ID_USUARIO_1");
-
-            entity.HasIndex(e => e.ID_USUARIO_2, "ID_USUARIO_2");
-
-            entity.HasOne(d => d.ID_USUARIO_1Navigation).WithMany(p => p.tb_chatID_USUARIO_1Navigations)
-                .HasForeignKey(d => d.ID_USUARIO_1)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("tb_chat_ibfk_1");
-
-            entity.HasOne(d => d.ID_USUARIO_2Navigation).WithMany(p => p.tb_chatID_USUARIO_2Navigations)
-                .HasForeignKey(d => d.ID_USUARIO_2)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("tb_chat_ibfk_2");
-        });
-
-        modelBuilder.Entity<tb_chat_mensagem>(entity =>
-        {
-            entity.HasKey(e => e.ID_CHAT_MENSAGEM).HasName("PRIMARY");
-
-            entity.ToTable("tb_chat_mensagem");
-
-            entity.HasIndex(e => e.ID_CHAT, "ID_CHAT");
-
-            entity.HasIndex(e => e.ID_USUARIO, "ID_USUARIO");
-
-            entity.Property(e => e.DS_LINK_IMAGEM).HasColumnType("text");
-            entity.Property(e => e.DS_MENSAGEM)
-                .IsRequired()
-                .HasColumnType("text");
-            entity.Property(e => e.DT_DATA_ENVIO).HasColumnType("datetime");
-
-            entity.HasOne(d => d.ID_CHATNavigation).WithMany(p => p.tb_chat_mensagems)
-                .HasForeignKey(d => d.ID_CHAT)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("tb_chat_mensagem_ibfk_2");
-
-            entity.HasOne(d => d.ID_USUARIONavigation).WithMany(p => p.tb_chat_mensagems)
-                .HasForeignKey(d => d.ID_USUARIO)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("tb_chat_mensagem_ibfk_1");
-        });
-
         modelBuilder.Entity<tb_config_usuario>(entity =>
         {
             entity.HasKey(e => e.ID_CONFIG_USUARIO).HasName("PRIMARY");
@@ -221,7 +171,8 @@ public partial class DiceHavenBDContext : DbContext
                 .IsRequired()
                 .HasMaxLength(75);
 
-            entity.HasOne(d => d.ID_USUARIONavigation).WithMany(p => p.tb_personagems)
+            entity.HasOne(d => d.ID_USUARIONavigation)
+                .WithMany(p => p.tb_personagems)
                 .HasForeignKey(d => d.ID_USUARIO)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("tb_personagem_ibfk_1");
@@ -293,6 +244,39 @@ public partial class DiceHavenBDContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("tb_usuario_contato_ibfk_1");
         });
+
+        modelBuilder.Entity<tb_campanha_mensagem>(entity =>
+        {
+            entity.HasKey(e => e.ID_CAMPANHA_MENSAGEM).HasName("PRIMARY");
+
+            entity.ToTable("tb_campanha_mensagem");
+
+            entity.HasIndex(e => e.ID_CAMPANHA, "ID_CAMPANHA");
+            entity.HasIndex(e => e.ID_USUARIO, "ID_USUARIO");
+            entity.HasIndex(e => e.ID_PERSONAGEM, "ID_PERSONAGEM"); 
+
+            entity.Property(e => e.DT_MENSAGEM).HasColumnType("datetime");
+            entity.Property(e => e.DS_MENSAGEM).HasColumnType("text");
+
+            entity.HasOne(d => d.ID_CAMPANHANavigation)
+                .WithMany(p => p.tb_campanha_mensagens)
+                .HasForeignKey(d => d.ID_CAMPANHA)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("tb_campanha_mensagem_ibfk_1");
+
+            entity.HasOne(d => d.ID_USUARIONavigation)
+                .WithMany(p => p.tb_campanha_mensagens)
+                .HasForeignKey(d => d.ID_USUARIO)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("tb_campanha_mensagem_ibfk_2");
+
+            entity.HasOne(d => d.ID_PERSONAGEMNavigation) 
+                .WithMany(p => p.tb_campanha_mensagens)
+                .HasForeignKey(d => d.ID_PERSONAGEM)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("tb_campanha_mensagem_ibfk_3"); 
+        });
+
 
         OnModelCreatingPartial(modelBuilder);
     }

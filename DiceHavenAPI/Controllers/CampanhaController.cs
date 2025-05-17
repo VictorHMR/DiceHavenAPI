@@ -207,5 +207,26 @@ namespace DiceHavenAPI.Controllers
                 return StatusCode((int)ex.CodeStatus, new { ex.Message });
             }
         }
+
+        [ProducesResponseType(typeof(List<PersonagemDTO>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Lista as mensagens pertencentes a campanha",
+            Description = "Lista as mensagens pertencentes a campanha.")]
+        [HttpGet("ListarMensagens")]
+        public ActionResult ListarMensagens(int IdCampanha, int Quantidade, DateTime DataInicial)
+        {
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                List<Claim> claim = identity.Claims.ToList();
+                int idUsuarioLogado = int.Parse(claim[0].Value);
+
+                return StatusCode(200, _campanha.ListarMensagens(IdCampanha, Quantidade, DataInicial));
+            }
+            catch (HttpDiceExcept ex)
+            {
+                return StatusCode((int)ex.CodeStatus, new { ex.Message });
+            }
+        }
+
     }
 }

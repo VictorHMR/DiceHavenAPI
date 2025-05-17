@@ -16,4 +16,5 @@ public partial class tb_personagem
 
     public virtual ICollection<tb_dados_ficha> tb_dados_fichas { get; set; } = new List<tb_dados_ficha>();
     public virtual ICollection<tb_personagem_campanha> tb_personagem_campanhas { get; set; } = new List<tb_personagem_campanha>();
+    public virtual ICollection<tb_campanha_mensagem> tb_campanha_mensagens { get; set; } = new List<tb_campanha_mensagem>();
 }

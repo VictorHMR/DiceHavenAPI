@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using static DiceHavenAPI.Utils.Enumeration;
 using DiceHaven_API.DTOs.Response;
 using DiceHaven_API.DTOs.Request;
+using DiceHaven_API.DTOs;
 
 namespace DiceHavenAPI.Services
 {
@@ -329,9 +330,41 @@ namespace DiceHavenAPI.Services
                                                           DS_NOME = p.DS_NOME,
                                                           DS_FOTO = imageService.GetImageAsBase64(p.DS_FOTO),
                                                           ID_USUARIO = p.ID_USUARIO,
+                                                          DS_COR = p.DS_COR
                                                       }).ToList();
 
                 return lstPersonagens;
+            }
+            catch (HttpDiceExcept ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw new HttpDiceExcept($"Ocorreu um erro ao listar personagens da campanha! Message: {ex.Message}", HttpStatusCode.InternalServerError);
+            }
+        }
+
+        public List<MensagemCampanhaDTO> ListarMensagens(int idCampanha, int quantidade, DateTime DataInicial)
+        {
+            try
+            {
+                List<MensagemCampanhaDTO> lstMensagens = (from cm in dbDiceHaven.tb_campanha_mensagens
+                                                          join c in dbDiceHaven.tb_campanhas on cm.ID_CAMPANHA equals c.ID_CAMPANHA
+                                                          where cm.ID_CAMPANHA == idCampanha && cm.DT_MENSAGEM < DataInicial
+                                                          orderby cm.DT_MENSAGEM descending
+                                                          select new MensagemCampanhaDTO
+                                                          {
+                                                              ID_CAMPANHA_MENSAGEM = cm.ID_CAMPANHA_MENSAGEM,
+                                                              DS_MENSAGEM = cm.DS_MENSAGEM,
+                                                              DT_MENSAGEM = cm.DT_MENSAGEM,
+                                                              ID_USUARIO = cm.ID_USUARIO,
+                                                              FL_MESTRE = cm.ID_USUARIO == c.ID_MESTRE_CAMPANHA,
+                                                              ID_CAMPANHA = cm.ID_CAMPANHA,
+                                                              ID_PERSONAGEM = cm.ID_PERSONAGEM
+                                                          }).Take(quantidade).ToList();
+
+                return lstMensagens;
             }
             catch (HttpDiceExcept ex)
             {

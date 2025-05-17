@@ -33,4 +33,7 @@ public partial class tb_campanha
     public virtual ICollection<tb_usuario_campanha> tb_usuario_campanhas { get; set; } = new List<tb_usuario_campanha>();
 
     public virtual ICollection<tb_personagem_campanha> tb_personagem_campanhas { get; set; } = new List<tb_personagem_campanha>();
+
+    public virtual ICollection<tb_campanha_mensagem> tb_campanha_mensagens { get; set; } = new List<tb_campanha_mensagem>();
+
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DiceHaven_API.Models;
+using System;
 using System.Collections.Generic;
 
 namespace DiceHavenAPI.Models;
@@ -27,12 +28,6 @@ public partial class tb_usuario
 
     public virtual ICollection<tb_campanha> tb_campanhaID_USUARIO_CRIADORNavigations { get; set; } = new List<tb_campanha>();
 
-    public virtual ICollection<tb_chat> tb_chatID_USUARIO_1Navigations { get; set; } = new List<tb_chat>();
-
-    public virtual ICollection<tb_chat> tb_chatID_USUARIO_2Navigations { get; set; } = new List<tb_chat>();
-
-    public virtual ICollection<tb_chat_mensagem> tb_chat_mensagems { get; set; } = new List<tb_chat_mensagem>();
-
     public virtual tb_config_usuario tb_config_usuario { get; set; }
 
     public virtual ICollection<tb_personagem> tb_personagems { get; set; } = new List<tb_personagem>();
@@ -42,4 +37,7 @@ public partial class tb_usuario
     public virtual ICollection<tb_usuario_contato> tb_usuario_contatoID_CONTATONavigations { get; set; } = new List<tb_usuario_contato>();
 
     public virtual ICollection<tb_usuario_contato> tb_usuario_contatoID_USUARIONavigations { get; set; } = new List<tb_usuario_contato>();
+
+    public virtual ICollection<tb_campanha_mensagem> tb_campanha_mensagens { get; set; } = new List<tb_campanha_mensagem>();
+
 }

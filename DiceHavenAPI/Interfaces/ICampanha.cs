@@ -1,4 +1,5 @@
-﻿using DiceHaven_API.DTOs.Request;
+﻿using DiceHaven_API.DTOs;
+using DiceHaven_API.DTOs.Request;
 using DiceHaven_API.DTOs.Response;
 using DiceHavenAPI.DTOs;
 using System;
@@ -20,5 +21,6 @@ namespace DiceHavenAPI.Interfaces
         void AlterarAdmins(GerenciarAdminDTO gerenciarAdmin, int idUsuarioLogado);
         List<UsuarioBasicoDTO> ListarUsuarios(int idUsuarioLogado, int? idCampanha);
         List<PersonagemDTO> ListarPersonagens(int idCampanha);
+        List<MensagemCampanhaDTO> ListarMensagens(int idCampanha, int quantidade, DateTime DataInicial);
     }
 }
