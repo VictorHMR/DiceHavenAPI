@@ -219,6 +219,9 @@ namespace DiceHaven_API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("DS_COR")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("DS_FOTO")
                         .HasColumnType("text");
 

@@ -43,6 +43,7 @@ namespace DiceHavenAPI.Services
                                                 ID_PERSONAGEM = ps.ID_PERSONAGEM,
                                                 DS_NOME = ps.DS_NOME,
                                                 DS_FOTO = imageService.GetImageAsBase64(ps.DS_FOTO),
+                                                DS_COR = ps.DS_COR,
                                                 ID_USUARIO = ps.ID_USUARIO
                                             }).FirstOrDefault();
 
@@ -91,6 +92,7 @@ namespace DiceHavenAPI.Services
                 tb_personagem novoPersonagemBD = new tb_personagem();
                 novoPersonagemBD.DS_NOME = novoPersonagem.DS_NOME;
                 novoPersonagemBD.DS_FOTO = imageService.SaveImageFromBase64(novoPersonagem.DS_FOTO);
+                novoPersonagemBD.DS_COR = novoPersonagem.DS_COR;
                 novoPersonagemBD.ID_USUARIO = novoPersonagem.ID_USUARIO;
 
                 dbDiceHaven.tb_personagems.Add(novoPersonagemBD);
@@ -121,7 +123,9 @@ namespace DiceHavenAPI.Services
                     throw new HttpDiceExcept("O personagem informado não existe.", HttpStatusCode.InternalServerError);
 
                 Personagem.DS_NOME = personagemInfo.DS_NOME;
+                Personagem.DS_COR = personagemInfo.DS_COR;
                 Personagem.ID_USUARIO = personagemInfo.ID_USUARIO;
+                
 
                 if (!string.IsNullOrEmpty(personagemInfo.DS_FOTO) && personagemInfo.DS_FOTO != Personagem.DS_FOTO)
                 {
