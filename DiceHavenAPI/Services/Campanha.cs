@@ -359,7 +359,7 @@ namespace DiceHavenAPI.Services
                                                               DS_MENSAGEM = cm.DS_MENSAGEM,
                                                               DT_MENSAGEM = cm.DT_MENSAGEM,
                                                               ID_USUARIO = cm.ID_USUARIO,
-                                                              FL_MESTRE = cm.ID_USUARIO == c.ID_MESTRE_CAMPANHA,
+                                                              FL_MESTRE = cm.FL_MESTRE,
                                                               ID_CAMPANHA = cm.ID_CAMPANHA,
                                                               ID_PERSONAGEM = cm.ID_PERSONAGEM
                                                           }).Take(quantidade).ToList();

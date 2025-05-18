@@ -368,3 +368,5 @@ DiceHaven/
 DiceHavenAPP/
 DiceHaven.db
 DiceHavenAPI/Migration.bat
+*.db-shm
+DiceHaven.db-wal

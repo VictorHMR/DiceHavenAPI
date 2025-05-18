@@ -127,7 +127,7 @@ namespace DiceHavenAPI.Services
                 Personagem.ID_USUARIO = personagemInfo.ID_USUARIO;
                 
 
-                if (!string.IsNullOrEmpty(personagemInfo.DS_FOTO) && personagemInfo.DS_FOTO != Personagem.DS_FOTO)
+                if (!string.IsNullOrEmpty(personagemInfo.DS_FOTO) && personagemInfo.DS_FOTO != imageService.GetImageAsBase64(Personagem.DS_FOTO))
                 {
                     imageService.DeleteImage(Personagem.DS_FOTO);
                     Personagem.DS_FOTO = imageService.SaveImageFromBase64(personagemInfo.DS_FOTO);

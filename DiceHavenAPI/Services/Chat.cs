@@ -35,7 +35,7 @@ namespace DiceHavenAPI.Services
                 var mensagem = new tb_campanha_mensagem
                 {
                     DS_MENSAGEM = novaMensagem.DS_MENSAGEM,
-                    FL_MESTRE = campanha.ID_MESTRE_CAMPANHA == novaMensagem.ID_USUARIO,
+                    FL_MESTRE = novaMensagem.FL_MESTRE,
                     DT_MENSAGEM = novaMensagem?.DT_MENSAGEM ?? DateTime.Now,
                     ID_USUARIO = novaMensagem.ID_USUARIO,
                     ID_CAMPANHA = novaMensagem.ID_CAMPANHA,
