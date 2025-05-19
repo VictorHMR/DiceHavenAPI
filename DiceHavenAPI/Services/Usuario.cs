@@ -38,7 +38,7 @@ namespace DiceHavenAPI.Services
                 List<Claim> claims = new List<Claim>();
                 claims.Add(new Claim(JwtRegisteredClaimNames.UniqueName, usuario.ID_USUARIO.ToString()));
                 claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:key"]));
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY")));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
                 var expiration = DateTime.UtcNow.AddDays(7);
                 JwtSecurityToken token = new JwtSecurityToken(
