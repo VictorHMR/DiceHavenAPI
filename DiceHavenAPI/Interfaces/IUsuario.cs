@@ -12,8 +12,8 @@ namespace DiceHavenAPI.Interfaces
     {
         AuthTokenDTO GerarToken(UsuarioDTO usuario);
         UsuarioDTO Login(LoginDTO login);
-        int cadastrarUsuario(UsuarioDTO request);
-        void alterarDadosUsuario(UsuarioDTO request);
+        Task<int> cadastrarUsuario(UsuarioDTO request);
+        Task alterarDadosUsuario(UsuarioDTO request);
         UsuarioDTO obterUsuario(int idUsuario);
         void alterarConfigUsuario(ConfigUsuarioDTO configsUsuario, int idUsuario);
     }

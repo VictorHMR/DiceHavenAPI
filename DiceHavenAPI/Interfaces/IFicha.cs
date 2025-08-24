@@ -13,6 +13,6 @@ namespace DiceHavenAPI.Interfaces
         List<SecaoFichaDTO> ObterModeloDeFicha(int idCampanha);
         void EditarModeloDeFicha(List<SecaoFichaDTO> lstCampos);
         FichaDTO ListarDadosFicha(int idCampanha, int? idPersonagem);
-        void GravarFicha(FichaDTO dadosFicha);
+        Task GravarFicha(FichaDTO dadosFicha);
     }
 }

@@ -226,16 +226,16 @@ namespace DiceHavenAPI.Services
 
         }
 
-        public void GravarFicha(FichaDTO dadosFicha)
+        public async Task GravarFicha(FichaDTO dadosFicha)
         {
             try
             {
                 dbDiceHaven.Database.BeginTransaction();
 
                 if(dadosFicha.PERSONAGEM?.ID_PERSONAGEM is null)
-                    dadosFicha.PERSONAGEM.ID_PERSONAGEM = personagemService.CadastrarPersonagem(dadosFicha.PERSONAGEM);
+                    dadosFicha.PERSONAGEM.ID_PERSONAGEM = await personagemService.CadastrarPersonagem(dadosFicha.PERSONAGEM);
                 else
-                    personagemService.EditarPersonagem(dadosFicha.PERSONAGEM);
+                    await personagemService.EditarPersonagem(dadosFicha.PERSONAGEM);
                 
 
                 if (!dbDiceHaven.tb_personagem_campanhas.Any(x => x.ID_PERSONAGEM == dadosFicha.PERSONAGEM.ID_PERSONAGEM && x.ID_CAMPANHA == dadosFicha.ID_CAMPANHA))

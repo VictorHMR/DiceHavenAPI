@@ -1,27 +1,28 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using DiceHaven_API.Hubs;
+using DiceHavenAPI;
+using DiceHavenAPI.Contexts;
+using DiceHavenAPI.Interfaces;
+using DiceHavenAPI.Services;
+using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+using Supabase;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DiceHavenAPI;
-using DiceHavenAPI.Contexts;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using DiceHavenAPI.Services;
-using DiceHavenAPI.Interfaces;
-using Microsoft.AspNetCore.SignalR;
-using DiceHaven_API.Hubs;
-using DotNetEnv;
 namespace DiceHavenAPI
 {
     public class Startup
@@ -66,6 +67,7 @@ namespace DiceHavenAPI
                     ValidateAudience = false
                 };
             });
+
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
@@ -132,6 +134,16 @@ namespace DiceHavenAPI
             services.AddRouting(options => options.LowercaseUrls = true);
 
             #region Injeção de Dependência 
+
+            services.AddScoped<Supabase.Client>(_ =>
+            new Supabase.Client(
+                Environment.GetEnvironmentVariable("SUPABASE_URL"),
+                Environment.GetEnvironmentVariable("SUPABASE_KEY"),
+                new SupabaseOptions
+                {
+                    AutoRefreshToken = true,
+                    AutoConnectRealtime = true,
+                }));
 
             services.AddScoped<ICampanha, Campanha>();
             services.AddScoped<IChat, Chat>();

@@ -15,6 +15,7 @@ using static DiceHavenAPI.Utils.Enumeration;
 using DiceHaven_API.DTOs.Response;
 using DiceHaven_API.DTOs.Request;
 using DiceHaven_API.DTOs;
+using DiceHaven_API.Utils;
 
 namespace DiceHavenAPI.Services
 {
@@ -22,11 +23,13 @@ namespace DiceHavenAPI.Services
     {
         public DiceHavenBDContext dbDiceHaven;
         private readonly IConfiguration _configuration;
+        private readonly Supabase.Client _client;
 
-        public Campanha(DiceHavenBDContext dbDiceHaven, IConfiguration configuration)
+        public Campanha(DiceHavenBDContext dbDiceHaven, IConfiguration configuration, Supabase.Client client)
         {
             this.dbDiceHaven = dbDiceHaven;
             this._configuration = configuration;
+            _client = client;
         }
         public Campanha(DiceHavenBDContext dbDiceHaven)
         {
@@ -37,7 +40,7 @@ namespace DiceHavenAPI.Services
         {
             try
             {
-                ImageService imageService = new ImageService(_configuration);
+                SupabaseStorage SupabaseStorage = new SupabaseStorage(_configuration, _client);
 
                 CampanhaDTO campanha = (from c in dbDiceHaven.tb_campanhas
                                         where c.ID_CAMPANHA == idCampanha
@@ -49,7 +52,7 @@ namespace DiceHavenAPI.Services
                                             DT_CRIACAO = c.DT_CRIACAO,
                                             FL_ATIVO = c.FL_ATIVO,
                                             FL_PUBLICA = c.FL_PUBLICA,
-                                            DS_FOTO = imageService.GetImageAsBase64(c.DS_FOTO),
+                                            DS_FOTO = c.DS_FOTO,
                                             ID_USUARIO_CRIADOR = c.ID_USUARIO_CRIADOR,
                                             ID_MESTRE_CAMPANHA = c.ID_MESTRE_CAMPANHA
                                         }).FirstOrDefault();
@@ -71,7 +74,7 @@ namespace DiceHavenAPI.Services
         {
             try
             {
-                ImageService imageService = new ImageService(_configuration);
+                SupabaseStorage SupabaseStorage = new SupabaseStorage(_configuration, _client);
 
                 List<CampanhaDTO> campanhas = (from c in dbDiceHaven.tb_campanhas
                                                join uc in dbDiceHaven.tb_usuario_campanhas on c.ID_CAMPANHA equals uc.ID_CAMPANHA
@@ -84,7 +87,7 @@ namespace DiceHavenAPI.Services
                                                     DT_CRIACAO = c.DT_CRIACAO,
                                                     FL_ATIVO = c.FL_ATIVO,
                                                     FL_PUBLICA = c.FL_PUBLICA,
-                                                    DS_FOTO = imageService.GetImageAsBase64(c.DS_FOTO),
+                                                    DS_FOTO = c.DS_FOTO,
                                                     ID_USUARIO_CRIADOR = c.ID_USUARIO_CRIADOR,
                                                     ID_MESTRE_CAMPANHA = c.ID_MESTRE_CAMPANHA
                                                 }).ToList();
@@ -102,18 +105,18 @@ namespace DiceHavenAPI.Services
             }
         } 
 
-        public int CadastrarCampanha(CampanhaDTO novaCampanha, int idUsuarioLogado)
+        public async Task<int> CadastrarCampanha(CampanhaDTO novaCampanha, int idUsuarioLogado)
         {
             try
             {
-                ImageService imageService = new ImageService(_configuration);
+                SupabaseStorage SupabaseStorage = new SupabaseStorage(_configuration, _client);
                 tb_campanha novaCampanhaBD = new tb_campanha();
                 novaCampanhaBD.DS_NOME_CAMPANHA = novaCampanha.DS_NOME_CAMPANHA;
                 novaCampanhaBD.DS_LORE = novaCampanha.DS_LORE;
                 novaCampanhaBD.DT_CRIACAO = DateTime.Now;
                 novaCampanhaBD.FL_ATIVO = true;
                 novaCampanhaBD.FL_PUBLICA = novaCampanha.FL_PUBLICA;
-                novaCampanhaBD.DS_FOTO = imageService.SaveImageFromBase64(novaCampanha.DS_FOTO);
+                novaCampanhaBD.DS_FOTO = await SupabaseStorage.SaveImageFromBase64(novaCampanha.DS_FOTO, "CampaignPicture", "CampaignPictures");
                 novaCampanhaBD.ID_USUARIO_CRIADOR = idUsuarioLogado;
                 novaCampanhaBD.ID_MESTRE_CAMPANHA = novaCampanha?.ID_MESTRE_CAMPANHA ?? idUsuarioLogado;
 
@@ -139,11 +142,11 @@ namespace DiceHavenAPI.Services
             }
         }
 
-        public void AtualizarCampanha(CampanhaDTO campanhaAtualizada)
+        public async Task AtualizarCampanha(CampanhaDTO campanhaAtualizada)
         {
             try
             {
-                ImageService imageService = new ImageService(_configuration);
+                SupabaseStorage SupabaseStorage = new SupabaseStorage(_configuration, _client);
 
                 tb_campanha CampanhaBD = dbDiceHaven.tb_campanhas.Find(campanhaAtualizada.ID_CAMPANHA);
                 if (CampanhaBD is null)
@@ -154,10 +157,10 @@ namespace DiceHavenAPI.Services
                 CampanhaBD.FL_PUBLICA = campanhaAtualizada.FL_PUBLICA;
                 CampanhaBD.ID_MESTRE_CAMPANHA = campanhaAtualizada?.ID_MESTRE_CAMPANHA ?? CampanhaBD.ID_MESTRE_CAMPANHA;
 
-                if (!string.IsNullOrEmpty(campanhaAtualizada.DS_FOTO) && campanhaAtualizada.DS_FOTO != CampanhaBD.DS_FOTO)
+                if (!string.IsNullOrEmpty(campanhaAtualizada.DS_FOTO))
                 {
-                    imageService.DeleteImage(CampanhaBD.DS_FOTO);
-                    CampanhaBD.DS_FOTO = imageService.SaveImageFromBase64(campanhaAtualizada.DS_FOTO);
+                    await SupabaseStorage.DeleteFile(CampanhaBD.DS_FOTO, "CampaignPictures");
+                    CampanhaBD.DS_FOTO = await SupabaseStorage.SaveImageFromBase64(campanhaAtualizada.DS_FOTO, "CampaignPicture", "CampaignPictures");
                 }
                 dbDiceHaven.SaveChanges();
 
@@ -274,7 +277,6 @@ namespace DiceHavenAPI.Services
         {
             try
             {
-                ImageService imageService = new ImageService(_configuration);
 
                 List<UsuarioBasicoDTO> lstUsuarios = (from c in dbDiceHaven.tb_campanhas
                         join uc in dbDiceHaven.tb_usuario_campanhas on c.ID_CAMPANHA equals uc.ID_CAMPANHA
@@ -284,7 +286,7 @@ namespace DiceHavenAPI.Services
                         {
                             ID_USUARIO = uc.ID_USUARIO,
                             DS_NOME = u.ID_USUARIO == idUsuarioLogado ? "Você" : u.DS_NOME,
-                            DS_FOTO = imageService.GetImageAsBase64(u.DS_FOTO),
+                            DS_FOTO = u.DS_FOTO,
                             FL_ADMIN = uc.FL_ADMIN
                         }).ToList();
 
@@ -296,7 +298,7 @@ namespace DiceHavenAPI.Services
                                    {
                                        ID_USUARIO = u.ID_USUARIO,
                                        DS_NOME = "Você",
-                                       DS_FOTO = imageService.GetImageAsBase64(u.DS_FOTO),
+                                       DS_FOTO = u.DS_FOTO,
                                        FL_ADMIN = true
                                    }).ToList();
                 }
@@ -319,7 +321,6 @@ namespace DiceHavenAPI.Services
         {
             try
             {
-                ImageService imageService = new ImageService(_configuration);
                 List<PersonagemDTO> lstPersonagens = (from c in dbDiceHaven.tb_campanhas
                                                       join pc in dbDiceHaven.tb_personagem_campanhas on c.ID_CAMPANHA equals pc.ID_CAMPANHA
                                                       join p in dbDiceHaven.tb_personagems on pc.ID_PERSONAGEM equals p.ID_PERSONAGEM
@@ -328,7 +329,7 @@ namespace DiceHavenAPI.Services
                                                       {
                                                           ID_PERSONAGEM = p.ID_PERSONAGEM,
                                                           DS_NOME = p.DS_NOME,
-                                                          DS_FOTO = imageService.GetImageAsBase64(p.DS_FOTO),
+                                                          DS_FOTO = p.DS_FOTO,
                                                           ID_USUARIO = p.ID_USUARIO,
                                                           DS_COR = p.DS_COR
                                                       }).ToList();

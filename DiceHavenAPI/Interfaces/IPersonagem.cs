@@ -12,7 +12,7 @@ namespace DiceHavenAPI.Interfaces
     {
         PersonagemDTO ObterPersonagem(int idPersonagem);
         List<PersonagemDTO> ListarPersonagem(int idUsuario);
-        int CadastrarPersonagem(PersonagemDTO novoPersonagem);
-        void EditarPersonagem(PersonagemDTO personagemInfo);
+        Task<int> CadastrarPersonagem(PersonagemDTO novoPersonagem);
+        Task EditarPersonagem(PersonagemDTO personagemInfo);
     }
 }

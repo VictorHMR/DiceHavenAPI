@@ -86,7 +86,7 @@ namespace DiceHavenAPI.Controllers
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Edita um usuario", Description = "Edita os dados de um usuario.")]
         [HttpPut("alterarDadosUsuario")]
-        public ActionResult alterarDadosUsuario(UsuarioDTO Usuario)
+        public async Task<ActionResult> alterarDadosUsuario(UsuarioDTO Usuario)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace DiceHavenAPI.Controllers
                 List<Claim> claim = identity.Claims.ToList();
                 Usuario.ID_USUARIO = int.Parse(claim[0].Value);
 
-                _usuario.alterarDadosUsuario(Usuario);
+                await _usuario.alterarDadosUsuario(Usuario);
                 return StatusCode(200, new { Message = "Usuário atualizado com sucesso!" });
             }
             catch (HttpDiceExcept ex)

@@ -94,8 +94,6 @@ namespace DiceHavenAPI.Services
         {
             try
             {
-                ImageService imageService = new ImageService(_configuration);
-
                 List<ContatoDTO> lstContatos = (from uc in dbDiceHaven.tb_usuario_contatos
                                                 join u in dbDiceHaven.tb_usuarios on uc.ID_CONTATO equals u.ID_USUARIO
                                                 where uc.ID_USUARIO == idUsuarioLogado
@@ -104,7 +102,7 @@ namespace DiceHavenAPI.Services
                                                     ID_USUARIO_CONTATO = uc.ID_USUARIO_CONTATO,
                                                     ID_CONTATO = uc.ID_CONTATO,
                                                     DS_NOME_CONTATO = u.DS_NOME,
-                                                    DS_FOTO_CONTATO = imageService.GetImageAsBase64(u.DS_FOTO),
+                                                    DS_FOTO_CONTATO = u.DS_FOTO,
                                                     FL_MUTADO = uc.FL_MUTADO
                                                 }).ToList();
                 return lstContatos;

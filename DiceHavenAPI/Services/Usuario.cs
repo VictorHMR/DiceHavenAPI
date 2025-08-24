@@ -1,19 +1,21 @@
-﻿using DiceHavenAPI.Contexts;
-using DiceHavenAPI.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DiceHavenAPI.Utils;
-using System.Net;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using DiceHaven_API.DTOs.Response;
+using DiceHaven_API.Utils;
+using DiceHavenAPI.Contexts;
 using DiceHavenAPI.DTOs;
 using DiceHavenAPI.Interfaces;
-using DiceHaven_API.DTOs.Response;
+using DiceHavenAPI.Models;
+using DiceHavenAPI.Utils;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using Supabase.Gotrue;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Net;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace DiceHavenAPI.Services
 {
@@ -21,11 +23,13 @@ namespace DiceHavenAPI.Services
     {
         public DiceHavenBDContext dbDiceHaven;
         private readonly IConfiguration _configuration;
+        private readonly Supabase.Client _client;
 
-        public Usuario(DiceHavenBDContext dbDiceHaven, IConfiguration config)
+        public Usuario(DiceHavenBDContext dbDiceHaven, IConfiguration config, Supabase.Client client)
         {
             this.dbDiceHaven = dbDiceHaven;
             _configuration = config;
+            _client = client;
         }
         public Usuario(DiceHavenBDContext dbDiceHaven)
         {
@@ -97,11 +101,11 @@ namespace DiceHavenAPI.Services
             }
         }
 
-        public int cadastrarUsuario(UsuarioDTO request)
+        public async Task<int> cadastrarUsuario(UsuarioDTO request)
         {
             try
             {
-                ImageService imageService = new ImageService(_configuration);
+                SupabaseStorage SupabaseStorage = new SupabaseStorage(_configuration, _client);
 
                 if (!loginValido(request.DS_LOGIN))
                     throw new HttpDiceExcept("Usuário já existe", HttpStatusCode.Conflict);
@@ -120,7 +124,7 @@ namespace DiceHavenAPI.Services
                     novoUsuario.DS_EMAIL = request.DS_EMAIL?.ToLower();
                     novoUsuario.FL_ATIVO = request.FL_ATIVO;
                     novoUsuario.DT_ULTIMO_ACESSO = DateTime.Now;
-                    novoUsuario.DS_FOTO = string.IsNullOrEmpty(request.DS_FOTO) ? null: imageService.SaveImageFromBase64(request.DS_FOTO);
+                    novoUsuario.DS_FOTO = string.IsNullOrEmpty(request.DS_FOTO) ? null: await SupabaseStorage.SaveImageFromBase64(request.DS_FOTO, "ProfilePicture", "ProfilePictures");
                     dbDiceHaven.Add(novoUsuario);
                     dbDiceHaven.SaveChanges();
 
@@ -146,11 +150,11 @@ namespace DiceHavenAPI.Services
 
         }
 
-        public void alterarDadosUsuario(UsuarioDTO request)
+        public async Task alterarDadosUsuario(UsuarioDTO request)
         {
             try
             {
-                ImageService imageService = new ImageService(_configuration);
+                SupabaseStorage SupabaseStorage = new SupabaseStorage(_configuration,_client);
                 
                 dbDiceHaven.Database.BeginTransaction();
 
@@ -167,14 +171,15 @@ namespace DiceHavenAPI.Services
                 Usuario.DS_LOGIN = request.DS_LOGIN ?? Usuario.DS_LOGIN;
                 Usuario.DS_EMAIL = request.DS_EMAIL?.ToLower() ?? Usuario.DS_EMAIL;
                 Usuario.FL_ATIVO = true;
-                if (!string.IsNullOrEmpty(request.DS_FOTO) && request.DS_FOTO != Usuario.DS_FOTO)
+                if (!string.IsNullOrEmpty(request.DS_FOTO))
                 {
-                    imageService.DeleteImage(Usuario.DS_FOTO);
-                    Usuario.DS_FOTO = imageService.SaveImageFromBase64(request.DS_FOTO);
+                    if (!string.IsNullOrEmpty(Usuario.DS_FOTO))
+                        await SupabaseStorage.DeleteFile(Usuario.DS_FOTO, "ProfilePictures");
+                    Usuario.DS_FOTO = await SupabaseStorage.SaveImageFromBase64(request.DS_FOTO, "ProfilePicture", "ProfilePictures");
                 }
                 dbDiceHaven.SaveChanges();
                 dbDiceHaven.Database.CommitTransaction();
-                
+
             }
             catch (HttpDiceExcept ex)
             {
@@ -189,8 +194,6 @@ namespace DiceHavenAPI.Services
 
         public UsuarioDTO obterUsuario(int idUsuario)
         {
-            ImageService imageService = new ImageService(_configuration);
-
             UsuarioDTO usuario = (from u in dbDiceHaven.tb_usuarios
                                   where u.ID_USUARIO == idUsuario
                                   select new UsuarioDTO
@@ -203,7 +206,7 @@ namespace DiceHavenAPI.Services
                                       DS_EMAIL = u.DS_EMAIL,
                                       FL_ATIVO = u.FL_ATIVO,
                                       DT_ULTIMO_ACESSO = u.DT_ULTIMO_ACESSO,
-                                      DS_FOTO = string.IsNullOrEmpty(u.DS_FOTO) ? null : imageService.GetImageAsBase64(u.DS_FOTO)
+                                      DS_FOTO = u.DS_FOTO
                                   }).FirstOrDefault();
             return usuario;
         }

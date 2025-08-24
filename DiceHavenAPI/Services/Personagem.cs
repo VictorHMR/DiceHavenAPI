@@ -11,6 +11,7 @@ using System.Net;
 using Microsoft.Extensions.Configuration;
 using DiceHavenAPI.Interfaces;
 using DiceHaven_API.DTOs.Response;
+using DiceHaven_API.Utils;
 
 namespace DiceHavenAPI.Services
 {
@@ -18,12 +19,13 @@ namespace DiceHavenAPI.Services
     {
         public DiceHavenBDContext dbDiceHaven;
         private readonly IConfiguration _configuration;
+        private readonly Supabase.Client _client;
 
-
-        public Personagem(DiceHavenBDContext dbDiceHaven, IConfiguration configuration)
+        public Personagem(DiceHavenBDContext dbDiceHaven, IConfiguration configuration, Supabase.Client client)
         {
             this.dbDiceHaven = dbDiceHaven;
             this._configuration = configuration;
+            _client = client;
         }
         public Personagem(DiceHavenBDContext dbDiceHaven)
         {
@@ -34,15 +36,13 @@ namespace DiceHavenAPI.Services
         {
             try
             {
-                ImageService imageService = new ImageService(_configuration);
-
                 PersonagemDTO personagem = (from ps in dbDiceHaven.tb_personagems
                                             where ps.ID_PERSONAGEM == idPersonagem
                                             select new PersonagemDTO
                                             {
                                                 ID_PERSONAGEM = ps.ID_PERSONAGEM,
                                                 DS_NOME = ps.DS_NOME,
-                                                DS_FOTO = imageService.GetImageAsBase64(ps.DS_FOTO),
+                                                DS_FOTO = ps.DS_FOTO,
                                                 DS_COR = ps.DS_COR,
                                                 ID_USUARIO = ps.ID_USUARIO
                                             }).FirstOrDefault();
@@ -59,15 +59,13 @@ namespace DiceHavenAPI.Services
         {
             try
             {
-                ImageService imageService = new ImageService(_configuration);
-
                 List<PersonagemDTO> listaPersonagens = (from ps in dbDiceHaven.tb_personagems
                                                         where ps.ID_USUARIO == idUsuario
                                                         select new PersonagemDTO
                                                         {
                                                             ID_PERSONAGEM = ps.ID_PERSONAGEM,
                                                             DS_NOME = ps.DS_NOME,
-                                                            DS_FOTO = imageService.GetImageAsBase64(ps.DS_FOTO),
+                                                            DS_FOTO = ps.DS_FOTO,
                                                             ID_USUARIO = ps.ID_USUARIO
                                                         }).ToList();
                 return listaPersonagens;
@@ -78,11 +76,11 @@ namespace DiceHavenAPI.Services
             }
         }
 
-        public int CadastrarPersonagem(PersonagemDTO novoPersonagem)
+        public async Task<int> CadastrarPersonagem(PersonagemDTO novoPersonagem)
         {
             try
             {
-                ImageService imageService = new ImageService(_configuration);
+                SupabaseStorage SupabaseStorage = new SupabaseStorage(_configuration, _client);
 
                 bool PersonagemExiste = dbDiceHaven.tb_personagems.Where(x => x.DS_NOME == novoPersonagem.DS_NOME).Any();
 
@@ -91,7 +89,7 @@ namespace DiceHavenAPI.Services
 
                 tb_personagem novoPersonagemBD = new tb_personagem();
                 novoPersonagemBD.DS_NOME = novoPersonagem.DS_NOME;
-                novoPersonagemBD.DS_FOTO = imageService.SaveImageFromBase64(novoPersonagem.DS_FOTO);
+                novoPersonagemBD.DS_FOTO = await SupabaseStorage.SaveImageFromBase64(novoPersonagem.DS_FOTO, "CharacterPicture", "CharacterPictures");
                 novoPersonagemBD.DS_COR = novoPersonagem.DS_COR;
                 novoPersonagemBD.ID_USUARIO = novoPersonagem.ID_USUARIO;
 
@@ -112,11 +110,11 @@ namespace DiceHavenAPI.Services
 
         }
 
-        public void EditarPersonagem(PersonagemDTO personagemInfo)
+        public async Task EditarPersonagem(PersonagemDTO personagemInfo)
         {
             try
             {
-                ImageService imageService = new ImageService(_configuration);
+                SupabaseStorage SupabaseStorage = new SupabaseStorage(_configuration, _client);
                 tb_personagem Personagem = dbDiceHaven.tb_personagems.Find(personagemInfo.ID_PERSONAGEM);
 
                 if (Personagem is null)
@@ -127,10 +125,10 @@ namespace DiceHavenAPI.Services
                 Personagem.ID_USUARIO = personagemInfo.ID_USUARIO;
                 
 
-                if (!string.IsNullOrEmpty(personagemInfo.DS_FOTO) && personagemInfo.DS_FOTO != imageService.GetImageAsBase64(Personagem.DS_FOTO))
+                if (!string.IsNullOrEmpty(personagemInfo.DS_FOTO))
                 {
-                    imageService.DeleteImage(Personagem.DS_FOTO);
-                    Personagem.DS_FOTO = imageService.SaveImageFromBase64(personagemInfo.DS_FOTO);
+                    await SupabaseStorage.DeleteFile(Personagem.DS_FOTO, "CharacterPictures");
+                    Personagem.DS_FOTO = await SupabaseStorage.SaveImageFromBase64(personagemInfo.DS_FOTO, "CharacterPicture", "CharacterPictures");
                 }
 
                 dbDiceHaven.SaveChanges();

@@ -66,7 +66,7 @@ namespace DiceHavenAPI.Controllers
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Cadastra uma nova campanha", Description = "Cadastra uma nova campanha com as informações passadas pelo usuário")]
         [HttpPost("cadastrarCampanha")]
-        public ActionResult cadastrarCampanha([FromBody] CampanhaDTO novaCampanha)
+        public async Task<ActionResult> cadastrarCampanha([FromBody] CampanhaDTO novaCampanha)
         {
             try
             {
@@ -74,7 +74,7 @@ namespace DiceHavenAPI.Controllers
                 List<Claim> claim = identity.Claims.ToList();
                 int idUsuarioLogado = int.Parse(claim[0].Value);
 
-                int idCampanha = _campanha.CadastrarCampanha(novaCampanha, idUsuarioLogado);
+                int idCampanha = await _campanha.CadastrarCampanha(novaCampanha, idUsuarioLogado);
                 return StatusCode(200, new { Message = "Campanha cadastrada com sucesso!", Id = idCampanha });
             }
             catch (HttpDiceExcept ex)

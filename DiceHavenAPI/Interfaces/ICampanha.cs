@@ -14,8 +14,8 @@ namespace DiceHavenAPI.Interfaces
     {
         CampanhaDTO ObterCampanha(int idCampanha);
         List<CampanhaDTO> ListarCampanhas(int idUsuario = 0);
-        int CadastrarCampanha(CampanhaDTO novaCampanha, int idUsuarioLogado);
-        void AtualizarCampanha(CampanhaDTO campanhaAtualizada);
+        Task<int> CadastrarCampanha(CampanhaDTO novaCampanha, int idUsuarioLogado);
+        Task AtualizarCampanha(CampanhaDTO campanhaAtualizada);
         void VincularUsuarioCampanha(int idCampanha, int idUsuario, bool flAdmin = false);
         void DesvincularUsuarioCampanha(int idCampanha, int idUsuario);
         void AlterarAdmins(GerenciarAdminDTO gerenciarAdmin, int idUsuarioLogado);
