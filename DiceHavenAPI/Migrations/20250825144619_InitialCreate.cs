@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DiceHaven_API.Migrations
 {
     /// <inheritdoc />
-    public partial class Migration_20250517135023 : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,36 +16,37 @@ namespace DiceHaven_API.Migrations
                 name: "tb_usuario",
                 columns: table => new
                 {
-                    ID_USUARIO = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    DS_NOME = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    ID_USUARIO = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DS_NOME = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false, collation: "utf8mb4_0900_ai_ci"),
                     DT_NASCIMENTO = table.Column<DateTime>(type: "datetime", nullable: false),
-                    DS_LOGIN = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
-                    DS_SENHA = table.Column<string>(type: "text", nullable: false),
-                    DS_EMAIL = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    FL_ATIVO = table.Column<bool>(type: "INTEGER", nullable: false),
+                    DS_LOGIN = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false, collation: "utf8mb4_0900_ai_ci"),
+                    DS_SENHA = table.Column<string>(type: "text", nullable: false, collation: "utf8mb4_0900_ai_ci"),
+                    DS_EMAIL = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false, collation: "utf8mb4_0900_ai_ci"),
+                    FL_ATIVO = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     DT_ULTIMO_ACESSO = table.Column<DateTime>(type: "datetime", nullable: true),
-                    DS_FOTO = table.Column<string>(type: "text", nullable: true)
+                    DS_FOTO = table.Column<string>(type: "text", nullable: true, collation: "utf8mb4_0900_ai_ci")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PRIMARY", x => x.ID_USUARIO);
-                });
+                })
+                .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
 
             migrationBuilder.CreateTable(
                 name: "tb_campanha",
                 columns: table => new
                 {
-                    ID_CAMPANHA = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    DS_NOME_CAMPANHA = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    DS_LORE = table.Column<string>(type: "text", nullable: true),
+                    ID_CAMPANHA = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DS_NOME_CAMPANHA = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false, collation: "utf8mb4_0900_ai_ci"),
+                    DS_LORE = table.Column<string>(type: "text", nullable: true, collation: "utf8mb4_0900_ai_ci"),
                     DT_CRIACAO = table.Column<DateTime>(type: "datetime", nullable: false),
-                    FL_ATIVO = table.Column<bool>(type: "INTEGER", nullable: false),
-                    FL_PUBLICA = table.Column<bool>(type: "INTEGER", nullable: false),
-                    DS_FOTO = table.Column<string>(type: "text", nullable: true),
-                    ID_USUARIO_CRIADOR = table.Column<int>(type: "INTEGER", nullable: false),
-                    ID_MESTRE_CAMPANHA = table.Column<int>(type: "INTEGER", nullable: false)
+                    FL_ATIVO = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    FL_PUBLICA = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    DS_FOTO = table.Column<string>(type: "text", nullable: true, collation: "utf8mb4_0900_ai_ci"),
+                    ID_USUARIO_CRIADOR = table.Column<int>(type: "int", nullable: false),
+                    ID_MESTRE_CAMPANHA = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -59,15 +61,15 @@ namespace DiceHaven_API.Migrations
                         column: x => x.ID_MESTRE_CAMPANHA,
                         principalTable: "tb_usuario",
                         principalColumn: "ID_USUARIO");
-                });
+                })
+                .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
 
             migrationBuilder.CreateTable(
                 name: "tb_config_usuario",
                 columns: table => new
                 {
-                    ID_CONFIG_USUARIO = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    FL_DARK_MODE = table.Column<bool>(type: "INTEGER", nullable: false)
+                    ID_CONFIG_USUARIO = table.Column<int>(type: "int", nullable: false),
+                    FL_DARK_MODE = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -77,18 +79,19 @@ namespace DiceHaven_API.Migrations
                         column: x => x.ID_CONFIG_USUARIO,
                         principalTable: "tb_usuario",
                         principalColumn: "ID_USUARIO");
-                });
+                })
+                .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
 
             migrationBuilder.CreateTable(
                 name: "tb_personagem",
                 columns: table => new
                 {
-                    ID_PERSONAGEM = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    DS_NOME = table.Column<string>(type: "TEXT", maxLength: 75, nullable: false),
-                    DS_FOTO = table.Column<string>(type: "text", nullable: true),
-                    DS_COR = table.Column<string>(type: "TEXT", nullable: true),
-                    ID_USUARIO = table.Column<int>(type: "INTEGER", nullable: false)
+                    ID_PERSONAGEM = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DS_NOME = table.Column<string>(type: "varchar(75)", maxLength: 75, nullable: false, collation: "utf8mb4_0900_ai_ci"),
+                    DS_FOTO = table.Column<string>(type: "text", nullable: true, collation: "utf8mb4_0900_ai_ci"),
+                    DS_COR = table.Column<string>(type: "longtext", nullable: true, collation: "utf8mb4_0900_ai_ci"),
+                    ID_USUARIO = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -98,17 +101,18 @@ namespace DiceHaven_API.Migrations
                         column: x => x.ID_USUARIO,
                         principalTable: "tb_usuario",
                         principalColumn: "ID_USUARIO");
-                });
+                })
+                .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
 
             migrationBuilder.CreateTable(
                 name: "tb_usuario_contato",
                 columns: table => new
                 {
-                    ID_USUARIO_CONTATO = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    ID_USUARIO = table.Column<int>(type: "INTEGER", nullable: false),
-                    ID_CONTATO = table.Column<int>(type: "INTEGER", nullable: false),
-                    FL_MUTADO = table.Column<bool>(type: "INTEGER", nullable: false)
+                    ID_USUARIO_CONTATO = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ID_USUARIO = table.Column<int>(type: "int", nullable: false),
+                    ID_CONTATO = table.Column<int>(type: "int", nullable: false),
+                    FL_MUTADO = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -123,17 +127,18 @@ namespace DiceHaven_API.Migrations
                         column: x => x.ID_CONTATO,
                         principalTable: "tb_usuario",
                         principalColumn: "ID_USUARIO");
-                });
+                })
+                .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
 
             migrationBuilder.CreateTable(
                 name: "tb_secao_ficha",
                 columns: table => new
                 {
-                    ID_SECAO_FICHA = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    DS_NOME_SECAO = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    NR_ORDEM = table.Column<int>(type: "INTEGER", nullable: false, defaultValueSql: "'0'"),
-                    ID_CAMPANHA = table.Column<int>(type: "INTEGER", nullable: false)
+                    ID_SECAO_FICHA = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DS_NOME_SECAO = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false, collation: "utf8mb4_0900_ai_ci"),
+                    NR_ORDEM = table.Column<int>(type: "int", nullable: false, defaultValueSql: "'0'"),
+                    ID_CAMPANHA = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -143,18 +148,19 @@ namespace DiceHaven_API.Migrations
                         column: x => x.ID_CAMPANHA,
                         principalTable: "tb_campanha",
                         principalColumn: "ID_CAMPANHA");
-                });
+                })
+                .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
 
             migrationBuilder.CreateTable(
                 name: "tb_usuario_campanha",
                 columns: table => new
                 {
-                    ID_USUARIO_CAMPANHA = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    ID_CAMPANHA = table.Column<int>(type: "INTEGER", nullable: false),
-                    ID_USUARIO = table.Column<int>(type: "INTEGER", nullable: false),
-                    FL_ADMIN = table.Column<bool>(type: "INTEGER", nullable: false),
-                    FL_MUTADO = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ID_USUARIO_CAMPANHA = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ID_CAMPANHA = table.Column<int>(type: "int", nullable: false),
+                    ID_USUARIO = table.Column<int>(type: "int", nullable: false),
+                    FL_ADMIN = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    FL_MUTADO = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     DT_ENTRADA = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
@@ -170,20 +176,21 @@ namespace DiceHaven_API.Migrations
                         column: x => x.ID_USUARIO,
                         principalTable: "tb_usuario",
                         principalColumn: "ID_USUARIO");
-                });
+                })
+                .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
 
             migrationBuilder.CreateTable(
                 name: "tb_campanha_mensagem",
                 columns: table => new
                 {
-                    ID_CAMPANHA_MENSAGEM = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    DS_MENSAGEM = table.Column<string>(type: "text", nullable: true),
-                    FL_MESTRE = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ID_CAMPANHA_MENSAGEM = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DS_MENSAGEM = table.Column<string>(type: "text", nullable: true, collation: "utf8mb4_0900_ai_ci"),
+                    FL_MESTRE = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     DT_MENSAGEM = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ID_USUARIO = table.Column<int>(type: "INTEGER", nullable: false),
-                    ID_CAMPANHA = table.Column<int>(type: "INTEGER", nullable: false),
-                    ID_PERSONAGEM = table.Column<int>(type: "INTEGER", nullable: true)
+                    ID_USUARIO = table.Column<int>(type: "int", nullable: false),
+                    ID_CAMPANHA = table.Column<int>(type: "int", nullable: false),
+                    ID_PERSONAGEM = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -203,16 +210,17 @@ namespace DiceHaven_API.Migrations
                         column: x => x.ID_PERSONAGEM,
                         principalTable: "tb_personagem",
                         principalColumn: "ID_PERSONAGEM");
-                });
+                })
+                .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
 
             migrationBuilder.CreateTable(
                 name: "tb_personagem_campanha",
                 columns: table => new
                 {
-                    ID_PERSONAGEM_CAMPANHA = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    ID_PERSONAGEM = table.Column<int>(type: "INTEGER", nullable: false),
-                    ID_CAMPANHA = table.Column<int>(type: "INTEGER", nullable: false),
+                    ID_PERSONAGEM_CAMPANHA = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ID_PERSONAGEM = table.Column<int>(type: "int", nullable: false),
+                    ID_CAMPANHA = table.Column<int>(type: "int", nullable: false),
                     DT_REGISTRO = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
@@ -228,22 +236,23 @@ namespace DiceHaven_API.Migrations
                         column: x => x.ID_PERSONAGEM,
                         principalTable: "tb_personagem",
                         principalColumn: "ID_PERSONAGEM");
-                });
+                })
+                .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
 
             migrationBuilder.CreateTable(
                 name: "tb_campo_ficha",
                 columns: table => new
                 {
-                    ID_CAMPO_FICHA = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    DS_NOME_CAMPO = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    NR_TIPO_CAMPO = table.Column<int>(type: "INTEGER", nullable: false),
-                    FL_BLOQUEADO = table.Column<bool>(type: "INTEGER", nullable: true),
-                    FL_VISIVEL = table.Column<bool>(type: "INTEGER", nullable: true),
-                    FL_MODIFICADOR = table.Column<bool>(type: "INTEGER", nullable: false),
-                    DS_VALOR_PADRAO = table.Column<string>(type: "text", nullable: true),
-                    NR_ORDEM = table.Column<int>(type: "INTEGER", nullable: false),
-                    ID_SECAO_FICHA = table.Column<int>(type: "INTEGER", nullable: false)
+                    ID_CAMPO_FICHA = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DS_NOME_CAMPO = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false, collation: "utf8mb4_0900_ai_ci"),
+                    NR_TIPO_CAMPO = table.Column<int>(type: "int", nullable: false),
+                    FL_BLOQUEADO = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    FL_VISIVEL = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    FL_MODIFICADOR = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    DS_VALOR_PADRAO = table.Column<string>(type: "text", nullable: true, collation: "utf8mb4_0900_ai_ci"),
+                    NR_ORDEM = table.Column<int>(type: "int", nullable: false),
+                    ID_SECAO_FICHA = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -253,18 +262,19 @@ namespace DiceHaven_API.Migrations
                         column: x => x.ID_SECAO_FICHA,
                         principalTable: "tb_secao_ficha",
                         principalColumn: "ID_SECAO_FICHA");
-                });
+                })
+                .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
 
             migrationBuilder.CreateTable(
                 name: "tb_dados_ficha",
                 columns: table => new
                 {
-                    ID_DADO_FICHA = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    ID_CAMPO_FICHA = table.Column<int>(type: "INTEGER", nullable: false),
-                    ID_PERSONAGEM = table.Column<int>(type: "INTEGER", nullable: false),
-                    DS_VALOR = table.Column<string>(type: "text", nullable: true),
-                    DS_VALOR_MODIFICADOR = table.Column<int>(type: "INTEGER", nullable: true)
+                    ID_DADO_FICHA = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ID_CAMPO_FICHA = table.Column<int>(type: "int", nullable: false),
+                    ID_PERSONAGEM = table.Column<int>(type: "int", nullable: false),
+                    DS_VALOR = table.Column<string>(type: "text", nullable: true, collation: "utf8mb4_0900_ai_ci"),
+                    DS_VALOR_MODIFICADOR = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -279,7 +289,8 @@ namespace DiceHaven_API.Migrations
                         column: x => x.ID_PERSONAGEM,
                         principalTable: "tb_personagem",
                         principalColumn: "ID_PERSONAGEM");
-                });
+                })
+                .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
 
             migrationBuilder.CreateIndex(
                 name: "ID_MESTRE_CAMPANHA",

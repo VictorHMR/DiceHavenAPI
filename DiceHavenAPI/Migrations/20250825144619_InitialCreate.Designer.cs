@@ -3,6 +3,7 @@ using System;
 using DiceHavenAPI.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -11,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DiceHaven_API.Migrations
 {
     [DbContext(typeof(DiceHavenBDContext))]
-    [Migration("20250517165029_Migration_20250517135023")]
-    partial class Migration_20250517135023
+    [Migration("20250825144619_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,13 +21,18 @@ namespace DiceHaven_API.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .UseCollation("utf8mb4_0900_ai_ci")
-                .HasAnnotation("ProductVersion", "9.0.4");
+                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
             modelBuilder.Entity("DiceHavenAPI.Models.tb_campanha", b =>
                 {
                     b.Property<int>("ID_CAMPANHA")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID_CAMPANHA"));
 
                     b.Property<string>("DS_FOTO")
                         .HasColumnType("text");
@@ -37,22 +43,22 @@ namespace DiceHaven_API.Migrations
                     b.Property<string>("DS_NOME_CAMPANHA")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime>("DT_CRIACAO")
                         .HasColumnType("datetime");
 
                     b.Property<bool>("FL_ATIVO")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("FL_PUBLICA")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("ID_MESTRE_CAMPANHA")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("ID_USUARIO_CRIADOR")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.HasKey("ID_CAMPANHA")
                         .HasName("PRIMARY");
@@ -68,33 +74,35 @@ namespace DiceHaven_API.Migrations
                 {
                     b.Property<int>("ID_CAMPO_FICHA")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID_CAMPO_FICHA"));
 
                     b.Property<string>("DS_NOME_CAMPO")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("DS_VALOR_PADRAO")
                         .HasColumnType("text");
 
                     b.Property<bool?>("FL_BLOQUEADO")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("FL_MODIFICADOR")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool?>("FL_VISIVEL")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("ID_SECAO_FICHA")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("NR_ORDEM")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("NR_TIPO_CAMPO")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.HasKey("ID_CAMPO_FICHA")
                         .HasName("PRIMARY");
@@ -108,10 +116,10 @@ namespace DiceHaven_API.Migrations
                 {
                     b.Property<int>("ID_CONFIG_USUARIO")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<bool>("FL_DARK_MODE")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("ID_CONFIG_USUARIO")
                         .HasName("PRIMARY");
@@ -123,19 +131,21 @@ namespace DiceHaven_API.Migrations
                 {
                     b.Property<int>("ID_DADO_FICHA")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID_DADO_FICHA"));
 
                     b.Property<string>("DS_VALOR")
                         .HasColumnType("text");
 
                     b.Property<int?>("DS_VALOR_MODIFICADOR")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("ID_CAMPO_FICHA")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("ID_PERSONAGEM")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.HasKey("ID_DADO_FICHA")
                         .HasName("PRIMARY");
@@ -151,10 +161,12 @@ namespace DiceHaven_API.Migrations
                 {
                     b.Property<int>("ID_PERSONAGEM")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID_PERSONAGEM"));
 
                     b.Property<string>("DS_COR")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("DS_FOTO")
                         .HasColumnType("text");
@@ -162,10 +174,10 @@ namespace DiceHaven_API.Migrations
                     b.Property<string>("DS_NOME")
                         .IsRequired()
                         .HasMaxLength(75)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(75)");
 
                     b.Property<int>("ID_USUARIO")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.HasKey("ID_PERSONAGEM")
                         .HasName("PRIMARY");
@@ -179,12 +191,14 @@ namespace DiceHaven_API.Migrations
                 {
                     b.Property<int>("ID_USUARIO")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID_USUARIO"));
 
                     b.Property<string>("DS_EMAIL")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("DS_FOTO")
                         .HasColumnType("text");
@@ -192,12 +206,12 @@ namespace DiceHaven_API.Migrations
                     b.Property<string>("DS_LOGIN")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(30)");
 
                     b.Property<string>("DS_NOME")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("DS_SENHA")
                         .IsRequired()
@@ -210,7 +224,7 @@ namespace DiceHaven_API.Migrations
                         .HasColumnType("datetime");
 
                     b.Property<bool>("FL_ATIVO")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("ID_USUARIO")
                         .HasName("PRIMARY");
@@ -222,22 +236,24 @@ namespace DiceHaven_API.Migrations
                 {
                     b.Property<int>("ID_USUARIO_CAMPANHA")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID_USUARIO_CAMPANHA"));
 
                     b.Property<DateTime>("DT_ENTRADA")
                         .HasColumnType("datetime");
 
                     b.Property<bool>("FL_ADMIN")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("FL_MUTADO")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("ID_CAMPANHA")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("ID_USUARIO")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.HasKey("ID_USUARIO_CAMPANHA")
                         .HasName("PRIMARY");
@@ -255,16 +271,18 @@ namespace DiceHaven_API.Migrations
                 {
                     b.Property<int>("ID_USUARIO_CONTATO")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID_USUARIO_CONTATO"));
 
                     b.Property<bool>("FL_MUTADO")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("ID_CONTATO")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("ID_USUARIO")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.HasKey("ID_USUARIO_CONTATO")
                         .HasName("PRIMARY");
@@ -281,7 +299,9 @@ namespace DiceHaven_API.Migrations
                 {
                     b.Property<int>("ID_CAMPANHA_MENSAGEM")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID_CAMPANHA_MENSAGEM"));
 
                     b.Property<string>("DS_MENSAGEM")
                         .HasColumnType("text");
@@ -290,16 +310,16 @@ namespace DiceHaven_API.Migrations
                         .HasColumnType("datetime");
 
                     b.Property<bool>("FL_MESTRE")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("ID_CAMPANHA")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ID_PERSONAGEM")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("ID_USUARIO")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.HasKey("ID_CAMPANHA_MENSAGEM")
                         .HasName("PRIMARY");
@@ -320,16 +340,18 @@ namespace DiceHaven_API.Migrations
                 {
                     b.Property<int>("ID_PERSONAGEM_CAMPANHA")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID_PERSONAGEM_CAMPANHA"));
 
                     b.Property<DateTime>("DT_REGISTRO")
                         .HasColumnType("datetime");
 
                     b.Property<int>("ID_CAMPANHA")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("ID_PERSONAGEM")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.HasKey("ID_PERSONAGEM_CAMPANHA")
                         .HasName("PRIMARY");
@@ -347,19 +369,21 @@ namespace DiceHaven_API.Migrations
                 {
                     b.Property<int>("ID_SECAO_FICHA")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID_SECAO_FICHA"));
 
                     b.Property<string>("DS_NOME_SECAO")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<int>("ID_CAMPANHA")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("NR_ORDEM")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("int")
                         .HasDefaultValueSql("'0'");
 
                     b.HasKey("ID_SECAO_FICHA")

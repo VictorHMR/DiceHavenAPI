@@ -5,6 +5,7 @@ using DiceHavenAPI.DTOs;
 using DiceHavenAPI.Interfaces;
 using DiceHavenAPI.Models;
 using DiceHavenAPI.Utils;
+using Google.Apis.Auth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Supabase.Gotrue;
@@ -147,7 +148,74 @@ namespace DiceHavenAPI.Services
                 dbDiceHaven.Database.RollbackTransaction();
                 throw new HttpDiceExcept($"Ocorreu um erro ao cadastrar o usuário! Message: {exx}", HttpStatusCode.InternalServerError);
             }
+        }
 
+        public async Task<UsuarioDTO> GoogleLogin(string DS_TOKEN)
+        {
+            try
+            {
+                int? idUsuario = null;
+                var payload = await GoogleJsonWebSignature.ValidateAsync(DS_TOKEN, new GoogleJsonWebSignature.ValidationSettings
+                {
+                    Audience = new[] { Environment.GetEnvironmentVariable("GOOGLE_SIGNIN_CLIENT_ID") } 
+                });
+                if (!loginValido(payload.Email) || !emailValido(payload.Email))
+                {
+                    idUsuario = dbDiceHaven.tb_usuarios.Where(x => x.DS_EMAIL == payload.Email).Select(x => x.ID_USUARIO).FirstOrDefault();
+                }
+                else
+                {
+                    dbDiceHaven.Database.BeginTransaction();
+
+                    tb_usuario novoUsuario = new tb_usuario();
+                    novoUsuario.DS_NOME = payload.GivenName;
+                    novoUsuario.DT_NASCIMENTO = DateTime.MinValue;
+                    novoUsuario.DS_LOGIN = payload.Email;
+                    novoUsuario.DS_EMAIL = payload.Email;
+                    novoUsuario.FL_ATIVO = true;
+                    novoUsuario.DT_ULTIMO_ACESSO = DateTime.Now;
+                    novoUsuario.DS_FOTO = payload.Picture;
+                    dbDiceHaven.Add(novoUsuario);
+                    dbDiceHaven.SaveChanges();
+
+                    tb_config_usuario config = new tb_config_usuario();
+                    config.ID_CONFIG_USUARIO = novoUsuario.ID_USUARIO;
+                    config.FL_DARK_MODE = true;
+                    dbDiceHaven.Add(config);
+                    dbDiceHaven.SaveChanges();
+                    dbDiceHaven.Database.CommitTransaction();
+
+                    idUsuario = novoUsuario.ID_USUARIO;
+                }
+
+                UsuarioDTO usuario = (from u in dbDiceHaven.tb_usuarios
+                                      where idUsuario.HasValue && u.ID_USUARIO == idUsuario.Value
+                                      select new UsuarioDTO
+                                      {
+                                          ID_USUARIO = u.ID_USUARIO,
+                                          DS_NOME = u.DS_NOME,
+                                          DT_NASCIMENTO = u.DT_NASCIMENTO,
+                                          DS_LOGIN = u.DS_LOGIN,
+                                          DS_EMAIL = u.DS_EMAIL,
+                                          FL_ATIVO = u.FL_ATIVO,
+                                          DT_ULTIMO_ACESSO = u.DT_ULTIMO_ACESSO
+                                      }).FirstOrDefault();
+                if (usuario is null)
+                    throw new HttpDiceExcept("Ocorreu um erro ao autenticar ! Verifique suas credenciais.");
+
+                dbDiceHaven.tb_usuarios.Find(usuario.ID_USUARIO).DT_ULTIMO_ACESSO = DateTime.Now;
+                dbDiceHaven.SaveChanges();
+                return usuario;
+            }
+            catch (HttpDiceExcept ex)
+            {
+                throw ex;
+            }
+            catch (Exception exx)
+            {
+                dbDiceHaven.Database.RollbackTransaction();
+                throw new HttpDiceExcept($"Ocorreu um erro ao cadastrar o usuário! Message: {exx}", HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task alterarDadosUsuario(UsuarioDTO request)

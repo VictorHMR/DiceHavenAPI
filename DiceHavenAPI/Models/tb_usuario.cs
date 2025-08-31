@@ -14,7 +14,7 @@ public partial class tb_usuario
 
     public string DS_LOGIN { get; set; }
 
-    public string DS_SENHA { get; set; }
+    public string? DS_SENHA { get; set; }
 
     public string DS_EMAIL { get; set; }
 

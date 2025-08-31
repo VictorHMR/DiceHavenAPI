@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using DiceHaven_API.Models;
 using DiceHavenAPI.Models;
 using Microsoft.EntityFrameworkCore;
-
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 namespace DiceHavenAPI.Contexts;
 
 public partial class DiceHavenBDContext : DbContext
@@ -40,7 +40,7 @@ public partial class DiceHavenBDContext : DbContext
     public virtual DbSet<tb_campanha_mensagem> tb_campanha_mensagens { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlite("Data Source=../DiceHaven.db");
+        => optionsBuilder.UseMySql(Environment.GetEnvironmentVariable("CONNECTION_STRING"), ServerVersion.AutoDetect(Environment.GetEnvironmentVariable("CONNECTION_STRING")));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -195,7 +195,6 @@ public partial class DiceHavenBDContext : DbContext
                 .IsRequired()
                 .HasMaxLength(100);
             entity.Property(e => e.DS_SENHA)
-                .IsRequired()
                 .HasColumnType("text");
             entity.Property(e => e.DT_NASCIMENTO).HasColumnType("datetime");
             entity.Property(e => e.DT_ULTIMO_ACESSO).HasColumnType("datetime");

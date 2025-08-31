@@ -45,16 +45,34 @@ namespace DiceHavenAPI.Controllers
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Cadastra um usuário no sistema", Description = "Cadastra um usuário no sistema.")]
         [HttpPost("cadastrarUsuario")]
-        public ActionResult cadastrarUsuario(UsuarioDTO novoUsuario)
+        public async Task<ActionResult> cadastrarUsuario(UsuarioDTO novoUsuario)
         {
             try
             {
-                _usuario.cadastrarUsuario(novoUsuario);
+                await _usuario.cadastrarUsuario(novoUsuario);
                 return StatusCode(200, new { Message = "Usuário cadastrado com sucesso!" });
             }
             catch (HttpDiceExcept ex)
             {
                 return StatusCode((int)ex.CodeStatus, new { ex.Message });
+            }
+
+        }
+
+        [ProducesResponseType(typeof(UsuarioDTO), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Loga utilizando token google", Description = "Loga ou cria usuário utilizando token google.")]
+        [HttpPost("googlelogin")]
+        public async Task<ActionResult> GoogleLogin([FromBody] GoogleLoginDTO login)
+        {
+            try
+            {
+                UsuarioDTO usuario = await _usuario.GoogleLogin(login.GoogleToken);
+                return StatusCode(200, _usuario.GerarToken(usuario));
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
             }
 
         }

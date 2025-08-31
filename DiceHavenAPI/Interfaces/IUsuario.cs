@@ -13,6 +13,7 @@ namespace DiceHavenAPI.Interfaces
         AuthTokenDTO GerarToken(UsuarioDTO usuario);
         UsuarioDTO Login(LoginDTO login);
         Task<int> cadastrarUsuario(UsuarioDTO request);
+        Task<UsuarioDTO> GoogleLogin(string DS_TOKEN);
         Task alterarDadosUsuario(UsuarioDTO request);
         UsuarioDTO obterUsuario(int idUsuario);
         void alterarConfigUsuario(ConfigUsuarioDTO configsUsuario, int idUsuario);

@@ -23,6 +23,7 @@ using Supabase;
 using System;
 using System.Collections.Generic;
 using System.Text;
+
 namespace DiceHavenAPI
 {
     public class Startup
@@ -47,7 +48,7 @@ namespace DiceHavenAPI
 #endif
 
             services.AddDbContext<DiceHavenBDContext>(options =>
-                options.UseSqlite(Environment.GetEnvironmentVariable("CONNECTION_STRING")));
+                options.UseMySql(Environment.GetEnvironmentVariable("CONNECTION_STRING"), ServerVersion.AutoDetect(Environment.GetEnvironmentVariable("CONNECTION_STRING"))));
 
 
             var key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY")); 
