@@ -239,11 +239,11 @@ namespace DiceHavenAPI.Services
                 Usuario.DS_LOGIN = request.DS_LOGIN ?? Usuario.DS_LOGIN;
                 Usuario.DS_EMAIL = request.DS_EMAIL?.ToLower() ?? Usuario.DS_EMAIL;
                 Usuario.FL_ATIVO = true;
-                if (!string.IsNullOrEmpty(request.DS_FOTO))
+                if (!string.IsNullOrEmpty(request.DS_FOTO) && request.DS_FOTO != Usuario.DS_FOTO)
                 {
-                    if (!string.IsNullOrEmpty(Usuario.DS_FOTO))
-                        await SupabaseStorage.DeleteFile(Usuario.DS_FOTO, "ProfilePictures");
+                    string fotoAntiga = Usuario.DS_FOTO;
                     Usuario.DS_FOTO = await SupabaseStorage.SaveImageFromBase64(request.DS_FOTO, "ProfilePicture", "ProfilePictures");
+                    await SupabaseStorage.DeleteFile(fotoAntiga, "ProfilePictures");
                 }
                 dbDiceHaven.SaveChanges();
                 dbDiceHaven.Database.CommitTransaction();

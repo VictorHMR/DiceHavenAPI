@@ -125,10 +125,11 @@ namespace DiceHavenAPI.Services
                 Personagem.ID_USUARIO = personagemInfo.ID_USUARIO;
                 
 
-                if (!string.IsNullOrEmpty(personagemInfo.DS_FOTO))
+                if (!string.IsNullOrEmpty(personagemInfo.DS_FOTO) && personagemInfo.DS_FOTO != Personagem.DS_FOTO)
                 {
-                    await SupabaseStorage.DeleteFile(Personagem.DS_FOTO, "CharacterPictures");
+                    string fotoAntiga = Personagem.DS_FOTO;
                     Personagem.DS_FOTO = await SupabaseStorage.SaveImageFromBase64(personagemInfo.DS_FOTO, "CharacterPicture", "CharacterPictures");
+                    await SupabaseStorage.DeleteFile(fotoAntiga, "CharacterPictures");
                 }
 
                 dbDiceHaven.SaveChanges();

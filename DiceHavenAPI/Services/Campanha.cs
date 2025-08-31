@@ -157,10 +157,11 @@ namespace DiceHavenAPI.Services
                 CampanhaBD.FL_PUBLICA = campanhaAtualizada.FL_PUBLICA;
                 CampanhaBD.ID_MESTRE_CAMPANHA = campanhaAtualizada?.ID_MESTRE_CAMPANHA ?? CampanhaBD.ID_MESTRE_CAMPANHA;
 
-                if (!string.IsNullOrEmpty(campanhaAtualizada.DS_FOTO))
+                if (!string.IsNullOrEmpty(campanhaAtualizada.DS_FOTO) && campanhaAtualizada.DS_FOTO != CampanhaBD.DS_FOTO)
                 {
-                    await SupabaseStorage.DeleteFile(CampanhaBD.DS_FOTO, "CampaignPictures");
+                    string fotoAntiga = CampanhaBD.DS_FOTO;
                     CampanhaBD.DS_FOTO = await SupabaseStorage.SaveImageFromBase64(campanhaAtualizada.DS_FOTO, "CampaignPicture", "CampaignPictures");
+                    await SupabaseStorage.DeleteFile(fotoAntiga, "CampaignPictures");
                 }
                 dbDiceHaven.SaveChanges();
 
