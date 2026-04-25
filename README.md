@@ -23,7 +23,7 @@ API desenvolvida em .NET para gerenciamento de fichas, personagens, campanhas de
 - Gerenciamento de **Fichas** e **Personagens**
 - Lista de contatos
 - Chat em tempo real
-- Rolagem de dados com exmpressões matemáticas.
+- Rolagem de dados com expressões matemáticas.
 
 ---
 
